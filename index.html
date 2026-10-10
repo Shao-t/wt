@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>飛航軌跡分析工具</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9C%88%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css'" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -148,6 +149,7 @@
 
   #map{ height:520px; width:100%; background:#0a0e18; }
   .leaflet-container{ background:#0a0e18; font-family:var(--sans); }
+  .osm-dark-tiles{ filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85) saturate(0.6); }
 
   /* legend */
   .legend{
@@ -265,9 +267,9 @@
       <div class="stat-card"><div class="label">總飛行時間</div><div class="value" id="sDuration">--</div></div>
       <div class="stat-card"><div class="label">實際航跡距離</div><div class="value" id="sDistance">--</div><div class="caption" id="sDistanceCaption"></div></div>
       <div class="stat-card"><div class="label">最高高度</div><div class="value" id="sMaxAlt">--</div></div>
-      <div class="stat-card"><div class="label">最高地速</div><div class="value" id="sMaxSpd">--</div></div>
+      <div class="stat-card"><div class="label">最高地速</div><div class="value" id="sMaxSpd">--</div><div class="caption" id="sMaxSpdCaption"></div></div>
       <div class="stat-card"><div class="label">平均巡航地速</div><div class="value" id="sAvgSpd">--</div></div>
-      <div class="stat-card"><div class="label">軌跡點數</div><div class="value" id="sPoints">--</div></div>
+      <div class="stat-card"><div class="label">軌跡點數</div><div class="value" id="sPoints">--</div><div class="caption" id="sPointsCaption"></div></div>
     </div>
 
     <div class="main-grid">
@@ -308,8 +310,8 @@
           <div class="pb-time"><span>已放映 <b id="pbElapsed">00:00:00</b></span><span id="pbSpeedLabel">1×</span><span>總長 <b id="pbTotal">00:00:00</b></span></div>
           <div class="speed-select" id="speedSelect">
             <button class="speed-btn" data-mult="10">10×</button>
-            <button class="speed-btn active" data-mult="60">60×</button>
-            <button class="speed-btn" data-mult="300">300×</button>
+            <button class="speed-btn" data-mult="60">60×</button>
+            <button class="speed-btn active" data-mult="300">300×</button>
             <button class="speed-btn" data-mult="1200">1200×</button>
             <button class="speed-btn" data-mult="3600">3600×</button>
           </div>
@@ -326,7 +328,7 @@
       <div class="panel chart-panel">
         <div class="panel-title" style="padding:0 0 8px; border:none;"><b>地速剖面圖 Ground Speed Profile</b></div>
         <canvas id="spdChart" height="90"></canvas>
-        <div class="chart-hint">點擊或拖曳圖表可跳至該時間點</div>
+        <div class="chart-hint">點擊圖表可跳至該時間點 ・ 曲線已用 ±30 秒滑動中位數平滑，原始讀數見「目前位置資訊」</div>
       </div>
     </div>
 
@@ -335,7 +337,9 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>window.L || document.write('<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"><\/script>');</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
+<script>window.Chart || document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>');</script>
 <script>
 /* =========================================================================
    KML PARSER
@@ -581,6 +585,18 @@ function clearError(){
   dzError.classList.add('hidden');
 }
 
+
+function showRenderWarning(msg){
+  let el = document.getElementById('renderWarning');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'renderWarning';
+    el.style.cssText = 'margin-bottom:12px;padding:10px 14px;border-radius:10px;font-size:13px;color:#fbbf24;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);';
+    dashboard.insertBefore(el, dashboard.firstChild);
+  }
+  el.textContent = '⚠ ' + msg;
+}
+
 function handleFile(file){
   if(!file) return;
   clearError();
@@ -598,7 +614,9 @@ function handleFile(file){
       dashboard.classList.remove('hidden');
       renderFlight(FLIGHT);
     }catch(err){
-      showError(err.message || '解析這份 KML 時發生錯誤。');
+      console.error('[載入失敗]', err);
+      if(!dashboard.classList.contains('hidden')){ showRenderWarning('畫面渲染時發生錯誤：' + (err && err.message ? err.message : err)); }
+      else { showError(err.message || '解析這份 KML 時發生錯誤。'); }
     }
   };
   reader.onerror = () => showError('讀取檔案時發生錯誤，請再試一次。');
@@ -643,6 +661,7 @@ function teardownDashboard(){
 
 function renderFlight(FLIGHT){
   teardownDashboard();
+  const oldWarn = document.getElementById('renderWarning'); if(oldWarn) oldWarn.remove();
 
   const pts = FLIGHT.points; // [epoch, lat, lon, alt_ft, spd_kt, hdg_deg]
   const N = pts.length;
@@ -657,20 +676,60 @@ function renderFlight(FLIGHT){
     return 2*R*Math.asin(Math.sqrt(a));
   }
 
+  const GAP_S = 600;           // no fixes for >10 min = receiver coverage gap
+  const MIN_DT_FOR_GLITCH = 20; // shorter intervals are dominated by 1-second timestamp rounding
+
+  // Some receivers report impossible speeds (e.g. 50 kt at 37,000 ft). Where that happens, use the
+  // ground speed derived from neighbouring positions instead.
+  let fixedSpeedCount = 0, excludedSpeedCount = 0;
+  const cleanSpd = new Array(N);
+  for(let i=0;i<N;i++){
+    cleanSpd[i] = pts[i][4];
+    if(pts[i][3] > 10000 && pts[i][4] < 200){
+      let a = i, b = i;
+      while(a > 0 && pts[i][0] - pts[a][0] < 20) a--;
+      while(b < N-1 && pts[b][0] - pts[i][0] < 20) b++;
+      const dtw = pts[b][0] - pts[a][0];
+      if(b > a && dtw > 0 && dtw <= 900){
+        const v = haversine(pts[a][1], pts[a][2], pts[b][1], pts[b][2]) / (dtw/3600);
+        if(v >= 200 && v <= 700){ cleanSpd[i] = Math.round(v); fixedSpeedCount++; }
+      }
+      // still impossible (e.g. frozen/stale position): no trustworthy speed for this point
+      if(cleanSpd[i] < 200){ cleanSpd[i] = null; excludedSpeedCount++; }
+    }
+  }
+
+  // time-windowed rolling median (±30 s) so single noisy speed readings don't dominate max/avg/chart
+  const smoothSpd = new Array(N);
+  {
+    let lo = 0, hi = 0;
+    for(let i=0;i<N;i++){
+      while(pts[i][0] - pts[lo][0] > 30) lo++;
+      while(hi < N-1 && pts[hi+1][0] - pts[i][0] <= 30) hi++;
+      const w = [];
+      for(let j=lo;j<=hi;j++) if(cleanSpd[j] != null) w.push(cleanSpd[j]);
+      if(!w.length){ smoothSpd[i] = null; continue; }
+      w.sort((a,b)=>a-b);
+      const m = w.length >> 1;
+      smoothSpd[i] = w.length % 2 ? w[m] : Math.round((w[m-1]+w[m])/2);
+    }
+  }
+
   let totalDist = 0;
-  let flaggedGlitches = 0;
+  let flaggedGlitches = 0, gapCount = 0, gapSeconds = 0;
   let maxAlt = 0, maxSpd = 0, spdSum = 0, spdCount = 0;
   for(let i=0;i<N;i++){
     const p = pts[i];
     if(p[3] > maxAlt) maxAlt = p[3];
-    if(p[4] > maxSpd) maxSpd = p[4];
-    if(p[3] > 20000){ spdSum += p[4]; spdCount++; }
+    if(smoothSpd[i] != null && smoothSpd[i] > maxSpd) maxSpd = smoothSpd[i];
+    if(p[3] > 20000 && smoothSpd[i] != null){ spdSum += smoothSpd[i]; spdCount++; }
     if(i>0){
       const dseg = haversine(pts[i-1][1], pts[i-1][2], p[1], p[2]);
       const dt = p[0] - pts[i-1][0];
       const impliedKt = dt > 0 ? dseg / (dt/3600) : 0;
-      if(impliedKt > 700 && dt < 1800 && dt > 0){
-        flaggedGlitches++;
+      if(!FLIGHT.noTimeData && dt > GAP_S){ gapCount++; gapSeconds += dt; }
+      if(impliedKt > 700 && dt >= MIN_DT_FOR_GLITCH && dt < 1800){
+        flaggedGlitches++; // an impossible jump between two sparse fixes: treat as bad data, not distance flown
       } else {
         totalDist += dseg;
       }
@@ -714,16 +773,71 @@ function renderFlight(FLIGHT){
   document.getElementById('sMaxSpd').innerHTML = maxSpd.toLocaleString() + '<span class="unit">kt</span>';
   document.getElementById('sAvgSpd').innerHTML = avgCruiseSpd.toLocaleString() + '<span class="unit">kt</span>';
   document.getElementById('sPoints').textContent = N.toLocaleString();
+  document.getElementById('sPointsCaption').textContent = gapCount ? `資料缺口 ${gapCount} 段（共 ${Math.round(gapSeconds/60)} 分鐘無訊號）` : '';
+  document.getElementById('mapSub').textContent = gapCount ? '依高度著色 ・ 虛線 = 無訊號缺口' : '依高度著色';
+  document.getElementById('sMaxSpd').title = '以 ±30 秒滑動中位數平滑後的最高地速（避免單點雜訊）';
+  document.getElementById('sMaxSpdCaption').textContent = (fixedSpeedCount || excludedSpeedCount) ? [fixedSpeedCount ? `已修正 ${fixedSpeedCount} 個` : '', excludedSpeedCount ? `排除 ${excludedSpeedCount} 個` : ''].filter(Boolean).join('、') + '不合理速度讀數' : '';
   document.getElementById('legendMax').textContent = (Math.ceil(Math.max(maxAlt,1000)/1000)*1000).toLocaleString() + '+ ft';
   document.getElementById('pbTotal').textContent = FLIGHT.noTimeData ? '--' : fmtHMS(totalSeconds);
 
+  /* ---------- compass ---------- */
+  const compassSvg = document.getElementById('compass');
+  compassSvg.innerHTML = `
+    <circle cx="70" cy="70" r="62" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+    <circle cx="70" cy="70" r="46" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="70" y="16" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">N</text>
+    <text x="70" y="130" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">S</text>
+    <text x="12" y="74" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">W</text>
+    <text x="128" y="74" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">E</text>
+    <g id="needleGroup" transform="rotate(0 70 70)">
+      <polygon points="70,18 64,72 70,64 76,72" fill="#2dd4bf" />
+      <polygon points="70,122 64,68 70,76 76,68" fill="#4d5871" />
+    </g>
+    <circle cx="70" cy="70" r="4" fill="#e7edf6"/>
+  `;
+  const needleGroup = document.getElementById('needleGroup');
+
   /* ---------- map ---------- */
-  const map = L.map('map', { zoomControl:true, attributionControl:true }).setView([pts[Math.floor(N/2)][1], pts[Math.floor(N/2)][2]], 4);
+  let map = null, planeMarker = null, altChart = null, spdChart = null;
+  // unwrap longitudes so tracks crossing the antimeridian (±180°) stay continuous on the map
+  const latlngs = [];
+  {
+    let offset = 0;
+    for(let i=0;i<N;i++){
+      if(i>0){
+        const diff = pts[i][2] - pts[i-1][2];
+        if(diff > 180) offset -= 360;
+        else if(diff < -180) offset += 360;
+      }
+      latlngs.push([pts[i][1], pts[i][2] + offset]);
+    }
+  }
+  try {
+  map = L.map('map', { zoomControl:true, attributionControl:true }).setView([pts[Math.floor(N/2)][1], pts[Math.floor(N/2)][2]], 4);
   currentMap = map;
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
-    subdomains: 'abcd', maxZoom: 19
+  // CARTO basemaps started requiring an API key (Aug 2026), so use keyless tiles instead:
+  // Esri "World Dark Gray" as the primary basemap, with OpenStreetMap (CSS-darkened) as a fallback.
+  const esriBase = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+    maxNativeZoom: 16, maxZoom: 18
   }).addTo(map);
+  const esriLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+    maxNativeZoom: 16, maxZoom: 18, pane: 'overlayPane', interactive: false
+  }).addTo(map);
+  let tileErrors = 0, tileLoads = 0, usedFallback = false;
+  esriBase.on('tileload', () => { tileLoads++; });
+  esriBase.on('tileerror', () => {
+    tileErrors++;
+    if(!usedFallback && tileErrors >= 4 && tileLoads === 0){
+      usedFallback = true;
+      map.removeLayer(esriBase); map.removeLayer(esriLabels);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19, className: 'osm-dark-tiles'
+      }).addTo(map);
+      showRenderWarning('主要底圖無法載入，已改用 OpenStreetMap 底圖。');
+    }
+  });
 
   function altToColor(alt){
     const stops = [
@@ -744,38 +858,35 @@ function renderFlight(FLIGHT){
   const segColors = FLIGHT.seg_colors || [];
   const canvasRenderer = L.canvas({ padding: 0.5 });
   const segGroup = L.layerGroup().addTo(map);
-  // unwrap longitudes so tracks crossing the antimeridian (±180°) stay continuous on the map
-  const latlngs = [];
-  {
-    let offset = 0;
-    for(let i=0;i<N;i++){
-      if(i>0){
-        const diff = pts[i][2] - pts[i-1][2];
-        if(diff > 180) offset -= 360;
-        else if(diff < -180) offset += 360;
-      }
-      latlngs.push([pts[i][1], pts[i][2] + offset]);
-    }
-  }
 
   function colorFor(i){
     if(segColors[i] && segColors[i] !== '000000') return '#' + segColors[i];
     return altToColor(pts[i][3]);
   }
 
+  function drawRun(a, b, color, dashed){
+    if(b <= a) return;
+    const opts = { renderer: canvasRenderer, color, weight:3, opacity:0.85, interactive:false };
+    if(dashed){ opts.dashArray = '2 8'; opts.opacity = 0.6; }
+    L.polyline(latlngs.slice(a, b+1), opts).addTo(segGroup);
+  }
   let runStart = 0;
   let runColor = N > 1 ? colorFor(0) : null;
-  for(let i=1;i<N-1;i++){
+  for(let i=0;i<N-1;i++){
+    const isGap = !FLIGHT.noTimeData && (pts[i+1][0] - pts[i][0]) > GAP_S;
     const c = colorFor(i);
-    if(c !== runColor){
-      L.polyline(latlngs.slice(runStart, i+1), { renderer: canvasRenderer, color: runColor, weight:3, opacity:0.85, interactive:false }).addTo(segGroup);
+    if(isGap){
+      drawRun(runStart, i, runColor, false);
+      drawRun(i, i+1, c, true);
+      runStart = i+1;
+      runColor = i+1 < N-1 ? colorFor(i+1) : c;
+    } else if(c !== runColor){
+      drawRun(runStart, i, runColor, false);
       runStart = i;
       runColor = c;
     }
   }
-  if(N > 1){
-    L.polyline(latlngs.slice(runStart), { renderer: canvasRenderer, color: runColor, weight:3, opacity:0.85, interactive:false }).addTo(segGroup);
-  }
+  drawRun(runStart, N-1, runColor, false);
 
   const originIcon = L.divIcon({ className:'', html:'<div style="width:10px;height:10px;border-radius:50%;background:#2dd4bf;box-shadow:0 0 8px #2dd4bf;"></div>', iconSize:[10,10] });
   const destIcon = L.divIcon({ className:'', html:'<div style="width:10px;height:10px;border-radius:50%;background:#ec4899;box-shadow:0 0 8px #ec4899;"></div>', iconSize:[10,10] });
@@ -788,35 +899,32 @@ function renderFlight(FLIGHT){
     className:'', html:'<div id="planeMarker" style="font-size:18px; transform:rotate(0deg); filter:drop-shadow(0 0 6px rgba(255,255,255,0.8));">✈</div>',
     iconSize:[20,20], iconAnchor:[10,10]
   });
-  const planeMarker = L.marker(latlngs[0], {icon: planeIcon, zIndexOffset:1000}).addTo(map);
-
-  /* ---------- compass ---------- */
-  const compassSvg = document.getElementById('compass');
-  compassSvg.innerHTML = `
-    <circle cx="70" cy="70" r="62" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-    <circle cx="70" cy="70" r="46" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-    <text x="70" y="16" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">N</text>
-    <text x="70" y="130" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">S</text>
-    <text x="12" y="74" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">W</text>
-    <text x="128" y="74" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">E</text>
-    <g id="needleGroup" transform="rotate(0 70 70)">
-      <polygon points="70,18 64,72 70,64 76,72" fill="#2dd4bf" />
-      <polygon points="70,122 64,68 70,76 76,68" fill="#4d5871" />
-    </g>
-    <circle cx="70" cy="70" r="4" fill="#e7edf6"/>
-  `;
-  const needleGroup = document.getElementById('needleGroup');
+  planeMarker = L.marker(latlngs[0], {icon: planeIcon, zIndexOffset:1000}).addTo(map);
+  } catch(err){
+    console.error('[地圖] 建立失敗：', err);
+    showRenderWarning('地圖無法載入（' + (err && err.message ? err.message : err) + '）。請檢查網路是否能連到 cdnjs.cloudflare.com。');
+  }
 
   /* ---------- charts ---------- */
+  let chartLabels = [];
+  function seekFromChart(chart, evt){
+    const hits = chart.getElementsAtEventForMode(evt, 'index', {intersect:false}, true);
+    if(hits.length){
+      const idx = hits[0].index;
+      const targetMinutes = chartLabels[idx];
+      seekToEpoch(t0 + targetMinutes*60);
+    }
+  }
+  try {
   const MAX_CHART_POINTS = 900;
   const chartStep = Math.max(1, Math.floor(N / MAX_CHART_POINTS));
   const chartIdx = [];
   for(let i=0;i<N;i+=chartStep) chartIdx.push(i);
   if(chartIdx[chartIdx.length-1] !== N-1) chartIdx.push(N-1);
 
-  const chartLabels = chartIdx.map(i => (pts[i][0]-t0)/60); // minutes elapsed
+  chartLabels = chartIdx.map(i => (pts[i][0]-t0)/60); // minutes elapsed
   const altData = chartIdx.map(i => ({ x: (pts[i][0]-t0)/60, y: pts[i][3] }));
-  const spdData = chartIdx.map(i => ({ x: (pts[i][0]-t0)/60, y: pts[i][4] }));
+  const spdData = chartIdx.filter(i => smoothSpd[i] != null).map(i => ({ x: (pts[i][0]-t0)/60, y: smoothSpd[i] }));
 
   function minutesToLabel(mins){
     const h = Math.floor(mins/60), m = Math.round(mins%60);
@@ -825,7 +933,7 @@ function renderFlight(FLIGHT){
 
   const commonScales = {
     x: {
-      type:'linear',
+      type:'linear', min: 0, max: totalSeconds/60,
       ticks: { color:'#8492a8', font:{family:'JetBrains Mono', size:10}, callback:(v)=>minutesToLabel(v) },
       grid: { color:'rgba(255,255,255,0.06)' }
     }
@@ -836,22 +944,42 @@ function renderFlight(FLIGHT){
     afterDraw(chart){
       const x = chart.$cursorX;
       if(x == null) return;
-      const {ctx, chartArea:{top,bottom}, scales:{x:xScale}} = chart;
+      const {ctx, chartArea:{top,bottom}, scales:{x:xScale, y:yScale}} = chart;
       const px = xScale.getPixelForValue(x);
       if(px < xScale.left || px > xScale.right) return;
       ctx.save();
-      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([3,3]);
+      ctx.strokeStyle = 'rgba(251,191,36,0.9)';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(px, top);
       ctx.lineTo(px, bottom);
       ctx.stroke();
+      // dot on the curve at the current time
+      const data = chart.data.datasets[0].data;
+      let y = null;
+      for(let i=1;i<data.length;i++){
+        if(data[i].x >= x){
+          const a = data[i-1], b = data[i];
+          const f = b.x === a.x ? 0 : (x - a.x)/(b.x - a.x);
+          y = a.y + (b.y - a.y)*f;
+          break;
+        }
+      }
+      if(y == null && data.length) y = data[data.length-1].y;
+      if(y != null){
+        ctx.fillStyle = '#fbbf24';
+        ctx.strokeStyle = '#05070d';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(px, yScale.getPixelForValue(y), 5, 0, Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+      }
       ctx.restore();
     }
   };
 
-  const altChart = new Chart(document.getElementById('altChart'), {
+  altChart = new Chart(document.getElementById('altChart'), {
     type:'line',
     data:{ datasets:[{
       data: altData, borderColor:'#2dd4bf', backgroundColor:'rgba(45,212,191,0.12)',
@@ -872,7 +1000,7 @@ function renderFlight(FLIGHT){
     plugins:[cursorPlugin]
   });
 
-  const spdChart = new Chart(document.getElementById('spdChart'), {
+  spdChart = new Chart(document.getElementById('spdChart'), {
     type:'line',
     data:{ datasets:[{
       data: spdData, borderColor:'#7c6bf0', backgroundColor:'rgba(124,107,240,0.12)',
@@ -894,19 +1022,14 @@ function renderFlight(FLIGHT){
   });
   currentAltChart = altChart;
   currentSpdChart = spdChart;
-
-  function seekFromChart(chart, evt){
-    const hits = chart.getElementsAtEventForMode(evt, 'index', {intersect:false}, true);
-    if(hits.length){
-      const idx = hits[0].index;
-      const targetMinutes = chartLabels[idx];
-      seekToEpoch(t0 + targetMinutes*60);
-    }
+  } catch(err){
+    console.error('[圖表] 建立失敗：', err);
+    showRenderWarning('剖面圖無法載入（' + (err && err.message ? err.message : err) + '）。');
   }
 
   /* ---------- playback engine ---------- */
   let curIdx = 0;
-  let playMult = 60;
+  let playMult = 300;
   let lastFrameTime = null;
   let simEpoch = t0;
 
@@ -926,11 +1049,13 @@ function renderFlight(FLIGHT){
 
   function phaseFor(idx){
     const alt = pts[idx][3];
-    const lookback = Math.max(0, idx-6);
-    const dAlt = pts[idx][3] - pts[lookback][3];
     if(alt < 50) return ['GROUND','phase-ground'];
-    if(dAlt > 80) return ['CLIMB','phase-climb'];
-    if(dAlt < -80) return ['DESCENT','phase-descent'];
+    const lookback = Math.max(0, idx-6);
+    const dtMin = (pts[idx][0] - pts[lookback][0]) / 60;
+    const vs = dtMin > 0 ? (pts[idx][3] - pts[lookback][3]) / dtMin : 0; // ft/min
+    if(vs > 300) return ['CLIMB','phase-climb'];
+    if(vs < -300) return ['DESCENT','phase-descent'];
+    if(alt < 20000) return ['LEVEL','phase-cruise'];
     return ['CRUISE','phase-cruise'];
   }
 
@@ -954,8 +1079,8 @@ function renderFlight(FLIGHT){
     tag.textContent = label;
     tag.className = 'phase-pill ' + cls;
 
-    needleGroup.setAttribute('transform', `rotate(${p[5]} 70 70)`);
-    planeMarker.setLatLng(latlngs[curIdx]);
+    if(needleGroup) needleGroup.setAttribute('transform', `rotate(${p[5]} 70 70)`);
+    if(planeMarker) planeMarker.setLatLng(latlngs[curIdx]);
     const planeDiv = document.getElementById('planeMarker');
     if(planeDiv) planeDiv.style.transform = `rotate(${p[5]-45}deg)`;
 
@@ -963,8 +1088,8 @@ function renderFlight(FLIGHT){
     document.getElementById('pbElapsed').textContent = FLIGHT.noTimeData ? '--' : fmtHMS(simEpoch - t0);
 
     const minutesElapsed = (simEpoch - t0)/60;
-    altChart.$cursorX = minutesElapsed; altChart.update('none');
-    spdChart.$cursorX = minutesElapsed; spdChart.update('none');
+    if(altChart){ altChart.$cursorX = minutesElapsed; altChart.update('none'); }
+    if(spdChart){ spdChart.$cursorX = minutesElapsed; spdChart.update('none'); }
 
     const frac = (simEpoch - t0) / totalSeconds;
     document.getElementById('routeLine').style.setProperty('--plane-pos', (frac*100)+'%');
