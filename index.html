@@ -10,211 +10,228 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* =========================================================================
+     Aviation Ops Light — 航務淺色
+     Tokens
+       paper   #F4F6F9  page            panel  #FFFFFF  surfaces
+       navy    #0B1F3A  text + flight strip
+       teal    #0F766E  primary action  amber  #B45309  cursor / descent
+     Navy is used in exactly one big place (the flight strip); everything else is
+     white panels with hairline borders so the map and charts carry the colour.
+     ========================================================================= */
   :root{
-    --bg: #05070d;
-    --bg2: #0a0e18;
-    --panel: rgba(18,24,38,0.62);
-    --panel-solid: #10141f;
-    --border: rgba(255,255,255,0.08);
-    --border-strong: rgba(255,255,255,0.16);
-    --text: #e7edf6;
-    --text-dim: #8492a8;
-    --text-faint: #4d5871;
-    --aurora-a: #2dd4bf;
-    --aurora-b: #7c6bf0;
-    --aurora-c: #ec4899;
-    --amber: #fbbf24;
-    --danger: #f87171;
-    --good: #34d399;
-    --mono: 'JetBrains Mono', ui-monospace, monospace;
-    --sans: 'Inter', -apple-system, sans-serif;
+    --paper:#F4F6F9;
+    --panel:#FFFFFF;
+    --border:#DDE3EB;
+    --border-strong:#C3CCD8;
+    --navy:#0B1F3A;
+    --text:#0B1F3A;
+    --text-dim:#475569;
+    --text-faint:#5B6B80;
+    --teal:#0F766E;
+    --teal-soft:#E3F4F2;
+    --amber:#B45309;
+    --amber-soft:#FDF1E1;
+    --good:#15803D;
+    --good-soft:#E8F5EC;
+    --danger:#B91C1C;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans:'Inter', -apple-system, BlinkMacSystemFont, 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
   body{
-    background: radial-gradient(ellipse 120% 80% at 50% -10%, #131c30 0%, var(--bg) 55%), var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
+    background:var(--paper);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:13px;
+    line-height:1.5;
     min-height:100vh;
     overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
   }
-  body::before{
-    content:"";
-    position:fixed; inset:0;
-    background:
-      radial-gradient(600px 300px at 15% 0%, rgba(45,212,191,0.10), transparent 60%),
-      radial-gradient(600px 300px at 85% 0%, rgba(124,107,240,0.10), transparent 60%);
-    pointer-events:none;
-    z-index:0;
-  }
-  .app{ position:relative; z-index:1; max-width:1440px; margin:0 auto; padding: 20px 20px 40px; }
+  .app{ max-width:1440px; margin:0 auto; padding:14px 16px 32px; }
   .hidden{ display:none !important; }
+  ::selection{ background:rgba(15,118,110,0.22); }
+  button{ font-family:var(--sans); }
+  button:focus-visible,.dropzone:focus-visible,#seek:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
 
   /* ---------- Dropzone (empty state) ---------- */
   .dropzone-wrap{ min-height:80vh; display:flex; align-items:center; justify-content:center; }
   .dropzone{
-    width:100%; max-width:640px;
-    background: var(--panel);
-    backdrop-filter: blur(16px) saturate(140%);
-    border: 2px dashed var(--border-strong);
-    border-radius:20px;
-    padding: 56px 40px;
+    width:100%; max-width:600px;
+    background:var(--panel);
+    border:2px dashed var(--border-strong);
+    border-radius:12px;
+    padding:56px 40px;
     text-align:center;
-    transition: border-color .15s, background .15s;
+    transition:border-color .15s, background .15s;
     cursor:pointer;
   }
-  .dropzone.dragover{ border-color: var(--aurora-a); background: rgba(45,212,191,0.06); }
-  .dropzone .icon{
-    font-size:44px; margin-bottom:18px;
-    background: linear-gradient(120deg, var(--aurora-a), var(--aurora-b) 55%, var(--aurora-c));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    display:inline-block;
-  }
-  .dropzone h1{ font-size:20px; font-weight:700; margin-bottom:8px; }
-  .dropzone p{ font-size:13px; color:var(--text-dim); line-height:1.7; }
-  .dropzone .formats{ margin-top:18px; font-family:var(--mono); font-size:11px; color:var(--text-faint); }
-  .dropzone .error{ margin-top:18px; font-size:13px; color:var(--danger); background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.3); border-radius:10px; padding:10px 14px; }
-  .dropzone .loading{ margin-top:18px; font-size:13px; color:var(--aurora-a); font-family:var(--mono); }
+  .dropzone:hover{ border-color:var(--teal); }
+  .dropzone.dragover{ border-color:var(--teal); background:var(--teal-soft); }
+  .dropzone .icon{ font-size:40px; margin-bottom:16px; color:var(--teal); display:inline-block; }
+  .dropzone h1{ font-size:20px; font-weight:700; margin-bottom:8px; color:var(--navy); }
+  .dropzone p{ font-size:13px; color:var(--text-dim); line-height:1.8; }
+  .dropzone .formats{ margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--text-faint); }
+  .dropzone .error{ margin-top:16px; font-size:13px; color:var(--danger); background:#FDECEC; border:1px solid #F3B8B8; border-radius:8px; padding:10px 14px; }
+  .dropzone .loading{ margin-top:16px; font-size:13px; color:var(--teal); font-family:var(--mono); }
 
-  /* ---------- Header ---------- */
+  /* ---------- Flight strip (header) — the one dark element ---------- */
   header.hud{
-    display:flex; flex-wrap:wrap; gap:16px;
-    align-items:stretch;
-    background: var(--panel);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:18px 22px;
-    margin-bottom:16px;
+    display:flex; flex-wrap:wrap; gap:12px; align-items:stretch;
+    background:var(--navy); color:#fff;
+    border-radius:8px; padding:14px 18px;
   }
-  .flight-id{ display:flex; flex-direction:column; gap:4px; padding-right:20px; border-right:1px solid var(--border); min-width:170px; }
-  .flight-id .code{
-    font-family:var(--mono); font-size:28px; font-weight:700; letter-spacing:0.5px;
-    background: linear-gradient(120deg, var(--aurora-a), var(--aurora-b) 55%, var(--aurora-c));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .flight-id .sub{ font-size:12px; color:var(--text-dim); font-family:var(--mono); }
-  .flight-id .airline{ font-size:13px; color:var(--text); margin-top:2px; }
+  .flight-id{ display:flex; flex-direction:column; gap:3px; padding-right:20px; border-right:1px solid rgba(255,255,255,0.18); min-width:170px; }
+  .flight-id .code{ font-family:var(--mono); font-size:26px; font-weight:700; letter-spacing:0.5px; color:#FBBF24; line-height:1.15; }
+  .flight-id .sub{ font-size:12px; color:rgba(255,255,255,0.7); font-family:var(--mono); }
+  .flight-id .airline{ font-size:13px; color:#fff; margin-top:2px; }
 
-  .route-block{ display:flex; align-items:center; gap:14px; flex:1; min-width:260px; padding: 0 20px; border-right:1px solid var(--border); }
+  .route-block{ display:flex; align-items:center; gap:14px; flex:1; min-width:260px; padding:0 20px; border-right:1px solid rgba(255,255,255,0.18); }
   .route-endpoint{ display:flex; flex-direction:column; gap:2px; }
-  .route-endpoint .icao{ font-family:var(--mono); font-size:22px; font-weight:700; }
-  .route-endpoint .city{ font-size:11px; color:var(--text-dim); }
-  .route-endpoint .time{ font-size:11px; color:var(--text-faint); font-family:var(--mono); margin-top:4px;}
-  .route-line{ flex:1; position:relative; height:2px; background:linear-gradient(90deg,var(--aurora-a),var(--aurora-c)); border-radius:2px; min-width:60px;}
-  .route-line::after{ content:"✈"; position:absolute; top:50%; left:var(--plane-pos,50%); transform:translate(-50%,-50%) rotate(90deg); font-size:14px; color:var(--text); }
+  .route-endpoint .icao{ font-family:var(--mono); font-size:22px; font-weight:700; color:#fff; }
+  .route-endpoint .city{ font-size:12px; color:rgba(255,255,255,0.75); }
+  .route-endpoint .time{ font-size:12px; color:rgba(255,255,255,0.68); font-family:var(--mono); margin-top:4px; }
+  .route-line{ flex:1; position:relative; height:1px; background:rgba(255,255,255,0.4); min-width:60px; }
+  .route-line::after{ content:"✈"; position:absolute; top:50%; left:var(--plane-pos,50%); transform:translate(-50%,-50%) rotate(90deg); font-size:14px; color:#FBBF24; }
 
-  .meta-block{ display:flex; gap:22px; flex-wrap:wrap; align-items:center; padding-left:4px;}
-  .meta-item{ display:flex; flex-direction:column; gap:2px; min-width:70px;}
-  .meta-item .label{ font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-faint);}
-  .meta-item .value{ font-family:var(--mono); font-size:15px; font-weight:600; }
+  .meta-block{ display:flex; gap:22px; flex-wrap:wrap; align-items:center; padding-left:4px; }
+  .meta-item{ display:flex; flex-direction:column; gap:2px; min-width:70px; }
+  .meta-item .label{ font-size:11px; color:rgba(255,255,255,0.68); }
+  .meta-item .value{ font-family:var(--mono); font-size:15px; font-weight:600; color:#fff; }
 
   .reset-btn{
     align-self:center; margin-left:auto;
-    font-family:var(--mono); font-size:11px; padding:8px 14px; border-radius:10px;
-    border:1px solid var(--border-strong); background:rgba(255,255,255,0.03); color:var(--text-dim);
-    cursor:pointer; white-space:nowrap; transition:background .15s, color .15s;
+    font-size:12px; font-weight:500; padding:8px 14px; border-radius:6px;
+    border:1px solid rgba(255,255,255,0.35); background:transparent; color:#fff;
+    cursor:pointer; white-space:nowrap; transition:background .15s;
   }
-  .reset-btn:hover{ background:rgba(255,255,255,0.08); color:var(--text); }
+  .reset-btn:hover{ background:rgba(255,255,255,0.12); }
+  .reset-btn:focus-visible{ outline-color:#FBBF24; }
 
-  /* ---------- Stat strip ---------- */
-  .stats{
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:12px; margin-bottom:16px;
-  }
+  /* ---------- Stat cards ---------- */
   .stat-card{
-    background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:12px 14px;
-    backdrop-filter: blur(16px);
+    background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:10px 14px;
+    display:flex; flex-direction:column; justify-content:center;
   }
-  .stat-card .label{ font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em;}
-  .stat-card .value{ font-family:var(--mono); font-size:20px; font-weight:700; margin-top:4px; color:var(--text);}
-  .stat-card .value span.unit{ font-size:12px; color:var(--text-dim); font-weight:500; margin-left:3px;}
-  .stat-card .caption{ font-size:10px; color:var(--text-faint); margin-top:3px; font-family:var(--mono); }
+  .stat-card .label{ font-size:12px; color:var(--text-dim); }
+  .stat-card .value{ font-family:var(--mono); font-size:19px; font-weight:700; margin-top:3px; color:var(--navy); font-variant-numeric:tabular-nums; }
+  .stat-card .value .unit{ font-size:12px; color:var(--text-dim); font-weight:500; margin-left:3px; }
+  .stat-card .caption{ font-size:11px; color:var(--text-faint); margin-top:3px; }
+  .dual{ font-size:11px; color:var(--text-faint); font-weight:500; margin-left:6px; white-space:nowrap; }
 
-  /* ---------- Main grid ---------- */
-  .main-grid{ display:grid; grid-template-columns: 1.55fr 1fr; gap:16px; align-items:start; }
-  @media (max-width:980px){ .main-grid{ grid-template-columns:1fr; } }
+  /* ---------- Toolbar ---------- */
+  .toolbar{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:12px; }
+  .seg{ display:inline-flex; border:1px solid var(--border-strong); border-radius:6px; overflow:hidden; background:var(--panel); }
+  .seg button,.tgl{ font-size:12px; font-weight:500; padding:7px 12px; border:none; background:transparent; color:var(--text-dim); cursor:pointer; transition:background .12s, color .12s; }
+  .seg button:hover,.tgl:hover{ background:#EEF2F6; color:var(--navy); }
+  .seg button + button{ border-left:1px solid var(--border); }
+  .seg button.active,.tgl.active{ background:var(--navy); color:#fff; font-weight:600; }
+  .tgl{ border:1px solid var(--border-strong); border-radius:6px; background:var(--panel); }
+  .tgl.active{ border-color:var(--navy); }
+  .tgl.disabled{ opacity:0.45; cursor:not-allowed; }
+  #colorSeg{ margin-left:6px; }
+  #unitHint{ color:var(--text-faint); margin-left:4px; font-size:12px; }
+  .t-item .value .unit{ font-size:12px; color:var(--text-dim); font-weight:500; margin-left:4px; }
 
-  .panel{
-    background:var(--panel); border:1px solid var(--border); border-radius:16px;
-    backdrop-filter: blur(16px) saturate(140%);
-    overflow:hidden;
-  }
+  /* ---------- Panels ---------- */
+  .panel{ background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
   .panel-title{
     display:flex; justify-content:space-between; align-items:center;
-    padding:12px 16px; border-bottom:1px solid var(--border);
-    font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:var(--text-dim);
+    padding:10px 14px; border-bottom:1px solid var(--border);
+    font-size:12px; color:var(--text-dim);
   }
-  .panel-title b{ color:var(--text); font-weight:600; letter-spacing:normal; text-transform:none; font-size:13px;}
+  .panel-title b{ color:var(--navy); font-weight:600; font-size:13px; }
 
-  #map{ height:520px; width:100%; background:#0a0e18; }
-  .leaflet-container{ background:#0a0e18; font-family:var(--sans); }
-  .osm-dark-tiles{ filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85) saturate(0.6); }
+  /* ---------- Map ---------- */
+  #map{ height:520px; width:100%; background:#E9EDF2; }
+  .leaflet-container{ background:#E9EDF2; font-family:var(--sans); }
+  .plane-icon svg{ filter:drop-shadow(0 1px 2px rgba(11,31,58,0.45)); }
+  .leaflet-tooltip{ font-family:var(--mono); font-size:11px; color:var(--navy); border:1px solid var(--border-strong); box-shadow:0 1px 3px rgba(11,31,58,0.15); }
 
-  /* legend */
   .legend{
-    position:absolute; z-index:500; right:12px; bottom:12px;
-    background:rgba(10,14,24,0.85); border:1px solid var(--border-strong); border-radius:10px;
-    padding:8px 10px; font-size:10px; color:var(--text-dim); font-family:var(--mono);
-    backdrop-filter:blur(6px);
+    position:absolute; z-index:500; right:12px; bottom:32px;
+    background:rgba(255,255,255,0.94); border:1px solid var(--border-strong); border-radius:6px;
+    padding:8px 10px; font-size:11px; color:var(--text-dim);
   }
-  .legend-bar{ width:150px; height:8px; border-radius:4px; margin:4px 0;
-    background: linear-gradient(90deg,#3a4a63 0%, #2dd4bf 20%, #34d399 40%, #facc15 60%, #fb923c 80%, #ef4444 100%);
+  .legend-bar{
+    width:150px; height:8px; border-radius:2px; margin:5px 0;
+    background:linear-gradient(90deg,#94A3B8 0%,#0E7490 20%,#15803D 40%,#CA8A04 60%,#EA580C 80%,#B91C1C 100%);
   }
-  .legend-labels{ display:flex; justify-content:space-between; }
+  .legend-labels{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; color:var(--text-dim); }
 
-  /* ---------- Right column: playback + compass + info ---------- */
-  .right-col{ display:flex; flex-direction:column; gap:16px; }
-
-  .telemetry{ padding:16px; display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
-  .telemetry .t-item{ }
-  .telemetry .t-item .label{ font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em;}
-  .telemetry .t-item .value{ font-family:var(--mono); font-size:22px; font-weight:700; margin-top:2px; }
-  .telemetry .t-item .value.small{ font-size:14px; font-weight:500; color:var(--text-dim);}
+  /* ---------- Telemetry ---------- */
+  .telemetry{ padding:14px; display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; }
+  .telemetry .t-item .label{ font-size:12px; color:var(--text-dim); }
+  .telemetry .t-item .value{ font-family:var(--mono); font-size:22px; font-weight:700; margin-top:2px; color:var(--navy); font-variant-numeric:tabular-nums; }
+  .telemetry .t-item .value.small{ font-size:14px; font-weight:500; color:var(--text-dim); }
   .phase-pill{
-    display:inline-block; font-family:var(--mono); font-size:11px; padding:3px 10px; border-radius:20px;
-    border:1px solid var(--border-strong); margin-top:2px;
+    display:inline-block; font-family:var(--mono); font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px;
+    border:1px solid var(--border-strong); background:#EEF2F6; color:var(--text-dim);
   }
-  .phase-ground{ color:var(--text-dim); }
-  .phase-climb{ color:var(--good); border-color:rgba(52,211,153,0.4); }
-  .phase-cruise{ color:var(--aurora-a); border-color:rgba(45,212,191,0.4); }
-  .phase-descent{ color:var(--amber); border-color:rgba(251,191,36,0.4); }
+  .phase-ground{ color:var(--text-dim); background:#EEF2F6; border-color:var(--border-strong); }
+  .phase-climb{ color:var(--good); background:var(--good-soft); border-color:#B7DEC3; }
+  .phase-cruise{ color:var(--teal); background:var(--teal-soft); border-color:#A8D9D4; }
+  .phase-descent{ color:var(--amber); background:var(--amber-soft); border-color:#EBCB9F; }
+  .compass-wrap{ display:flex; align-items:center; justify-content:center; padding:0 16px 14px; }
 
-  .compass-wrap{ display:flex; align-items:center; justify-content:center; padding:10px 16px 18px; }
-
-  /* ---------- Playback controls ---------- */
-  .playback{ padding:14px 16px 18px; border-top:1px solid var(--border); }
+  /* ---------- Playback ---------- */
+  .playback{ padding:14px; }
   .pb-row{ display:flex; align-items:center; gap:10px; }
   .pb-btn{
-    width:38px; height:38px; border-radius:10px; border:1px solid var(--border-strong);
-    background:rgba(255,255,255,0.03); color:var(--text); display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:15px; transition:background .15s, transform .1s;
+    width:38px; height:38px; border-radius:6px; border:1px solid var(--border-strong);
+    background:var(--panel); color:var(--navy); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:15px; transition:background .12s, transform .1s;
   }
-  .pb-btn:hover{ background:rgba(255,255,255,0.08); }
-  .pb-btn:active{ transform:scale(0.94); }
-  .pb-btn.play{ background:linear-gradient(120deg,var(--aurora-a),var(--aurora-b)); border:none; color:#04121a; font-weight:700;}
-  #seek{ flex:1; -webkit-appearance:none; height:5px; border-radius:3px; background:rgba(255,255,255,0.12); outline:none; cursor:pointer;}
-  #seek::-webkit-slider-thumb{ -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--aurora-a); box-shadow:0 0 8px rgba(45,212,191,0.7); cursor:pointer; }
-  #seek::-moz-range-thumb{ width:14px; height:14px; border-radius:50%; background:var(--aurora-a); border:none; box-shadow:0 0 8px rgba(45,212,191,0.7); cursor:pointer;}
-  .speed-select{ display:flex; gap:4px; margin-left:4px; }
+  .pb-btn:hover{ background:#EEF2F6; }
+  .pb-btn:active{ transform:scale(0.95); }
+  .pb-btn.play{ background:var(--teal); border-color:var(--teal); color:#fff; }
+  .pb-btn.play:hover{ background:#0B5F58; }
+  #seek{ flex:1; -webkit-appearance:none; appearance:none; height:5px; border-radius:3px; background:#D5DCE6; outline:none; cursor:pointer; }
+  #seek::-webkit-slider-thumb{ -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--teal); border:2px solid #fff; box-shadow:0 0 0 1px var(--teal), 0 1px 3px rgba(11,31,58,0.3); cursor:pointer; }
+  #seek::-moz-range-thumb{ width:12px; height:12px; border-radius:50%; background:var(--teal); border:2px solid #fff; box-shadow:0 0 0 1px var(--teal), 0 1px 3px rgba(11,31,58,0.3); cursor:pointer; }
+  .speed-select{ display:flex; gap:6px; margin-top:12px; }
   .speed-btn{
-    font-family:var(--mono); font-size:11px; padding:6px 8px; border-radius:8px; border:1px solid var(--border);
-    background:transparent; color:var(--text-dim); cursor:pointer;
+    font-size:12px; font-weight:500; padding:5px 10px; border-radius:6px; border:1px solid var(--border-strong);
+    background:var(--panel); color:var(--text-dim); cursor:pointer; font-variant-numeric:tabular-nums;
   }
-  .speed-btn.active{ color:var(--bg); background:var(--aurora-a); border-color:var(--aurora-a); font-weight:700;}
-  .pb-time{ font-family:var(--mono); font-size:12px; color:var(--text-dim); display:flex; justify-content:space-between; margin-top:8px; }
-  .pb-time b{ color:var(--text); font-weight:600;}
+  .speed-btn:hover{ background:#EEF2F6; color:var(--navy); }
+  .speed-btn.active{ color:#fff; background:var(--navy); border-color:var(--navy); font-weight:600; }
+  .pb-time{ font-family:var(--mono); font-size:12px; color:var(--text-dim); display:flex; justify-content:space-between; margin-top:10px; }
+  .pb-time b{ color:var(--navy); font-weight:600; }
 
   /* ---------- Charts ---------- */
-  .charts{ display:flex; flex-direction:column; gap:14px; margin-top:16px; }
-  .chart-panel{ padding:12px 16px 16px; }
+  .chart-panel{ padding:12px 16px 14px; }
   .chart-panel canvas{ width:100% !important; }
-  .chart-hint{ font-size:10.5px; color:var(--text-faint); margin-top:4px; }
+  .chart-box{ position:relative; height:210px; }
+  .chart-hint{ font-size:11px; color:var(--text-faint); margin-top:6px; }
 
-  footer{ text-align:center; color:var(--text-faint); font-size:11px; margin-top:26px; font-family:var(--mono); }
+  footer{ text-align:center; color:var(--text-faint); font-size:12px; margin-top:6px; }
   footer a{ color:var(--text-dim); }
 
-  ::selection{ background: rgba(124,107,240,0.4); }
+  /* ---------- Bento layout (12 columns; wrappers dissolve so every card joins one grid) ---------- */
+  #dashboard:not(.hidden){ display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:10px; align-items:stretch; }
+  .stats,.main-grid,.right-col,.charts{ display:contents; }
+  #dashboard > .toolbar,#dashboard > header.hud,#dashboard > footer,#dashboard > #renderWarning{ grid-column:1 / -1; margin:0; }
+  .stats > .stat-card{ grid-column:span 2; }
+  .main-grid > .panel{ grid-column:span 8; grid-row:span 2; display:flex; flex-direction:column; }
+  .main-grid > .panel #map{ flex:1; min-height:520px; height:auto; }
+  .right-col > .panel{ grid-column:span 4; }
+  .right-col > .panel.playback{ align-self:stretch; }
+  .charts > .chart-panel{ grid-column:span 6; margin:0; }
+  #sDistanceCaption{ display:flex; flex-wrap:wrap; gap:0 10px; }
+  #sDistanceCaption span{ white-space:nowrap; }
+  @media (max-width:980px){
+    .stats > .stat-card{ grid-column:span 4; }
+    .main-grid > .panel,.right-col > .panel,.charts > .chart-panel{ grid-column:1 / -1; grid-row:auto; }
+    .flight-id,.route-block{ border-right:none; padding-right:0; }
+  }
+  @media (max-width:560px){
+    .stats > .stat-card{ grid-column:span 6; }
+    .app{ padding:10px 10px 24px; }
+  }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
 </style>
 </head>
 <body>
@@ -235,6 +252,21 @@
 
   <!-- ================= Loaded state: dashboard ================= -->
   <div id="dashboard" class="hidden">
+
+    <div class="toolbar">
+      <div class="seg" id="unitSeg">
+        <button data-mode="aviation" title="地速 kt・高度 ft・距離 nm・爬升率 ft/min">航空</button>
+        <button data-mode="metric" title="地速 km/h・高度 m・距離 km・爬升率 m/s">公制</button>
+        <button data-mode="mixed" title="地速 km/h・高度 ft・距離 km・爬升率 ft/min">混合</button>
+      </div>
+      <button class="tgl" id="tglFL" title="高度以飛航高度層（FL）顯示，11,000 ft 以上才套用；僅適用於高度為 ft 的模式">FL 高度層</button>
+      <button class="tgl" id="tglDual" title="主要單位旁以小字並列另一套單位">雙單位</button>
+      <div class="seg" id="colorSeg" title="航跡線的著色依據">
+        <button data-color="alt">航跡：依高度</button>
+        <button data-color="spd">航跡：依地速</button>
+      </div>
+      <span id="unitHint"></span>
+    </div>
 
     <header class="hud">
       <div class="flight-id">
@@ -264,7 +296,7 @@
     </header>
 
     <div class="stats">
-      <div class="stat-card"><div class="label">總飛行時間</div><div class="value" id="sDuration">--</div></div>
+      <div class="stat-card"><div class="label">軌跡總時長（含地面）</div><div class="value" id="sDuration">--</div></div>
       <div class="stat-card"><div class="label">實際航跡距離</div><div class="value" id="sDistance">--</div><div class="caption" id="sDistanceCaption"></div></div>
       <div class="stat-card"><div class="label">最高高度</div><div class="value" id="sMaxAlt">--</div></div>
       <div class="stat-card"><div class="label">最高地速</div><div class="value" id="sMaxSpd">--</div><div class="caption" id="sMaxSpdCaption"></div></div>
@@ -277,9 +309,9 @@
         <div class="panel-title"><b>航跡地圖</b><span id="mapSub">依高度著色</span></div>
         <div id="map"></div>
         <div class="legend">
-          <div>高度 Altitude</div>
-          <div class="legend-bar"></div>
-          <div class="legend-labels"><span>0 ft</span><span id="legendMax">40,000+ ft</span></div>
+          <div id="legendTitle">高度 Altitude</div>
+          <div class="legend-bar" id="legendBar"></div>
+          <div class="legend-labels"><span id="legendMin">0 ft</span><span id="legendMax">40,000+ ft</span></div>
         </div>
       </div>
 
@@ -322,13 +354,13 @@
     <div class="charts">
       <div class="panel chart-panel">
         <div class="panel-title" style="padding:0 0 8px; border:none;"><b>高度剖面圖 Altitude Profile</b></div>
-        <canvas id="altChart" height="90"></canvas>
+        <div class="chart-box"><canvas id="altChart"></canvas></div>
         <div class="chart-hint">點擊或拖曳圖表可跳至該時間點</div>
       </div>
       <div class="panel chart-panel">
         <div class="panel-title" style="padding:0 0 8px; border:none;"><b>地速剖面圖 Ground Speed Profile</b></div>
-        <canvas id="spdChart" height="90"></canvas>
-        <div class="chart-hint">點擊圖表可跳至該時間點 ・ 曲線已用 ±30 秒滑動中位數平滑，原始讀數見「目前位置資訊」</div>
+        <div class="chart-box"><canvas id="spdChart"></canvas></div>
+        <div class="chart-hint">點擊圖表可跳至該時間點 ・ 曲線已用前後各 2 點的中位數平滑，原始讀數見「目前位置資訊」</div>
       </div>
     </div>
 
@@ -591,7 +623,7 @@ function showRenderWarning(msg){
   if(!el){
     el = document.createElement('div');
     el.id = 'renderWarning';
-    el.style.cssText = 'margin-bottom:12px;padding:10px 14px;border-radius:10px;font-size:13px;color:#fbbf24;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);';
+    el.style.cssText = 'margin-bottom:12px;padding:10px 14px;border-radius:8px;font-size:13px;color:#92400E;background:#FDF1E1;border:1px solid #EBCB9F;';
     dashboard.insertBefore(el, dashboard.firstChild);
   }
   el.textContent = '⚠ ' + msg;
@@ -649,10 +681,121 @@ document.getElementById('btnReset').addEventListener('click', () => {
 /* =========================================================================
    DASHBOARD RENDERING (called fresh each time a KML is loaded)
    ========================================================================= */
-let currentMap = null, currentAltChart = null, currentSpdChart = null;
+let currentMap = null, currentAltChart = null, currentSpdChart = null, currentRefresh = null, currentRecolor = null;
 let currentPlaying = false;
 
+/* =========================================================================
+   UNITS - internal data stays in kt / ft / nm; conversion happens only when displaying.
+   ========================================================================= */
+const Q = {
+  spd:  { a:{u:'kt', f:1},      m:{u:'km/h', f:1.852} },
+  alt:  { a:{u:'ft', f:1},      m:{u:'m', f:0.3048} },
+  dist: { a:{u:'nm', f:1},      m:{u:'km', f:1.852} },
+  vs:   { a:{u:'ft/min', f:1},  m:{u:'m/s', f:0.3048/60, dec:1} }
+};
+const MODES = {
+  aviation: { spd:'a', alt:'a', dist:'a', vs:'a' },
+  metric:   { spd:'m', alt:'m', dist:'m', vs:'m' },
+  mixed:    { spd:'m', alt:'a', dist:'m', vs:'a' }
+};
+const FL_MIN_FT = 11000; // below roughly the transition altitude, show plain feet instead of FL
+const UNIT_KEY = 'flightViewer.units';
+let unitMode = 'aviation', optFL = false, optDual = false;
+try{
+  const saved = JSON.parse(localStorage.getItem(UNIT_KEY) || '{}');
+  if(MODES[saved.mode]) unitMode = saved.mode;
+  optFL = !!saved.fl; optDual = !!saved.dual;
+}catch(e){}
+
+function sys(q){ return MODES[unitMode][q]; }
+
+// v is always in internal units (kt / ft / nm / ft per min). Returns {n: number text, u: unit, d: dual text}.
+function fmt(q, v, o){
+  o = o || {};
+  const s = sys(q), os = s === 'a' ? 'm' : 'a';
+  const num = (sy) => {
+    const dec = Q[q][sy].dec || 0, k = Math.pow(10, dec);
+    let r = Math.round(v * Q[q][sy].f * k) / k;
+    if(r === 0) r = 0; // avoid "-0"
+    return (o.sign && r > 0 ? '+' : '') + r.toLocaleString('en-US', { minimumFractionDigits:dec, maximumFractionDigits:dec });
+  };
+  let n, u;
+  if(q === 'alt' && s === 'a' && optFL && v >= FL_MIN_FT){
+    n = 'FL' + String(Math.round(v / 100)).padStart(3, '0'); u = '';
+  } else {
+    n = num(s); u = Q[q][s].u;
+  }
+  const d = optDual ? num(os) + ' ' + Q[q][os].u : '';
+  return { n, u, d };
+}
+function fhtml(p){
+  return p.n + (p.u ? '<span class="unit">' + p.u + '</span>' : '') + (p.d ? '<span class="dual">' + p.d + '</span>' : '');
+}
+function ftext(p, withDual){
+  return p.n + (p.u ? ' ' + p.u : '') + (withDual && p.d ? ' (' + p.d + ')' : '');
+}
+
+function syncToolbar(){
+  const flOk = sys('alt') === 'a';
+  document.querySelectorAll('#unitSeg button').forEach(b => b.classList.toggle('active', b.dataset.mode === unitMode));
+  const fl = document.getElementById('tglFL');
+  fl.classList.toggle('active', optFL && flOk);
+  fl.classList.toggle('disabled', !flOk);
+  document.getElementById('tglDual').classList.toggle('active', optDual);
+  document.getElementById('unitHint').textContent =
+    '地速 ' + Q.spd[sys('spd')].u + ' ・ 高度 ' + Q.alt[sys('alt')].u + ' ・ 距離 ' + Q.dist[sys('dist')].u + ' ・ 爬升率 ' + Q.vs[sys('vs')].u;
+}
+function setUnits(){
+  try{ localStorage.setItem(UNIT_KEY, JSON.stringify({ mode:unitMode, fl:optFL, dual:optDual })); }catch(e){}
+  syncToolbar();
+  if(currentRefresh) currentRefresh();
+}
+document.querySelectorAll('#unitSeg button').forEach(b => b.addEventListener('click', () => { unitMode = b.dataset.mode; setUnits(); }));
+document.getElementById('tglFL').addEventListener('click', () => { if(sys('alt') !== 'a') return; optFL = !optFL; setUnits(); });
+document.getElementById('tglDual').addEventListener('click', () => { optDual = !optDual; setUnits(); });
+syncToolbar();
+
+/* ---------- track colouring: by altitude (default) or by ground speed ---------- */
+// Speed ramp is deliberately different from the altitude ramp so the two modes are not mistaken for each other.
+const SPEED_MAX = 600; // kt, fixed so different flights are comparable
+const SPEED_STOPS = [
+  [0,   [79,70,229]],    // indigo: standing / taxi
+  [100, [124,58,237]],   // violet
+  [250, [192,38,211]],   // magenta
+  [400, [225,29,72]],    // crimson
+  [500, [234,88,12]],    // orange: typical jet cruise
+  [600, [161,98,7]]      // dark amber
+];
+function rampColor(stops, v){
+  if(v <= stops[0][0]) return `rgb(${stops[0][1].join(',')})`;
+  for(let i=0;i<stops.length-1;i++){
+    if(v <= stops[i+1][0]){
+      const [a0,c0]=stops[i], [a1,c1]=stops[i+1];
+      const f = (v-a0)/(a1-a0 || 1);
+      return `rgb(${c0.map((x,k)=>Math.round(x+(c1[k]-x)*f)).join(',')})`;
+    }
+  }
+  return `rgb(${stops[stops.length-1][1].join(',')})`;
+}
+function speedBarCss(){
+  return 'linear-gradient(90deg,' + SPEED_STOPS.map(([v,c]) => `rgb(${c.join(',')}) ${(v/SPEED_MAX*100).toFixed(1)}%`).join(',') + ')';
+}
+const COLOR_KEY = 'flightViewer.trackColor';
+let colorMode = 'alt';
+try{ if(localStorage.getItem(COLOR_KEY) === 'spd') colorMode = 'spd'; }catch(e){}
+function syncColorSeg(){
+  document.querySelectorAll('#colorSeg button').forEach(b => b.classList.toggle('active', b.dataset.color === colorMode));
+}
+document.querySelectorAll('#colorSeg button').forEach(b => b.addEventListener('click', () => {
+  colorMode = b.dataset.color;
+  try{ localStorage.setItem(COLOR_KEY, colorMode); }catch(e){}
+  syncColorSeg();
+  if(currentRecolor) currentRecolor();
+}));
+syncColorSeg();
+
 function teardownDashboard(){
+  currentRefresh = null; currentRecolor = null;
   currentPlaying = false;
   if(currentMap){ currentMap.remove(); currentMap = null; }
   if(currentAltChart){ currentAltChart.destroy(); currentAltChart = null; }
@@ -679,40 +822,60 @@ function renderFlight(FLIGHT){
   const GAP_S = 600;           // no fixes for >10 min = receiver coverage gap
   const MIN_DT_FOR_GLITCH = 20; // shorter intervals are dominated by 1-second timestamp rounding
 
-  // Some receivers report impossible speeds (e.g. 50 kt at 37,000 ft). Where that happens, use the
-  // ground speed derived from neighbouring positions instead.
+  // Some receivers report bad speeds (e.g. 10 kt or 220 kt in the middle of a 500 kt cruise). Where that happens,
+  // use the ground speed derived from neighbouring positions instead. A reading is bad when it is physically
+  // impossible for a jet at that height (< 200 kt above 10,000 ft) or when it sits far away from its neighbours.
+  // Below 10,000 ft real speed changes are large (take-off roll, approach), so only the impossible check applies there.
+  const NB_HALF = 2, NB_MAX_DT = 150, SPIKE_KT = 80;
+  function neighbourMedian(i){
+    const w = [];
+    for(let d=-NB_HALF; d<=NB_HALF; d++){
+      const j = i + d;
+      if(d === 0 || j < 0 || j >= N) continue;
+      if(pts[j][3] > 10000 && pts[j][4] < 200) continue; // an impossible reading must not vote on its neighbour
+      if(Math.abs(pts[j][0] - pts[i][0]) <= NB_MAX_DT) w.push(pts[j][4]); // never reaches across a signal gap
+    }
+    if(w.length < 2) return null;
+    w.sort((a,b)=>a-b);
+    const m = w.length >> 1;
+    return w.length % 2 ? w[m] : (w[m-1] + w[m])/2;
+  }
   let fixedSpeedCount = 0, excludedSpeedCount = 0;
   const cleanSpd = new Array(N);
   for(let i=0;i<N;i++){
     cleanSpd[i] = pts[i][4];
-    if(pts[i][3] > 10000 && pts[i][4] < 200){
+    if(pts[i][3] > 10000){
+      const nb = neighbourMedian(i);
+      const bad = pts[i][4] < 200 || (nb != null && Math.abs(pts[i][4] - nb) > SPIKE_KT);
+      if(!bad) continue;
+      cleanSpd[i] = null;
       let a = i, b = i;
       while(a > 0 && pts[i][0] - pts[a][0] < 20) a--;
       while(b < N-1 && pts[b][0] - pts[i][0] < 20) b++;
       const dtw = pts[b][0] - pts[a][0];
       if(b > a && dtw > 0 && dtw <= 900){
         const v = haversine(pts[a][1], pts[a][2], pts[b][1], pts[b][2]) / (dtw/3600);
-        if(v >= 200 && v <= 700){ cleanSpd[i] = Math.round(v); fixedSpeedCount++; }
+        if(v >= 200 && v <= 700 && (nb == null || Math.abs(v - nb) <= SPIKE_KT*1.5)){ cleanSpd[i] = Math.round(v); fixedSpeedCount++; }
       }
-      // still impossible (e.g. frozen/stale position): no trustworthy speed for this point
-      if(cleanSpd[i] < 200){ cleanSpd[i] = null; excludedSpeedCount++; }
+      // no trustworthy replacement (e.g. frozen/stale position): leave this point out
+      if(cleanSpd[i] == null) excludedSpeedCount++;
     }
   }
 
-  // time-windowed rolling median (±30 s) so single noisy speed readings don't dominate max/avg/chart
+  // Rolling median over the nearest 5 fixes (itself +/- 2, never reaching more than 2 min away), so a single noisy
+  // reading cannot dominate max/avg/chart. Counting fixes rather than seconds matters: fixes can be 30-55 s apart,
+  // and a "+/-30 s" time window then contains only the point itself, i.e. no smoothing at all.
+  const SMOOTH_HALF = 2, SMOOTH_MAX_DT = 120;
   const smoothSpd = new Array(N);
-  {
-    let lo = 0, hi = 0;
-    for(let i=0;i<N;i++){
-      while(pts[i][0] - pts[lo][0] > 30) lo++;
-      while(hi < N-1 && pts[hi+1][0] - pts[i][0] <= 30) hi++;
-      const w = [];
-      for(let j=lo;j<=hi;j++) if(cleanSpd[j] != null) w.push(cleanSpd[j]);
-      if(!w.length){ smoothSpd[i] = null; continue; }
-      w.sort((a,b)=>a-b);
-      const m = w.length >> 1;
-      smoothSpd[i] = w.length % 2 ? w[m] : Math.round((w[m-1]+w[m])/2);
+  for(let i=0;i<N;i++){
+    const w = [];
+    for(let j=Math.max(0, i-SMOOTH_HALF); j<=Math.min(N-1, i+SMOOTH_HALF); j++){
+      if(cleanSpd[j] != null && Math.abs(pts[j][0] - pts[i][0]) <= SMOOTH_MAX_DT) w.push(cleanSpd[j]);
     }
+    if(!w.length){ smoothSpd[i] = null; continue; }
+    w.sort((a,b)=>a-b);
+    const m = w.length >> 1;
+    smoothSpd[i] = w.length % 2 ? w[m] : Math.round((w[m-1]+w[m])/2);
   }
 
   let totalDist = 0;
@@ -727,7 +890,9 @@ function renderFlight(FLIGHT){
       const dseg = haversine(pts[i-1][1], pts[i-1][2], p[1], p[2]);
       const dt = p[0] - pts[i-1][0];
       const impliedKt = dt > 0 ? dseg / (dt/3600) : 0;
-      if(!FLIGHT.noTimeData && dt > GAP_S){ gapCount++; gapSeconds += dt; }
+      // standing on the ground (both ends < 100 ft, < 1 nm apart) is parked time, not a signal loss in flight
+      const parked = pts[i-1][3] < 100 && p[3] < 100 && dseg < 1;
+      if(!FLIGHT.noTimeData && dt > GAP_S && !parked){ gapCount++; gapSeconds += dt; }
       if(impliedKt > 700 && dt >= MIN_DT_FOR_GLITCH && dt < 1800){
         flaggedGlitches++; // an impossible jump between two sparse fixes: treat as bad data, not distance flown
       } else {
@@ -767,38 +932,65 @@ function renderFlight(FLIGHT){
   document.getElementById('hDate').textContent = FLIGHT.noTimeData ? '--' : fmtDate(t0);
 
   document.getElementById('sDuration').textContent = FLIGHT.noTimeData ? '無時間資料' : fmtHMS(totalSeconds);
-  document.getElementById('sDistance').innerHTML = Math.round(totalDist).toLocaleString() + '<span class="unit">nm</span>';
-  document.getElementById('sDistanceCaption').textContent = `直線距離 ${Math.round(greatCircleDist).toLocaleString()} nm ・ 多繞 ${Math.round((totalDist/greatCircleDist-1)*100)}%${flaggedGlitches ? ' ・ 已忽略 '+flaggedGlitches+' 筆訊號異常點' : ''}`;
-  document.getElementById('sMaxAlt').innerHTML = maxAlt.toLocaleString() + '<span class="unit">ft</span>';
-  document.getElementById('sMaxSpd').innerHTML = maxSpd.toLocaleString() + '<span class="unit">kt</span>';
-  document.getElementById('sAvgSpd').innerHTML = avgCruiseSpd.toLocaleString() + '<span class="unit">kt</span>';
+  function renderStats(){
+    document.getElementById('sDistance').innerHTML = fhtml(fmt('dist', totalDist));
+    const capParts = [`直線距離 ${ftext(fmt('dist', greatCircleDist))}`, `多繞 ${Math.round((totalDist/greatCircleDist-1)*100)}%`];
+    if(flaggedGlitches) capParts.push('已忽略 ' + flaggedGlitches + ' 筆訊號異常點');
+    document.getElementById('sDistanceCaption').innerHTML = capParts.map(t => '<span>' + t + '</span>').join('');
+    document.getElementById('sMaxAlt').innerHTML = fhtml(fmt('alt', maxAlt));
+    document.getElementById('sMaxSpd').innerHTML = fhtml(fmt('spd', maxSpd));
+    document.getElementById('sAvgSpd').innerHTML = fhtml(fmt('spd', avgCruiseSpd));
+    renderLegend();
+  }
+  function renderLegend(){
+    const how = colorMode === 'spd' ? '依地速著色' : '依高度著色';
+    document.getElementById('mapSub').textContent = gapCount ? how + ' ・ 虛線 = 無訊號缺口' : how;
+    const bar = document.getElementById('legendBar');
+    if(colorMode === 'spd'){
+      document.getElementById('legendTitle').textContent = '地速 Ground Speed';
+      bar.style.background = speedBarCss();
+      document.getElementById('legendMin').textContent = ftext(fmt('spd', 0));
+      document.getElementById('legendMax').textContent = ftext(fmt('spd', SPEED_MAX)) + '+';
+      return;
+    }
+    document.getElementById('legendTitle').textContent = '高度 Altitude';
+    bar.style.background = ''; // back to the stylesheet's altitude gradient
+    document.getElementById('legendMin').textContent = ftext(fmt('alt', 0));
+    let top;
+    if(sys('alt') === 'm'){
+      top = (Math.ceil(Math.max(maxAlt*0.3048, 1000)/1000)*1000).toLocaleString('en-US') + ' m';
+    } else {
+      const ft = Math.ceil(Math.max(maxAlt, 1000)/1000)*1000;
+      top = optFL ? 'FL' + String(ft/100).padStart(3, '0') : ft.toLocaleString('en-US') + ' ft';
+    }
+    document.getElementById('legendMax').textContent = top + '+';
+  }
+  renderStats();
   document.getElementById('sPoints').textContent = N.toLocaleString();
   document.getElementById('sPointsCaption').textContent = gapCount ? `資料缺口 ${gapCount} 段（共 ${Math.round(gapSeconds/60)} 分鐘無訊號）` : '';
-  document.getElementById('mapSub').textContent = gapCount ? '依高度著色 ・ 虛線 = 無訊號缺口' : '依高度著色';
-  document.getElementById('sMaxSpd').title = '以 ±30 秒滑動中位數平滑後的最高地速（避免單點雜訊）';
+  document.getElementById('sMaxSpd').title = '以前後各 2 點的中位數平滑後的最高地速（避免單點雜訊）';
   document.getElementById('sMaxSpdCaption').textContent = (fixedSpeedCount || excludedSpeedCount) ? [fixedSpeedCount ? `已修正 ${fixedSpeedCount} 個` : '', excludedSpeedCount ? `排除 ${excludedSpeedCount} 個` : ''].filter(Boolean).join('、') + '不合理速度讀數' : '';
-  document.getElementById('legendMax').textContent = (Math.ceil(Math.max(maxAlt,1000)/1000)*1000).toLocaleString() + '+ ft';
   document.getElementById('pbTotal').textContent = FLIGHT.noTimeData ? '--' : fmtHMS(totalSeconds);
 
   /* ---------- compass ---------- */
   const compassSvg = document.getElementById('compass');
   compassSvg.innerHTML = `
-    <circle cx="70" cy="70" r="62" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-    <circle cx="70" cy="70" r="46" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-    <text x="70" y="16" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">N</text>
-    <text x="70" y="130" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">S</text>
-    <text x="12" y="74" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">W</text>
-    <text x="128" y="74" fill="#8492a8" font-size="11" text-anchor="middle" font-family="JetBrains Mono">E</text>
+    <circle cx="70" cy="70" r="62" fill="none" stroke="rgba(11,31,58,0.22)" stroke-width="1.5"/>
+    <circle cx="70" cy="70" r="46" fill="none" stroke="rgba(11,31,58,0.12)" stroke-width="1"/>
+    <text x="70" y="16" fill="#475569" font-size="11" text-anchor="middle" font-family="JetBrains Mono">N</text>
+    <text x="70" y="130" fill="#475569" font-size="11" text-anchor="middle" font-family="JetBrains Mono">S</text>
+    <text x="12" y="74" fill="#475569" font-size="11" text-anchor="middle" font-family="JetBrains Mono">W</text>
+    <text x="128" y="74" fill="#475569" font-size="11" text-anchor="middle" font-family="JetBrains Mono">E</text>
     <g id="needleGroup" transform="rotate(0 70 70)">
-      <polygon points="70,18 64,72 70,64 76,72" fill="#2dd4bf" />
-      <polygon points="70,122 64,68 70,76 76,68" fill="#4d5871" />
+      <polygon points="70,18 64,72 70,64 76,72" fill="#0F766E" />
+      <polygon points="70,122 64,68 70,76 76,68" fill="#94A3B8" />
     </g>
-    <circle cx="70" cy="70" r="4" fill="#e7edf6"/>
+    <circle cx="70" cy="70" r="4" fill="#0B1F3A"/>
   `;
   const needleGroup = document.getElementById('needleGroup');
 
   /* ---------- map ---------- */
-  let map = null, planeMarker = null, altChart = null, spdChart = null;
+  let map = null, planeMarker = null, planeEl = null, altChart = null, spdChart = null, trackRedraw = null;
   // unwrap longitudes so tracks crossing the antimeridian (±180°) stay continuous on the map
   const latlngs = [];
   {
@@ -816,12 +1008,12 @@ function renderFlight(FLIGHT){
   map = L.map('map', { zoomControl:true, attributionControl:true }).setView([pts[Math.floor(N/2)][1], pts[Math.floor(N/2)][2]], 4);
   currentMap = map;
   // CARTO basemaps started requiring an API key (Aug 2026), so use keyless tiles instead:
-  // Esri "World Dark Gray" as the primary basemap, with OpenStreetMap (CSS-darkened) as a fallback.
-  const esriBase = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  // Esri "World Light Gray" as the primary basemap, with plain OpenStreetMap as a fallback.
+  const esriBase = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
     maxNativeZoom: 16, maxZoom: 18
   }).addTo(map);
-  const esriLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+  const esriLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
     maxNativeZoom: 16, maxZoom: 18, pane: 'overlayPane', interactive: false
   }).addTo(map);
   let tileErrors = 0, tileLoads = 0, usedFallback = false;
@@ -833,7 +1025,7 @@ function renderFlight(FLIGHT){
       map.removeLayer(esriBase); map.removeLayer(esriLabels);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19, className: 'osm-dark-tiles'
+        maxZoom: 19
       }).addTo(map);
       showRenderWarning('主要底圖無法載入，已改用 OpenStreetMap 底圖。');
     }
@@ -841,8 +1033,8 @@ function renderFlight(FLIGHT){
 
   function altToColor(alt){
     const stops = [
-      [0, [58,74,99]], [3000,[45,212,191]], [10000,[52,211,153]],
-      [20000,[250,204,21]], [30000,[251,146,60]], [40000,[239,68,68]]
+      [0, [148,163,184]], [3000,[14,116,144]], [10000,[21,128,61]],
+      [20000,[202,138,4]], [30000,[234,88,12]], [40000,[185,28,28]]
     ];
     for(let i=0;i<stops.length-1;i++){
       if(alt <= stops[i+1][0]){
@@ -852,61 +1044,94 @@ function renderFlight(FLIGHT){
         return `rgb(${c[0]},${c[1]},${c[2]})`;
       }
     }
-    return 'rgb(239,68,68)';
+    return 'rgb(185,28,28)';
   }
 
   const segColors = FLIGHT.seg_colors || [];
   const canvasRenderer = L.canvas({ padding: 0.5 });
   const segGroup = L.layerGroup().addTo(map);
 
+  // speed of segment i = mean of the (smoothed) speeds at its two ends; null = no trustworthy reading
+  function segSpeed(i){
+    const a = smoothSpd[i], b = smoothSpd[i+1];
+    if(a == null && b == null) return null;
+    return a == null ? b : (b == null ? a : (a + b)/2);
+  }
   function colorFor(i){
+    if(colorMode === 'spd'){
+      const v = segSpeed(i);
+      // 10 kt buckets keep neighbouring segments in one polyline instead of one per fix
+      return v == null ? '#94A3B8' : rampColor(SPEED_STOPS, Math.round(v/10)*10);
+    }
     if(segColors[i] && segColors[i] !== '000000') return '#' + segColors[i];
     return altToColor(pts[i][3]);
   }
 
   function drawRun(a, b, color, dashed){
     if(b <= a) return;
-    const opts = { renderer: canvasRenderer, color, weight:3, opacity:0.85, interactive:false };
+    const opts = { renderer: canvasRenderer, color, weight:3.5, opacity:0.95, interactive:false };
     if(dashed){ opts.dashArray = '2 8'; opts.opacity = 0.6; }
     L.polyline(latlngs.slice(a, b+1), opts).addTo(segGroup);
   }
-  let runStart = 0;
-  let runColor = N > 1 ? colorFor(0) : null;
-  for(let i=0;i<N-1;i++){
-    const isGap = !FLIGHT.noTimeData && (pts[i+1][0] - pts[i][0]) > GAP_S;
-    const c = colorFor(i);
-    if(isGap){
-      drawRun(runStart, i, runColor, false);
-      drawRun(i, i+1, c, true);
-      runStart = i+1;
-      runColor = i+1 < N-1 ? colorFor(i+1) : c;
-    } else if(c !== runColor){
-      drawRun(runStart, i, runColor, false);
-      runStart = i;
-      runColor = c;
+  function drawTrack(){
+    segGroup.clearLayers();
+    let runStart = 0;
+    let runColor = N > 1 ? colorFor(0) : null;
+    for(let i=0;i<N-1;i++){
+      const isGap = !FLIGHT.noTimeData && (pts[i+1][0] - pts[i][0]) > GAP_S;
+      const c = colorFor(i);
+      if(isGap){
+        drawRun(runStart, i, runColor, false);
+        drawRun(i, i+1, c, true);
+        runStart = i+1;
+        runColor = i+1 < N-1 ? colorFor(i+1) : c;
+      } else if(c !== runColor){
+        drawRun(runStart, i, runColor, false);
+        runStart = i;
+        runColor = c;
+      }
     }
+    drawRun(runStart, N-1, runColor, false);
   }
-  drawRun(runStart, N-1, runColor, false);
+  drawTrack();
+  trackRedraw = drawTrack;
 
-  const originIcon = L.divIcon({ className:'', html:'<div style="width:10px;height:10px;border-radius:50%;background:#2dd4bf;box-shadow:0 0 8px #2dd4bf;"></div>', iconSize:[10,10] });
-  const destIcon = L.divIcon({ className:'', html:'<div style="width:10px;height:10px;border-radius:50%;background:#ec4899;box-shadow:0 0 8px #ec4899;"></div>', iconSize:[10,10] });
+  const originIcon = L.divIcon({ className:'', html:'<div style="width:12px;height:12px;border-radius:50%;background:#0F766E;border:2px solid #fff;box-shadow:0 0 0 1px rgba(11,31,58,0.45);"></div>', iconSize:[12,12] });
+  const destIcon = L.divIcon({ className:'', html:'<div style="width:12px;height:12px;border-radius:50%;background:#0B1F3A;border:2px solid #fff;box-shadow:0 0 0 1px rgba(11,31,58,0.45);"></div>', iconSize:[12,12] });
   L.marker(latlngs[0], {icon: originIcon}).addTo(map).bindTooltip(FLIGHT.origin ? FLIGHT.origin.code : '起點');
   L.marker(latlngs[N-1], {icon: destIcon}).addTo(map).bindTooltip(FLIGHT.dest ? FLIGHT.dest.code : '終點');
 
-  map.fitBounds(L.latLngBounds(latlngs), { padding:[24,24] });
+  {
+    const bounds = L.latLngBounds(latlngs);
+    map.fitBounds(bounds, { padding:[24,24], animate:false });
+    // The legend floats over the bottom-right of the map. If the track runs under it (e.g. a south-east bound
+    // route whose destination lands in that corner), fit again with the space below the legend's top edge reserved.
+    const legendEl = document.querySelector('.legend'), mapEl = document.getElementById('map');
+    if(legendEl && mapEl){
+      const mr = mapEl.getBoundingClientRect(), lr = legendEl.getBoundingClientRect();
+      const box = { l: lr.left - mr.left - 12, r: lr.right - mr.left + 12, t: lr.top - mr.top - 12, b: lr.bottom - mr.top + 12 };
+      const covered = latlngs.some(q => { const c = map.latLngToContainerPoint(q); return c.x >= box.l && c.x <= box.r && c.y >= box.t && c.y <= box.b; });
+      if(covered) map.fitBounds(bounds, { paddingTopLeft:[24,24], paddingBottomRight:[24, Math.ceil(mr.bottom - lr.top) + 16], animate:false });
+    }
+  }
 
+  // SVG airliner silhouette, nose up, drawn around the exact centre of a 26x26 box that is also the marker anchor,
+  // so the centre of the plane sits on the track. Rotating the <svg> by the heading needs no offset correction.
   const planeIcon = L.divIcon({
-    className:'', html:'<div id="planeMarker" style="font-size:18px; transform:rotate(0deg); filter:drop-shadow(0 0 6px rgba(255,255,255,0.8));">✈</div>',
-    iconSize:[20,20], iconAnchor:[10,10]
+    className:'plane-icon',
+    html:'<svg id="planeMarker" viewBox="0 0 24 24" width="26" height="26" style="display:block;overflow:visible;will-change:transform;">' +
+         '<path d="M12 1.8C12.9 1.8 13.5 3 13.5 4.6V9L22.2 14V16L13.5 13.6V18.4L15.8 20.2V22L12 21L8.2 22V20.2L10.5 18.4V13.6L1.8 16V14L10.5 9V4.6C10.5 3 11.1 1.8 12 1.8Z" fill="#0B1F3A" stroke="#fff" stroke-width="1.1" stroke-linejoin="round"/></svg>',
+    iconSize:[26,26], iconAnchor:[13,13]
   });
-  planeMarker = L.marker(latlngs[0], {icon: planeIcon, zIndexOffset:1000}).addTo(map);
+  planeMarker = L.marker(latlngs[0], {icon: planeIcon, zIndexOffset:1000, interactive:false, keyboard:false}).addTo(map);
+  planeEl = document.getElementById('planeMarker');
   } catch(err){
     console.error('[地圖] 建立失敗：', err);
     showRenderWarning('地圖無法載入（' + (err && err.message ? err.message : err) + '）。請檢查網路是否能連到 cdnjs.cloudflare.com。');
   }
 
   /* ---------- charts ---------- */
-  let chartLabels = [];
+  let chartLabels = [], chartApply = null;
   function seekFromChart(chart, evt){
     const hits = chart.getElementsAtEventForMode(evt, 'index', {intersect:false}, true);
     if(hits.length){
@@ -923,8 +1148,7 @@ function renderFlight(FLIGHT){
   if(chartIdx[chartIdx.length-1] !== N-1) chartIdx.push(N-1);
 
   chartLabels = chartIdx.map(i => (pts[i][0]-t0)/60); // minutes elapsed
-  const altData = chartIdx.map(i => ({ x: (pts[i][0]-t0)/60, y: pts[i][3] }));
-  const spdData = chartIdx.filter(i => smoothSpd[i] != null).map(i => ({ x: (pts[i][0]-t0)/60, y: smoothSpd[i] }));
+  const spdIdx = chartIdx.filter(i => smoothSpd[i] != null);
 
   function minutesToLabel(mins){
     const h = Math.floor(mins/60), m = Math.round(mins%60);
@@ -934,8 +1158,8 @@ function renderFlight(FLIGHT){
   const commonScales = {
     x: {
       type:'linear', min: 0, max: totalSeconds/60,
-      ticks: { color:'#8492a8', font:{family:'JetBrains Mono', size:10}, callback:(v)=>minutesToLabel(v) },
-      grid: { color:'rgba(255,255,255,0.06)' }
+      ticks: { color:'#475569', font:{family:'JetBrains Mono', size:10}, callback:(v)=>minutesToLabel(v) },
+      grid: { color:'rgba(11,31,58,0.08)' }
     }
   };
 
@@ -948,7 +1172,7 @@ function renderFlight(FLIGHT){
       const px = xScale.getPixelForValue(x);
       if(px < xScale.left || px > xScale.right) return;
       ctx.save();
-      ctx.strokeStyle = 'rgba(251,191,36,0.9)';
+      ctx.strokeStyle = 'rgba(180,83,9,0.9)';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(px, top);
@@ -967,8 +1191,8 @@ function renderFlight(FLIGHT){
       }
       if(y == null && data.length) y = data[data.length-1].y;
       if(y != null){
-        ctx.fillStyle = '#fbbf24';
-        ctx.strokeStyle = '#05070d';
+        ctx.fillStyle = '#B45309';
+        ctx.strokeStyle = '#fff';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(px, yScale.getPixelForValue(y), 5, 0, Math.PI*2);
@@ -982,19 +1206,19 @@ function renderFlight(FLIGHT){
   altChart = new Chart(document.getElementById('altChart'), {
     type:'line',
     data:{ datasets:[{
-      data: altData, borderColor:'#2dd4bf', backgroundColor:'rgba(45,212,191,0.12)',
-      borderWidth:1.6, pointRadius:0, fill:true, tension:0.15
+      data: [], borderColor:'#0F766E', backgroundColor:'rgba(15,118,110,0.10)',
+      borderWidth:2, pointRadius:0, fill:true, tension:0.15
     }]},
     options:{
-      responsive:true, animation:false, maintainAspectRatio:true,
+      responsive:true, animation:false, maintainAspectRatio:false,
       interaction:{ mode:'index', intersect:false },
       plugins:{ legend:{display:false}, tooltip:{
         callbacks:{
-          title: (ctx)=> minutesToLabel(ctx[0].parsed.x) + ' 起飛後',
-          label: (ctx)=> `高度 ${Math.round(ctx.parsed.y).toLocaleString()} ft`
+          title: (ctx)=> minutesToLabel(ctx[0].parsed.x) + ' 軌跡起算',
+          label: (ctx)=> '高度 ' + ftext(fmt('alt', pts[chartIdx[ctx.dataIndex]][3]), true)
         }
       }},
-      scales: Object.assign({}, commonScales, { y: { ticks:{ color:'#8492a8', font:{family:'JetBrains Mono', size:10}, callback:v=>(v/1000)+'k' }, grid:{ color:'rgba(255,255,255,0.06)'} } }),
+      scales: Object.assign({}, commonScales, { y: { ticks:{ color:'#475569', font:{family:'JetBrains Mono', size:10}, callback:v=>(v/1000)+'k' }, grid:{ color:'rgba(11,31,58,0.08)'} } }),
       onClick: (evt, elements, chart) => seekFromChart(chart, evt)
     },
     plugins:[cursorPlugin]
@@ -1003,25 +1227,43 @@ function renderFlight(FLIGHT){
   spdChart = new Chart(document.getElementById('spdChart'), {
     type:'line',
     data:{ datasets:[{
-      data: spdData, borderColor:'#7c6bf0', backgroundColor:'rgba(124,107,240,0.12)',
-      borderWidth:1.6, pointRadius:0, fill:true, tension:0.15
+      data: [], borderColor:'#1D4ED8', backgroundColor:'rgba(29,78,216,0.08)',
+      borderWidth:2, pointRadius:0, fill:true, tension:0.15
     }]},
     options:{
-      responsive:true, animation:false, maintainAspectRatio:true,
+      responsive:true, animation:false, maintainAspectRatio:false,
       interaction:{ mode:'index', intersect:false },
       plugins:{ legend:{display:false}, tooltip:{
         callbacks:{
-          title: (ctx)=> minutesToLabel(ctx[0].parsed.x) + ' 起飛後',
-          label: (ctx)=> `地速 ${Math.round(ctx.parsed.y).toLocaleString()} kt`
+          title: (ctx)=> minutesToLabel(ctx[0].parsed.x) + ' 軌跡起算',
+          label: (ctx)=> '地速 ' + ftext(fmt('spd', smoothSpd[spdIdx[ctx.dataIndex]]), true)
         }
       }},
-      scales: Object.assign({}, commonScales, { y: { ticks:{ color:'#8492a8', font:{family:'JetBrains Mono', size:10} }, grid:{ color:'rgba(255,255,255,0.06)'} } }),
+      scales: Object.assign({}, commonScales, { y: { ticks:{ color:'#475569', font:{family:'JetBrains Mono', size:10} }, grid:{ color:'rgba(11,31,58,0.08)'} } }),
       onClick: (evt, elements, chart) => seekFromChart(chart, evt)
     },
     plugins:[cursorPlugin]
   });
   currentAltChart = altChart;
   currentSpdChart = spdChart;
+
+  // rebuild chart data and Y axes in the current display units
+  chartApply = function(){
+    const sa = sys('alt'), ss = sys('spd');
+    const fl = sa === 'a' && optFL;
+    altChart.data.datasets[0].data = chartIdx.map(i => ({ x:(pts[i][0]-t0)/60, y: pts[i][3]*Q.alt[sa].f }));
+    spdChart.data.datasets[0].data = spdIdx.map(i => ({ x:(pts[i][0]-t0)/60, y: smoothSpd[i]*Q.spd[ss].f }));
+    const ay = altChart.options.scales.y;
+    ay.ticks.stepSize = sa === 'm' ? 1000 : 5000;
+    ay.ticks.callback = fl ? (v)=>'FL'+String(Math.max(0, Math.round(v/100))).padStart(3,'0') : (v)=>(v/1000)+'k';
+    ay.title.display = true; ay.title.color = '#475569';
+    ay.title.text = fl ? 'Flight Level' : Q.alt[sa].u;
+    const sy = spdChart.options.scales.y;
+    sy.title.display = true; sy.title.color = '#475569';
+    sy.title.text = Q.spd[ss].u;
+    altChart.update('none'); spdChart.update('none');
+  };
+  chartApply();
   } catch(err){
     console.error('[圖表] 建立失敗：', err);
     showRenderWarning('剖面圖無法載入（' + (err && err.message ? err.message : err) + '）。');
@@ -1059,40 +1301,98 @@ function renderFlight(FLIGHT){
     return ['CRUISE','phase-cruise'];
   }
 
+  const DEG = Math.PI/180;
+  const mercY = (lat) => Math.log(Math.tan(Math.PI/4 + lat*DEG/2));
+  const invMercY = (y) => (2*Math.atan(Math.exp(y)) - Math.PI/2)/DEG;
+  const angDiff = (a, b) => ((b - a + 540) % 360) - 180;
+
+  // Position and heading ON the drawn polyline at a given time. Leaflet draws each segment straight in map
+  // (Web Mercator) space, so interpolate in that space. Across a signal gap the dashed segment's own direction is used.
+  function poseAt(epoch, idx){
+    if(idx <= 0) return [latlngs[0][0], latlngs[0][1], pts[0][5]];
+    const a = idx-1, b = idx;
+    const ta = pts[a][0], tb = pts[b][0];
+    const f = tb > ta ? Math.min(1, Math.max(0, (epoch - ta)/(tb - ta))) : 1;
+    const ya = mercY(latlngs[a][0]), yb = mercY(latlngs[b][0]);
+    const dLng = latlngs[b][1] - latlngs[a][1];
+    let hdg;
+    // (parked in a gap: almost no displacement, so the bearing of the segment is noise; use the reported heading)
+    const moved = Math.hypot(dLng*DEG, yb - ya); // radians in map space, 2e-4 is roughly 0.7 nm; a real in-air gap spans tens of nm
+    if(!FLIGHT.noTimeData && tb - ta > GAP_S && moved > 2e-4) hdg = (Math.atan2(dLng*DEG, yb - ya)/DEG + 360) % 360;
+    else hdg = (pts[a][5] + angDiff(pts[a][5], pts[b][5])*f + 360) % 360;
+    return [invMercY(ya + (yb-ya)*f), latlngs[a][1] + dLng*f, hdg];
+  }
+
+  // cached element refs, and "last shown" values so each frame only touches what actually changed
+  const R = {};
+  ['tTime','tAlt','tSpd','tHdg','tCoord','tVs','phaseTag','pbElapsed','routeLine'].forEach(id => { R[id] = document.getElementById(id); });
+  let uiIdx = -1, lastSecShown = -1, lastSeekVal = -1, lastFrac = -1;
+  const lastCursorPx = {};
+  function moveCursor(chart, key, minutes){
+    if(!chart) return;
+    chart.$cursorX = minutes;
+    const xs = chart.scales && chart.scales.x;
+    const px = xs ? Math.round(xs.getPixelForValue(minutes)) : null;
+    if(px !== null && px === lastCursorPx[key]) return; // cursor has not moved a whole pixel: skip the redraw
+    lastCursorPx[key] = px;
+    chart.draw(); // repaint only; the data and scales have not changed
+  }
+
   function updateUI(epoch){
     simEpoch = Math.min(Math.max(epoch, t0), t1);
     curIdx = findIdxForEpoch(simEpoch);
-    const p = pts[curIdx];
-    const prev = pts[Math.max(0,curIdx-6)];
-    const dt = p[0]-prev[0] || 1;
-    const vs = Math.round((p[3]-prev[3]) / (dt/60)); // ft/min
+    const pose = poseAt(simEpoch, curIdx);
 
-    document.getElementById('tTime').textContent = FLIGHT.noTimeData ? '--:--:--' : fmtTimeUTC(p[0]);
-    document.getElementById('tAlt').innerHTML = p[3].toLocaleString() + ' <span style="font-size:12px;color:var(--text-dim);">ft</span>';
-    document.getElementById('tSpd').innerHTML = p[4].toLocaleString() + ' <span style="font-size:12px;color:var(--text-dim);">kt</span>';
-    document.getElementById('tHdg').textContent = p[5] + '°';
-    document.getElementById('tCoord').textContent = p[1].toFixed(4) + ', ' + p[2].toFixed(4);
-    document.getElementById('tVs').textContent = (vs>0?'+':'') + vs.toLocaleString() + ' ft/min';
+    // text readouts only change when the nearest fix changes
+    if(curIdx !== uiIdx){
+      uiIdx = curIdx;
+      const p = pts[curIdx];
+      const prev = pts[Math.max(0,curIdx-6)];
+      const dt = p[0]-prev[0] || 1;
+      const vs = Math.round((p[3]-prev[3]) / (dt/60)); // ft/min
 
-    const [label, cls] = phaseFor(curIdx);
-    const tag = document.getElementById('phaseTag');
-    tag.textContent = label;
-    tag.className = 'phase-pill ' + cls;
+      R.tTime.textContent = FLIGHT.noTimeData ? '--:--:--' : fmtTimeUTC(p[0]);
+      R.tAlt.innerHTML = fhtml(fmt('alt', p[3]));
+      R.tSpd.innerHTML = fhtml(fmt('spd', p[4]));
+      R.tHdg.textContent = p[5] + '°';
+      R.tCoord.textContent = p[1].toFixed(4) + ', ' + p[2].toFixed(4);
+      R.tVs.textContent = ftext(fmt('vs', vs, { sign:true }), true);
 
-    if(needleGroup) needleGroup.setAttribute('transform', `rotate(${p[5]} 70 70)`);
-    if(planeMarker) planeMarker.setLatLng(latlngs[curIdx]);
-    const planeDiv = document.getElementById('planeMarker');
-    if(planeDiv) planeDiv.style.transform = `rotate(${p[5]-45}deg)`;
+      const [label, cls] = phaseFor(curIdx);
+      R.phaseTag.textContent = label;
+      R.phaseTag.className = 'phase-pill ' + cls;
+    }
 
-    seekEl.value = String(Math.round(simEpoch - t0));
-    document.getElementById('pbElapsed').textContent = FLIGHT.noTimeData ? '--' : fmtHMS(simEpoch - t0);
+    // these follow the interpolated pose every frame
+    const hdgTxt = pose[2].toFixed(1);
+    if(needleGroup) needleGroup.setAttribute('transform', `rotate(${hdgTxt} 70 70)`);
+    if(planeMarker){
+      const ll = [pose[0], pose[1]];
+      planeMarker.setLatLng(ll); // keeps Leaflet's own state (zoom/pan) in sync, but it rounds to whole pixels
+      // At slow playback the plane moves less than 1px per frame, so rounding makes it step. Place it at the
+      // exact sub-pixel position instead (skipped during Leaflet's zoom animation, which positions markers itself).
+      const ic = planeMarker._icon;
+      if(ic && map && !map._animatingZoom){
+        const q = map.project(ll).subtract(map.getPixelOrigin());
+        ic.style.transform = `translate3d(${q.x.toFixed(2)}px,${q.y.toFixed(2)}px,0)`;
+      }
+    }
+    if(planeEl) planeEl.style.transform = `rotate(${hdgTxt}deg)`;
+
+    const seekVal = Math.round(simEpoch - t0);
+    if(seekVal !== lastSeekVal){ lastSeekVal = seekVal; seekEl.value = String(seekVal); }
+    const secShown = Math.floor(simEpoch - t0);
+    if(secShown !== lastSecShown){
+      lastSecShown = secShown;
+      R.pbElapsed.textContent = FLIGHT.noTimeData ? '--' : fmtHMS(simEpoch - t0);
+    }
 
     const minutesElapsed = (simEpoch - t0)/60;
-    if(altChart){ altChart.$cursorX = minutesElapsed; altChart.update('none'); }
-    if(spdChart){ spdChart.$cursorX = minutesElapsed; spdChart.update('none'); }
+    moveCursor(altChart, 'alt', minutesElapsed);
+    moveCursor(spdChart, 'spd', minutesElapsed);
 
-    const frac = (simEpoch - t0) / totalSeconds;
-    document.getElementById('routeLine').style.setProperty('--plane-pos', (frac*100)+'%');
+    const frac = Math.round((simEpoch - t0) / totalSeconds * 1000) / 10;
+    if(frac !== lastFrac){ lastFrac = frac; R.routeLine.style.setProperty('--plane-pos', frac + '%'); }
   }
 
   function seekToEpoch(epoch){ updateUI(epoch); }
@@ -1100,7 +1400,7 @@ function renderFlight(FLIGHT){
   function step(ts){
     if(!currentPlaying) return;
     if(lastFrameTime == null) lastFrameTime = ts;
-    const dtReal = (ts - lastFrameTime)/1000;
+    const dtReal = Math.min(0.25, (ts - lastFrameTime)/1000); // a hidden tab pauses rAF; do not leap ahead on return
     lastFrameTime = ts;
     const newEpoch = simEpoch + dtReal*playMult;
     if(newEpoch >= t1){
@@ -1145,6 +1445,18 @@ function renderFlight(FLIGHT){
   document.getElementById('pbSpeedLabel').textContent = playMult + '×';
 
   updateUI(t0);
+
+  currentRecolor = function(){
+    if(trackRedraw) trackRedraw();
+    renderLegend();
+  };
+
+  currentRefresh = function(){
+    renderStats();
+    if(chartApply) chartApply();
+    uiIdx = -1; lastCursorPx.alt = lastCursorPx.spd = undefined;
+    updateUI(simEpoch);
+  };
 }
 </script>
 </body>
