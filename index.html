@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>飛航軌跡分析工具</title>
+<title>航班比較分析工具</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%E2%9C%88%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css'" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,17 +110,6 @@
   .reset-btn:hover{ background:rgba(255,255,255,0.12); }
   .reset-btn:focus-visible{ outline-color:#FBBF24; }
 
-  /* ---------- Stat cards ---------- */
-  .stat-card{
-    background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:10px 14px;
-    display:flex; flex-direction:column; justify-content:center;
-  }
-  .stat-card .label{ font-size:12px; color:var(--text-dim); }
-  .stat-card .value{ font-family:var(--mono); font-size:19px; font-weight:700; margin-top:3px; color:var(--navy); font-variant-numeric:tabular-nums; }
-  .stat-card .value .unit{ font-size:12px; color:var(--text-dim); font-weight:500; margin-left:3px; }
-  .stat-card .caption{ font-size:11px; color:var(--text-faint); margin-top:3px; }
-  .dual{ font-size:11px; color:var(--text-faint); font-weight:500; margin-left:6px; white-space:nowrap; }
-
   /* ---------- Toolbar ---------- */
   .toolbar{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:12px; }
   .seg{ display:inline-flex; border:1px solid var(--border-strong); border-radius:6px; overflow:hidden; background:var(--panel); }
@@ -161,211 +150,259 @@
   }
   .legend-labels{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; color:var(--text-dim); }
 
-  /* ---------- Telemetry ---------- */
-  .telemetry{ padding:14px; display:grid; grid-template-columns:1fr 1fr; gap:12px 14px; }
-  .telemetry .t-item .label{ font-size:12px; color:var(--text-dim); }
-  .telemetry .t-item .value{ font-family:var(--mono); font-size:22px; font-weight:700; margin-top:2px; color:var(--navy); font-variant-numeric:tabular-nums; }
-  .telemetry .t-item .value.small{ font-size:14px; font-weight:500; color:var(--text-dim); }
-  .phase-pill{
-    display:inline-block; font-family:var(--mono); font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px;
-    border:1px solid var(--border-strong); background:#EEF2F6; color:var(--text-dim);
+  /* =========================================================================
+     Comparison tool additions
+     ========================================================================= */
+  .hud-actions{ align-self:center; margin-left:auto; display:flex; gap:8px; }
+  .btn-light{
+    font-size:12px; font-weight:600; padding:8px 14px; border-radius:6px; cursor:pointer; white-space:nowrap;
+    border:1px solid rgba(255,255,255,0.35); background:transparent; color:#fff; transition:background .15s;
   }
-  .phase-ground{ color:var(--text-dim); background:#EEF2F6; border-color:var(--border-strong); }
-  .phase-climb{ color:var(--good); background:var(--good-soft); border-color:#B7DEC3; }
-  .phase-cruise{ color:var(--teal); background:var(--teal-soft); border-color:#A8D9D4; }
-  .phase-descent{ color:var(--amber); background:var(--amber-soft); border-color:#EBCB9F; }
-  .compass-wrap{ display:flex; align-items:center; justify-content:center; padding:0 16px 14px; }
-
-  /* ---------- Playback ---------- */
-  .playback{ padding:14px; }
-  .pb-row{ display:flex; align-items:center; gap:10px; }
-  .pb-btn{
-    width:38px; height:38px; border-radius:6px; border:1px solid var(--border-strong);
-    background:var(--panel); color:var(--navy); display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-size:15px; transition:background .12s, transform .1s;
+  .btn-light:hover{ background:rgba(255,255,255,0.12); }
+  .btn-light.primary{ background:#FBBF24; border-color:#FBBF24; color:#0B1F3A; }
+  .btn-light.primary:hover{ background:#F59E0B; }
+  .btn-light:focus-visible{ outline:2px solid #FBBF24; outline-offset:2px; }
+  .btn{
+    font-size:13px; font-weight:600; padding:10px 18px; border-radius:6px; cursor:pointer;
+    border:1px solid var(--teal); background:var(--teal); color:#fff; margin-top:20px;
   }
-  .pb-btn:hover{ background:#EEF2F6; }
-  .pb-btn:active{ transform:scale(0.95); }
-  .pb-btn.play{ background:var(--teal); border-color:var(--teal); color:#fff; }
-  .pb-btn.play:hover{ background:#0B5F58; }
-  #seek{ flex:1; -webkit-appearance:none; appearance:none; height:5px; border-radius:3px; background:#D5DCE6; outline:none; cursor:pointer; }
-  #seek::-webkit-slider-thumb{ -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--teal); border:2px solid #fff; box-shadow:0 0 0 1px var(--teal), 0 1px 3px rgba(11,31,58,0.3); cursor:pointer; }
-  #seek::-moz-range-thumb{ width:12px; height:12px; border-radius:50%; background:var(--teal); border:2px solid #fff; box-shadow:0 0 0 1px var(--teal), 0 1px 3px rgba(11,31,58,0.3); cursor:pointer; }
-  .speed-select{ display:flex; gap:6px; margin-top:12px; }
-  .speed-btn{
-    font-size:12px; font-weight:500; padding:5px 10px; border-radius:6px; border:1px solid var(--border-strong);
-    background:var(--panel); color:var(--text-dim); cursor:pointer; font-variant-numeric:tabular-nums;
+  .btn:hover{ background:#0B5F58; }
+  .route-line.static::after{ left:50%; }
+  .hint-s{ font-size:11px; color:var(--text-faint); }
+
+  .toolbar{ margin:0; }
+  .toolbar .grp{ display:flex; align-items:center; gap:6px; }
+  .toolbar .lbl{ font-size:12px; color:var(--text-dim); }
+  select.sel{
+    font-family:var(--sans); font-size:12px; font-weight:500; color:var(--navy);
+    border:1px solid var(--border-strong); border-radius:6px; background:var(--panel); padding:6px 8px; cursor:pointer;
   }
-  .speed-btn:hover{ background:#EEF2F6; color:var(--navy); }
-  .speed-btn.active{ color:#fff; background:var(--navy); border-color:var(--navy); font-weight:600; }
-  .pb-time{ font-family:var(--mono); font-size:12px; color:var(--text-dim); display:flex; justify-content:space-between; margin-top:10px; }
-  .pb-time b{ color:var(--navy); font-weight:600; }
+  .toolbar .sep{ width:1px; height:20px; background:var(--border-strong); margin:0 6px; }
+  .toolbar .push{ margin-left:auto; }
 
-  /* ---------- Charts ---------- */
-  .chart-panel{ padding:12px 16px 14px; }
-  .chart-panel canvas{ width:100% !important; }
-  .chart-box{ position:relative; height:210px; }
-  .chart-hint{ font-size:11px; color:var(--text-faint); margin-top:6px; }
+  /* main row: flight list + map */
+  .main-row{ display:grid; grid-template-columns:310px minmax(0,1fr); gap:10px; height:clamp(540px,72vh,720px); }
+  .main-row > .panel{ display:flex; flex-direction:column; min-height:0; }
+  .flight-list{ overflow:auto; flex:1; min-height:0; }
+  .frow{ display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:start; padding:10px 12px; border-bottom:1px solid var(--border); }
+  .frow:hover,.frow.hl{ background:#F4F7FA; }
+  .swatch{ position:relative; width:18px; height:18px; margin-top:1px; cursor:pointer; flex:none; }
+  .swatch input{ position:absolute; inset:0; opacity:0; cursor:pointer; margin:0; }
+  .swatch span{ display:block; width:18px; height:18px; border-radius:4px; border:2px solid var(--c); background:#fff; }
+  .swatch input:checked + span{ background:var(--c); box-shadow:inset 0 0 0 2px #fff; }
+  .swatch input:focus-visible + span{ outline:2px solid var(--teal); outline-offset:2px; }
+  .swatch input:disabled{ cursor:not-allowed; }
+  .fl1{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .fl1 b{ font-family:var(--mono); font-size:13px; color:var(--navy); }
+  .fl1 .reg{ font-family:var(--mono); font-size:12px; color:var(--text-dim); }
+  .tag{ font-size:10.5px; font-weight:600; padding:1px 7px; border-radius:20px; background:var(--navy); color:#fff; }
+  .mini{ font-size:11px; font-weight:500; padding:2px 8px; border-radius:5px; border:1px solid var(--border-strong); background:var(--panel); color:var(--text-dim); cursor:pointer; }
+  .mini:hover{ background:#EEF2F6; color:var(--navy); }
+  .mini.danger:hover{ background:#FDECEC; color:var(--danger); border-color:#F3B8B8; }
+  .fl2{ font-size:11.5px; color:var(--text-dim); margin-top:3px; line-height:1.5; font-variant-numeric:tabular-nums; }
+  .fl2 .v{ font-family:var(--mono); color:var(--navy); }
+  .fl2 .d-pos{ color:var(--good); } .fl2 .d-neg{ color:var(--amber); }
+  .facts{ display:flex; gap:4px; }
+  .list-foot{ display:flex; gap:8px; padding:10px 12px; border-top:1px solid var(--border); background:#FAFBFC; }
+  .list-empty{ padding:16px; color:var(--text-faint); font-size:12px; }
 
-  footer{ text-align:center; color:var(--text-faint); font-size:12px; margin-top:6px; }
-  footer a{ color:var(--text-dim); }
+  .map-panel #map{ flex:1; min-height:0; height:auto; }
+  .legend{ left:12px; right:auto; bottom:28px; display:flex; flex-direction:column; gap:5px; font-size:11px; }
+  .legend .li{ display:flex; align-items:center; gap:8px; }
+  .legend svg{ width:34px; height:6px; flex:none; }
 
-  /* ---------- Bento layout (12 columns; wrappers dissolve so every card joins one grid) ---------- */
-  #dashboard:not(.hidden){ display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:10px; align-items:stretch; }
-  .stats,.main-grid,.right-col,.charts{ display:contents; }
-  #dashboard > .toolbar,#dashboard > header.hud,#dashboard > footer,#dashboard > #renderWarning{ grid-column:1 / -1; margin:0; }
-  .stats > .stat-card{ grid-column:span 2; }
-  .main-grid > .panel{ grid-column:span 8; grid-row:span 2; display:flex; flex-direction:column; }
-  .main-grid > .panel #map{ flex:1; min-height:520px; height:auto; }
-  .right-col > .panel{ grid-column:span 4; }
-  .right-col > .panel.playback{ align-self:stretch; }
-  .charts > .chart-panel{ grid-column:span 6; margin:0; }
-  #sDistanceCaption{ display:flex; flex-wrap:wrap; gap:0 10px; }
-  #sDistanceCaption span{ white-space:nowrap; }
+  /* summary table */
+  .table-wrap{ overflow-x:auto; }
+  table.cmp{ border-collapse:separate; border-spacing:0; width:100%; font-size:12.5px; min-width:1180px; }
+  table.cmp th, table.cmp td{ padding:8px 10px; border-bottom:1px solid var(--border); text-align:right; white-space:nowrap; }
+  table.cmp th{ position:sticky; top:0; background:#F7F9FB; color:var(--text-dim); font-weight:600; font-size:12px; cursor:pointer; user-select:none; vertical-align:bottom; line-height:1.3; }
+  table.cmp th small{ display:block; font-weight:400; color:var(--text-faint); font-size:10.5px; }
+  table.cmp th:hover{ color:var(--navy); }
+  table.cmp th[aria-sort="ascending"]::after{ content:" ▲"; font-size:9px; color:var(--teal); }
+  table.cmp th[aria-sort="descending"]::after{ content:" ▼"; font-size:9px; color:var(--teal); }
+  table.cmp th:first-child, table.cmp td:first-child{ text-align:left; position:sticky; left:0; background:var(--panel); z-index:2; border-right:1px solid var(--border); }
+  table.cmp th:first-child{ background:#F7F9FB; z-index:3; }
+  table.cmp td{ font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--navy); }
+  table.cmp td:first-child{ font-family:var(--sans); }
+  table.cmp tr.base td{ background:#F1F8F7; }
+  table.cmp tr.base td:first-child{ background:#F1F8F7; }
+  table.cmp tr.hid td{ opacity:0.45; }
+  table.cmp tr:hover td{ background:#F4F7FA; }
+  table.cmp tr.base:hover td{ background:#E8F3F1; }
+  table.cmp td .dl{ display:block; font-size:10.5px; color:var(--text-faint); }
+  table.cmp td.best{ color:var(--teal); font-weight:700; }
+  table.cmp td.na{ color:var(--text-faint); }
+  table.cmp .fn{ display:flex; align-items:center; gap:8px; }
+  table.cmp .fn i{ width:10px; height:10px; border-radius:2px; flex:none; }
+  table.cmp .fn b{ font-family:var(--mono); font-size:12.5px; }
+  table.cmp .fn small{ display:block; color:var(--text-faint); font-size:10.5px; font-family:var(--sans); }
+  table.cmp tfoot td{ background:#F7F9FB; font-size:12px; color:var(--text-dim); border-bottom:none; }
+  table.cmp tfoot td:first-child{ background:#F7F9FB; font-family:var(--sans); font-weight:600; color:var(--navy); }
+  .q{ display:inline-block; font-family:var(--sans); font-size:10.5px; font-weight:600; padding:1px 7px; border-radius:20px; margin-left:6px; }
+  .q-high{ color:var(--good); background:var(--good-soft); }
+  .q-mid{ color:var(--amber); background:var(--amber-soft); }
+  .q-low{ color:var(--danger); background:#FDECEC; }
+  .warn{ color:var(--amber); margin-left:3px; cursor:help; }
+  .tnote{ padding:8px 14px 10px; font-size:11.5px; color:var(--text-faint); border-top:1px solid var(--border); }
+
+  /* charts */
+  .charts-grid{ display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:10px; }
+  .charts-grid > .panel{ grid-column:span 6; }
+  .chart-panel{ padding:0; position:relative; }
+  .chart-box{ position:relative; height:250px; padding:10px 14px 6px; }
+  .chart-empty{ position:absolute; inset:44px 14px 10px; display:flex; align-items:center; justify-content:center; text-align:center; color:var(--text-faint); font-size:12.5px; background:rgba(255,255,255,0.88); z-index:2; padding:0 24px; }
+  .chart-foot{ padding:0 14px 10px; font-size:11px; color:var(--text-faint); }
+
+  /* coverage */
+  .cov{ padding:10px 14px 6px; display:flex; flex-direction:column; gap:10px; }
+  .cov-row{ display:grid; grid-template-columns:104px minmax(0,1fr) 92px; gap:10px; align-items:center; }
+  .cov-l{ display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:12px; color:var(--navy); white-space:nowrap; }
+  .cov-l i{ width:10px; height:10px; border-radius:2px; flex:none; }
+  .cov-bar{ width:100%; height:16px; display:block; background:#EEF2F6; border-radius:3px; }
+  .cov-r{ font-family:var(--mono); font-size:12px; color:var(--navy); text-align:right; white-space:nowrap; }
+  .cov-axis{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-faint); padding:0 92px 0 114px; margin-top:-2px; }
+  .cov-legend{ display:flex; gap:16px; align-items:center; padding:2px 14px 12px; font-size:11px; color:var(--text-faint); }
+  .cov-legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .cov-legend svg{ width:26px; height:10px; }
+
+  footer{ grid-column:1 / -1; }
+
+  /* overlay + toasts */
+  .drop-overlay{ position:fixed; inset:0; z-index:9999; background:rgba(11,31,58,0.55); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:600; border:3px dashed #FBBF24; margin:10px; border-radius:12px; pointer-events:none; }
+  #toasts{ position:fixed; right:16px; bottom:16px; z-index:10000; display:flex; flex-direction:column; gap:8px; max-width:min(420px,calc(100vw - 32px)); }
+  .toast{ background:var(--panel); border:1px solid var(--border-strong); border-left:4px solid var(--teal); border-radius:6px; padding:9px 12px; font-size:12.5px; color:var(--navy); box-shadow:0 4px 14px rgba(11,31,58,0.14); }
+  .toast.warn{ border-left-color:var(--amber); } .toast.err{ border-left-color:var(--danger); }
+
+  #dashboard:not(.hidden){ display:flex; flex-direction:column; gap:10px; }
   @media (max-width:980px){
-    .stats > .stat-card{ grid-column:span 4; }
-    .main-grid > .panel,.right-col > .panel,.charts > .chart-panel{ grid-column:1 / -1; grid-row:auto; }
+    .main-row{ grid-template-columns:1fr; height:auto; }
+    .main-row .list-panel{ max-height:300px; }
+    .main-row .map-panel{ height:440px; }
+    .charts-grid > .panel{ grid-column:1 / -1; }
     .flight-id,.route-block{ border-right:none; padding-right:0; }
+    .hud-actions{ margin-left:0; }
+    .cov-row{ grid-template-columns:84px minmax(0,1fr) 80px; }
+    .cov-axis{ padding:0 80px 0 94px; }
   }
-  @media (max-width:560px){
-    .stats > .stat-card{ grid-column:span 6; }
-    .app{ padding:10px 10px 24px; }
-  }
+  @media (max-width:560px){ .app{ padding:10px 10px 24px; } }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ================= Empty state: dropzone ================= -->
+  <!-- ================= Empty state ================= -->
   <div id="dropzoneWrap" class="dropzone-wrap">
-    <div class="dropzone" id="dropzone">
+    <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="加入 KML 檔案">
       <div class="icon">✈</div>
-      <h1>飛航軌跡分析工具</h1>
-      <p>拖曳 KML 檔案到這裡，或點擊選擇檔案<br>支援 Flightradar24 匯出格式，以及 Google Earth gx:Track 格式</p>
-      <div class="formats">.kml</div>
-      <div id="dzError" class="error hidden"></div>
-      <div id="dzLoading" class="loading hidden">解析中…</div>
-      <input type="file" id="fileInput" accept=".kml" class="hidden">
+      <h1>航班比較分析工具</h1>
+      <p>加入同一航班不同日期的 KML（Flightradar24 匯出，可一次選多個）<br>以離地時刻對齊，比較航線、高度、地速與資料可信度</p>
+      <div class="formats">.kml　.json（匯入先前匯出的資料庫）</div>
+      <button class="btn" id="btnPick" type="button">選擇檔案</button>
+      <div class="hint-s" style="margin-top:14px;">資料只存在你的瀏覽器裡（IndexedDB），不會上傳到任何伺服器</div>
     </div>
   </div>
 
-  <!-- ================= Loaded state: dashboard ================= -->
+  <!-- ================= Loaded state ================= -->
   <div id="dashboard" class="hidden">
 
-    <div class="toolbar">
-      <div class="seg" id="unitSeg">
-        <button data-mode="aviation" title="地速 kt・高度 ft・距離 nm・爬升率 ft/min">航空</button>
-        <button data-mode="metric" title="地速 km/h・高度 m・距離 km・爬升率 m/s">公制</button>
-        <button data-mode="mixed" title="地速 km/h・高度 ft・距離 km・爬升率 ft/min">混合</button>
-      </div>
-      <button class="tgl" id="tglFL" title="高度以飛航高度層（FL）顯示，11,000 ft 以上才套用；僅適用於高度為 ft 的模式">FL 高度層</button>
-      <button class="tgl" id="tglDual" title="主要單位旁以小字並列另一套單位">雙單位</button>
-      <div class="seg" id="colorSeg" title="航跡線的著色依據">
-        <button data-color="alt">航跡：依高度</button>
-        <button data-color="spd">航跡：依地速</button>
-      </div>
-      <span id="unitHint"></span>
-    </div>
-
-    <header class="hud">
+    <header class="hud" id="strip">
       <div class="flight-id">
-        <div class="code" id="hFlightCode">--</div>
-        <div class="sub" id="hFlightIcao">--</div>
-        <div class="airline" id="hAirline">--</div>
+        <div class="code" id="hCode">--</div>
+        <div class="sub" id="hIcao"></div>
+        <div class="airline" id="hAirline"></div>
       </div>
       <div class="route-block">
-        <div class="route-endpoint">
-          <div class="icao" id="hOrigin">---</div>
-          <div class="city" id="hOriginCity">--</div>
-          <div class="time" id="hOriginTime">--</div>
-        </div>
-        <div class="route-line" id="routeLine"></div>
-        <div class="route-endpoint" style="text-align:right;">
-          <div class="icao" id="hDest">---</div>
-          <div class="city" id="hDestCity">--</div>
-          <div class="time" id="hDestTime">--</div>
-        </div>
+        <div class="route-endpoint"><div class="icao" id="hOrigin">---</div><div class="city" id="hOriginCity"></div></div>
+        <div class="route-line static" id="routeLine"></div>
+        <div class="route-endpoint" style="text-align:right;"><div class="icao" id="hDest">---</div><div class="city" id="hDestCity"></div></div>
       </div>
       <div class="meta-block">
-        <div class="meta-item"><div class="label">機型</div><div class="value" id="hAircraft">--</div></div>
-        <div class="meta-item"><div class="label">機號</div><div class="value" id="hReg">--</div></div>
-        <div class="meta-item"><div class="label">日期</div><div class="value" id="hDate">--</div></div>
+        <div class="meta-item"><div class="label">趟數</div><div class="value" id="hCount">--</div></div>
+        <div class="meta-item"><div class="label">基準航班</div><div class="value" id="hBase">--</div></div>
+        <div class="meta-item"><div class="label">日期範圍（UTC）</div><div class="value" id="hRange">--</div></div>
       </div>
-      <button class="reset-btn" id="btnReset">📂 載入新檔案</button>
+      <div class="hud-actions">
+        <button class="btn-light primary" id="btnAdd" type="button">＋ 加入檔案</button>
+      </div>
     </header>
 
-    <div class="stats">
-      <div class="stat-card"><div class="label">軌跡總時長（含地面）</div><div class="value" id="sDuration">--</div></div>
-      <div class="stat-card"><div class="label">實際航跡距離</div><div class="value" id="sDistance">--</div><div class="caption" id="sDistanceCaption"></div></div>
-      <div class="stat-card"><div class="label">最高高度</div><div class="value" id="sMaxAlt">--</div></div>
-      <div class="stat-card"><div class="label">最高地速</div><div class="value" id="sMaxSpd">--</div><div class="caption" id="sMaxSpdCaption"></div></div>
-      <div class="stat-card"><div class="label">平均巡航地速</div><div class="value" id="sAvgSpd">--</div></div>
-      <div class="stat-card"><div class="label">軌跡點數</div><div class="value" id="sPoints">--</div><div class="caption" id="sPointsCaption"></div></div>
+    <div class="toolbar" role="toolbar" aria-label="分析設定">
+      <div class="grp"><span class="lbl">航班群組</span><select class="sel" id="selGroup" aria-label="航班群組"></select></div>
+      <span class="sep"></span>
+      <div class="grp"><span class="lbl">單位</span>
+        <div class="seg" id="unitSeg"><button data-v="aviation">航空 kt・ft・nm</button><button data-v="metric">公制 km/h・m・km</button></div>
+      </div>
+      <div class="grp"><span class="lbl">X 軸</span>
+        <div class="seg" id="xSeg"><button data-v="dist" title="離地後飛過的航跡距離">沿航跡距離</button><button data-v="time" title="離地後經過的時間">起飛後時間</button><button data-v="prog" title="各航班自己的 0–100%">完成百分比</button></div>
+      </div>
+      <div class="grp"><span class="lbl" title="相鄰兩點間隔超過此值，視為資料缺口（不是真實航跡）">缺口門檻</span>
+        <select class="sel" id="selThr" aria-label="缺口門檻"><option value="180">3 分鐘</option><option value="300">5 分鐘</option><option value="600">10 分鐘</option></select>
+      </div>
+      <button class="tgl" id="tglGC" title="以基準航班離地點到落地點畫大圓航線">大圓參考線</button>
+      <button class="tgl push" id="btnFit">適合視野</button>
     </div>
 
-    <div class="main-grid">
-      <div class="panel" style="position:relative;">
-        <div class="panel-title"><b>航跡地圖</b><span id="mapSub">依高度著色</span></div>
+    <div class="main-row">
+      <aside class="panel list-panel">
+        <div class="panel-title"><b>航班</b><span id="listCount"></span></div>
+        <div class="flight-list" id="flightList"></div>
+        <div class="list-foot">
+          <button class="mini" id="btnExport" type="button">匯出 JSON</button>
+          <button class="mini danger" id="btnClearGroup" type="button">移除此群組</button>
+        </div>
+      </aside>
+      <section class="panel map-panel" style="position:relative;">
+        <div class="panel-title"><b>航跡地圖（離地→落地）</b><span id="mapSub">各航班以不同顏色顯示</span></div>
         <div id="map"></div>
         <div class="legend">
-          <div id="legendTitle">高度 Altitude</div>
-          <div class="legend-bar" id="legendBar"></div>
-          <div class="legend-labels"><span id="legendMin">0 ft</span><span id="legendMax">40,000+ ft</span></div>
+          <div class="li"><svg viewBox="0 0 34 6"><line x1="0" y1="3" x2="34" y2="3" stroke="#475569" stroke-width="3"/></svg>實測航跡</div>
+          <div class="li"><svg viewBox="0 0 34 6"><line x1="0" y1="3" x2="34" y2="3" stroke="#475569" stroke-width="2" stroke-dasharray="4 4"/></svg>缺口（直線內插）</div>
+          <div class="li" id="legGC"><svg viewBox="0 0 34 6"><line x1="0" y1="3" x2="34" y2="3" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="1 4" stroke-linecap="round"/></svg>大圓航線</div>
         </div>
-      </div>
-
-      <div class="right-col">
-        <div class="panel">
-          <div class="panel-title"><b>目前位置資訊</b><span id="phaseTag" class="phase-pill phase-ground">GROUND</span></div>
-          <div class="telemetry">
-            <div class="t-item"><div class="label">時間 UTC</div><div class="value" id="tTime">--:--:--</div></div>
-            <div class="t-item"><div class="label">高度</div><div class="value" id="tAlt">0 <span style="font-size:12px;color:var(--text-dim);">ft</span></div></div>
-            <div class="t-item"><div class="label">地速</div><div class="value" id="tSpd">0 <span style="font-size:12px;color:var(--text-dim);">kt</span></div></div>
-            <div class="t-item"><div class="label">航向</div><div class="value" id="tHdg">0°</div></div>
-            <div class="t-item" style="grid-column:span 2;"><div class="label">座標</div><div class="value small" id="tCoord">--</div></div>
-            <div class="t-item" style="grid-column:span 2;"><div class="label">爬升率 / 下降率</div><div class="value small" id="tVs">--</div></div>
-          </div>
-          <div class="compass-wrap">
-            <svg id="compass" width="140" height="140" viewBox="0 0 140 140"></svg>
-          </div>
-        </div>
-
-        <div class="panel playback" style="padding-top:14px;">
-          <div class="panel-title" style="padding:0 0 12px; border:none;"><b>回放控制</b></div>
-          <div class="pb-row">
-            <button class="pb-btn" id="btnStepBack" title="上一點">⏮</button>
-            <button class="pb-btn play" id="btnPlay" title="播放/暫停">▶</button>
-            <button class="pb-btn" id="btnStepFwd" title="下一點">⏭</button>
-            <input type="range" id="seek" min="0" max="1000" value="0">
-          </div>
-          <div class="pb-time"><span>已放映 <b id="pbElapsed">00:00:00</b></span><span id="pbSpeedLabel">1×</span><span>總長 <b id="pbTotal">00:00:00</b></span></div>
-          <div class="speed-select" id="speedSelect">
-            <button class="speed-btn" data-mult="10">10×</button>
-            <button class="speed-btn" data-mult="60">60×</button>
-            <button class="speed-btn active" data-mult="300">300×</button>
-            <button class="speed-btn" data-mult="1200">1200×</button>
-            <button class="speed-btn" data-mult="3600">3600×</button>
-          </div>
-        </div>
-      </div>
+      </section>
     </div>
 
-    <div class="charts">
-      <div class="panel chart-panel">
-        <div class="panel-title" style="padding:0 0 8px; border:none;"><b>高度剖面圖 Altitude Profile</b></div>
-        <div class="chart-box"><canvas id="altChart"></canvas></div>
-        <div class="chart-hint">點擊或拖曳圖表可跳至該時間點</div>
-      </div>
-      <div class="panel chart-panel">
-        <div class="panel-title" style="padding:0 0 8px; border:none;"><b>地速剖面圖 Ground Speed Profile</b></div>
-        <div class="chart-box"><canvas id="spdChart"></canvas></div>
-        <div class="chart-hint">點擊圖表可跳至該時間點 ・ 曲線已用前後各 2 點的中位數平滑，原始讀數見「目前位置資訊」</div>
-      </div>
+    <section class="panel table-panel">
+      <div class="panel-title"><b>航班比較表</b><span class="hint-s">點欄位標題排序 ・ 綠色粗體 = 該欄最小值 ・ 小字 = 與基準航班的差</span></div>
+      <div class="table-wrap"><table class="cmp" id="cmpTable"></table></div>
+      <div class="tnote">距離與平均地速以實測點的連線計算；缺口以直線連接，資料覆蓋率低的航班，距離偏短（⚠ = 下限估計）。巡航層、巡航地速只用實測區段計算。</div>
+    </section>
+
+    <div class="charts-grid">
+      <section class="panel chart-panel">
+        <div class="panel-title"><b>高度剖面</b><span id="altSub" class="hint-s"></span></div>
+        <div class="chart-box"><canvas id="chAlt"></canvas></div>
+        <div class="chart-foot">移動游標檢視各航班同一位置的數值，點一下可鎖定游標 ・ 虛線 = 缺口內插</div>
+      </section>
+      <section class="panel chart-panel">
+        <div class="panel-title"><b>地速剖面</b><span class="hint-s">已用前後各 2 點中位數平滑</span></div>
+        <div class="chart-box"><canvas id="chSpd"></canvas></div>
+        <div class="chart-foot">地速差異可粗略反映各天的風況（沒有風資料，僅供參考）</div>
+      </section>
+      <section class="panel chart-panel">
+        <div class="panel-title"><b id="dltTitle">相對基準的差距</b><span id="dltSub" class="hint-s"></span></div>
+        <div class="chart-box"><canvas id="chDlt"></canvas><div class="chart-empty hidden" id="dltEmpty"></div></div>
+        <div class="chart-foot" id="dltFoot"></div>
+      </section>
+      <section class="panel chart-panel">
+        <div class="panel-title"><b>資料覆蓋</b><span class="hint-s">各航班離地→落地，依時間 0–100%</span></div>
+        <div class="cov" id="covBody"></div>
+        <div class="cov-axis"><span>離地</span><span>落地</span></div>
+        <div class="cov-legend">
+          <span><svg viewBox="0 0 26 10"><rect width="26" height="10" fill="#475569" rx="2"/></svg>實測</span>
+          <span><svg viewBox="0 0 26 10"><rect width="26" height="10" fill="#EEF2F6" rx="2"/><path d="M0 10L10 0M8 10L18 0M16 10L26 0" stroke="#475569" stroke-width="1.5" opacity="0.7"/></svg>缺口（內插）</span>
+        </div>
+      </section>
     </div>
 
-    <footer>KML 軌跡資料，全程在你的瀏覽器本機解析、不會上傳到任何伺服器</footer>
+    <footer>KML 軌跡全程在你的瀏覽器本機解析，不會上傳到任何伺服器</footer>
   </div>
+
+  <div id="dropOverlay" class="drop-overlay hidden">放開以加入 KML 或 JSON 檔案</div>
+  <div id="toasts" role="status" aria-live="polite"></div>
+  <input type="file" id="fileInput" accept=".kml,.json,application/json,application/vnd.google-earth.kml+xml" multiple class="hidden">
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -374,18 +411,333 @@
 <script>window.Chart || document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>');</script>
 <script>
 /* =========================================================================
-   KML PARSER
-   Supports:
-   (A) Flightradar24-style export: one <Placemark> per track point, each with
-       <TimeStamp><when>, <Point><coordinates>, and a <description> CDATA
-       block containing Altitude/Speed/Heading text; plus an optional second
-       set of colored <LineString> segment Placemarks used for map styling.
-   (B) Google Earth / ADS-B style <gx:Track> with parallel <when> / <gx:coord>
-       lists, optionally with <ExtendedData><gx:SimpleArrayData> for speed
-       and heading.
-   (C) Fallback: a plain <LineString><coordinates> path with no time series.
-   Any speed/heading the source doesn't provide is filled in from consecutive
-   point positions and timestamps (great-circle ground speed and bearing).
+   FLIGHT COMPARE — core
+   ========================================================================= */
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const MONO = "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
+const R_NM = 3440.065;
+const rad = d => d * Math.PI / 180;
+const nf0 = new Intl.NumberFormat('en-US', {maximumFractionDigits: 0});
+const nf1 = new Intl.NumberFormat('en-US', {maximumFractionDigits: 1, minimumFractionDigits: 1});
+const PALETTE = ['#1D4ED8','#EA580C','#0F766E','#7E22CE','#BE185D','#4D7C0F','#92400E','#475569'];
+const UNITS = {
+  aviation: {alt:{f:1,u:'ft'},     spd:{f:1,u:'kt'},      dist:{f:1,u:'nm'}},
+  metric:   {alt:{f:0.3048,u:'m'}, spd:{f:1.852,u:'km/h'}, dist:{f:1.852,u:'km'}}
+};
+
+function hav(lat1, lon1, lat2, lon2){
+  const dLat = rad(lat2 - lat1), dLon = rad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLon/2)**2;
+  return 2 * R_NM * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+const mercY = lat => Math.log(Math.tan(Math.PI/4 + rad(Math.max(-85, Math.min(85, lat)))/2));
+const invMercY = y => (2 * Math.atan(Math.exp(y)) - Math.PI/2) * 180 / Math.PI;
+function greatCircle(lat1, lon1, lat2, lon2, n = 96){
+  const p1 = rad(lat1), l1 = rad(lon1), p2 = rad(lat2), l2 = rad(lon2);
+  const d = 2 * Math.asin(Math.min(1, Math.sqrt(Math.sin((p2-p1)/2)**2 + Math.cos(p1)*Math.cos(p2)*Math.sin((l2-l1)/2)**2)));
+  if(d < 1e-9) return [[lat1, lon1], [lat2, lon2]];
+  const out = []; let prev = lon1;
+  for(let k = 0; k <= n; k++){
+    const f = k / n, A = Math.sin((1-f)*d)/Math.sin(d), B = Math.sin(f*d)/Math.sin(d);
+    const x = A*Math.cos(p1)*Math.cos(l1) + B*Math.cos(p2)*Math.cos(l2);
+    const y = A*Math.cos(p1)*Math.sin(l1) + B*Math.cos(p2)*Math.sin(l2);
+    const z = A*Math.sin(p1) + B*Math.sin(p2);
+    let lon = Math.atan2(y, x) * 180 / Math.PI;
+    while(lon - prev > 180) lon -= 360;
+    while(lon - prev < -180) lon += 360;
+    prev = lon;
+    out.push([Math.atan2(z, Math.hypot(x, y)) * 180 / Math.PI, lon]);
+  }
+  return out;
+}
+function fmtHM(min, signed){
+  const neg = min < 0; let m = Math.round(Math.abs(min));
+  const h = Math.floor(m / 60); m = m % 60;
+  return (neg ? '−' : (signed ? '+' : '')) + h + ':' + String(m).padStart(2, '0');
+}
+const fmtClock = sec => new Date(sec * 1000).toISOString().substr(11, 5);
+const fmtDate  = sec => new Date(sec * 1000).toISOString().substr(0, 10);
+const fmtMD    = sec => new Date(sec * 1000).toISOString().substr(5, 5).replace('-', '/');
+const fileBase = n => String(n || '').replace(/\.[^.]+$/, '');
+
+/* ---------- state ---------- */
+const LIB = new Map();            // id -> Track (record + derived arrays)
+const UI = { units:'aviation', xmode:'dist', thr:300, showGC:true, group:null, baseline:{}, sortKey:'tTO', sortDir:1, hl:null };
+let CURSOR = null;                // {x (internal units of UI.xmode), locked}
+const U = () => UNITS[UI.units];
+const xFactor = () => UI.xmode === 'dist' ? U().dist.f : 1;
+
+/* =========================================================================
+   ANALYSIS — everything is derived from the raw points, nothing is stored twice
+   ========================================================================= */
+function groupKeyOf(meta){ return [meta.code || '', meta.origin ? meta.origin.code : '', meta.dest ? meta.dest.code : ''].join('|'); }
+
+function buildTrack(rec){
+  const P = rec.pts, N = P.length;
+  if(N < 3) throw new Error('軌跡點數不足');
+
+  // continuous longitude (no jump at the antimeridian)
+  const lonU = new Array(N); let off = 0; lonU[0] = P[0][2];
+  for(let i = 1; i < N; i++){
+    const df = P[i][2] - P[i-1][2];
+    if(df > 180) off -= 360; else if(df < -180) off += 360;
+    lonU[i] = P[i][2] + off;
+  }
+
+  // cumulative along-track distance; an impossible jump (>700 kt between sparse fixes) counts as bad data, not distance
+  const cum = new Float64Array(N); let glitches = 0;
+  for(let i = 1; i < N; i++){
+    const dseg = hav(P[i-1][1], P[i-1][2], P[i][1], P[i][2]), dt = P[i][0] - P[i-1][0];
+    const implied = dt > 0 ? dseg / (dt/3600) : 0;
+    if(implied > 700 && dt >= 20 && dt < 1800){ glitches++; cum[i] = cum[i-1]; } else cum[i] = cum[i-1] + dseg;
+  }
+
+  // ---- ground-speed clean-up (same rules as the single-flight viewer) ----
+  const NB_HALF = 2, NB_MAX_DT = 150, SPIKE_KT = 80;
+  function neighbourMedian(i){
+    const w = [];
+    for(let d = -NB_HALF; d <= NB_HALF; d++){
+      const j = i + d;
+      if(d === 0 || j < 0 || j >= N) continue;
+      if(P[j][3] > 10000 && P[j][4] < 200) continue;
+      if(Math.abs(P[j][0] - P[i][0]) <= NB_MAX_DT) w.push(P[j][4]);
+    }
+    if(w.length < 2) return null;
+    w.sort((a,b) => a-b);
+    const m = w.length >> 1;
+    return w.length % 2 ? w[m] : (w[m-1] + w[m]) / 2;
+  }
+  const clean = new Array(N); let fixedSpd = 0;
+  for(let i = 0; i < N; i++){
+    clean[i] = P[i][4];
+    if(P[i][3] > 10000){
+      const nb = neighbourMedian(i);
+      const bad = P[i][4] < 200 || (nb != null && Math.abs(P[i][4] - nb) > SPIKE_KT);
+      if(!bad) continue;
+      clean[i] = null;
+      let a = i, b = i;
+      while(a > 0 && P[i][0] - P[a][0] < 20) a--;
+      while(b < N-1 && P[b][0] - P[i][0] < 20) b++;
+      const dtw = P[b][0] - P[a][0];
+      if(b > a && dtw > 0 && dtw <= 900){
+        const v = hav(P[a][1], P[a][2], P[b][1], P[b][2]) / (dtw/3600);
+        if(v >= 200 && v <= 700 && (nb == null || Math.abs(v - nb) <= SPIKE_KT*1.5)){ clean[i] = Math.round(v); fixedSpd++; }
+      }
+    }
+  }
+  const spd = new Array(N);
+  for(let i = 0; i < N; i++){
+    const w = [];
+    for(let j = Math.max(0, i-2); j <= Math.min(N-1, i+2); j++) if(clean[j] != null && Math.abs(P[j][0] - P[i][0]) <= 120) w.push(clean[j]);
+    if(!w.length){ spd[i] = null; continue; }
+    w.sort((a,b) => a-b);
+    const m = w.length >> 1;
+    spd[i] = w.length % 2 ? w[m] : Math.round((w[m-1] + w[m]) / 2);
+  }
+
+  // ---- lift-off / touch-down: the moment altitude crosses ground level + 100 ft ----
+  const startsOnGround = P[0][4] < 60;
+  const endsOnGround = P[N-1][4] < 80;
+  const g0 = P[0][3];
+  const g1 = P[N-1][3];
+  const th0 = g0 + 100, th1 = g1 + 100;
+  let iTO = 0, hasTO = false, tTO = P[0][0], dTO = 0;
+  if(startsOnGround){
+    let k = -1;
+    for(let i = 0; i < N; i++) if(P[i][3] >= th0){ k = i; break; }
+    if(k < 0) throw new Error('這份軌跡沒有離地紀錄');
+    iTO = k; hasTO = k > 0;
+    if(k > 0){
+      const a0 = P[k-1][3], a1 = P[k][3];
+      const f = a1 > a0 ? Math.min(1, Math.max(0, (th0 - a0) / (a1 - a0))) : 1;
+      tTO = P[k-1][0] + f * (P[k][0] - P[k-1][0]);
+      dTO = cum[k-1] + f * (cum[k] - cum[k-1]);
+    } else { tTO = P[0][0]; dTO = 0; }
+  }
+  let iLD = N - 1, hasLD = false, tLD = P[N-1][0], dLD = cum[N-1];
+  if(endsOnGround){
+    let k = -1;
+    for(let i = N-1; i >= 0; i--) if(P[i][3] >= th1){ k = i; break; }
+    if(k > 0 && k < N-1){
+      iLD = k; hasLD = true;
+      const a0 = P[k][3], a1 = P[k+1][3];
+      const f = a0 > a1 ? Math.min(1, Math.max(0, (a0 - th1) / (a0 - a1))) : 0;
+      tLD = P[k][0] + f * (P[k+1][0] - P[k][0]);
+      dLD = cum[k] + f * (cum[k+1] - cum[k]);
+    }
+  }
+  if(iLD - iTO < 2) throw new Error('空中的點數不足，無法分析');
+  const distAir = Math.max(1, dLD - dTO), airSec = Math.max(1, tLD - tTO);
+
+  // ---- airborne window arrays (all comparisons run on these) ----
+  const n = iLD - iTO + 1;
+  const W = { n, t:new Float64Array(n), alt:new Float64Array(n), lat:new Float64Array(n), lon:new Float64Array(n),
+              dt:new Float64Array(n), spd:new Array(n), X:{ time:new Float64Array(n), dist:new Float64Array(n), prog:new Float64Array(n) } };
+  for(let k = 0; k < n; k++){
+    const i = iTO + k;
+    W.t[k] = P[i][0]; W.alt[k] = P[i][3]; W.lat[k] = P[i][1]; W.lon[k] = lonU[i]; W.spd[k] = spd[i];
+    W.dt[k] = k < n-1 ? P[i+1][0] - P[i][0] : 0;
+    W.X.time[k] = Math.max(0, (P[i][0] - tTO) / 60);
+    W.X.dist[k] = Math.max(0, cum[i] - dTO);
+    W.X.prog[k] = Math.min(100, Math.max(0, 100 * (cum[i] - dTO) / distAir));
+  }
+  const meta = rec.meta;
+  return {
+    id: rec.id, name: rec.name, meta, pts: P, vis: rec.vis !== false, ci: rec.ci || 0, added: rec.added || 0,
+    gkey: groupKeyOf(meta), W, iTO, iLD, hasTO, hasLD, tTO, tLD, dTO, dLD, distAir, airSec, glitches, fixedSpd,
+    label: fmtMD(tTO) + (meta.reg ? ' ' + meta.reg : ''), S: null
+  };
+}
+
+/* ---------- statistics for the current gap threshold ---------- */
+function computeStats(T, thr){
+  const W = T.W, n = W.n;
+  let gapSec = 0, gapCount = 0, maxGap = 0; const gaps = [];
+  const lv = new Map(); let cruiseSec = 0, spdW = 0, spdDt = 0;
+  for(let k = 0; k < n-1; k++){
+    const dt = W.dt[k];
+    if(dt > thr){ gapSec += dt; gapCount++; if(dt > maxGap) maxGap = dt; gaps.push({k, t0:W.t[k], t1:W.t[k+1], sec:dt}); continue; }
+    if(W.alt[k] >= 25000 && W.alt[k+1] >= 25000){
+      const lvl = Math.round((W.alt[k] + W.alt[k+1]) / 2 / 1000) * 1000;
+      lv.set(lvl, (lv.get(lvl) || 0) + dt); cruiseSec += dt;
+      const s0 = W.spd[k], s1 = W.spd[k+1];
+      if(s0 != null && s1 != null){ spdW += dt * (s0 + s1) / 2; spdDt += dt; }
+    }
+  }
+  let mainLevel = null, best = 0;
+  lv.forEach((sec, l) => { if(sec > best){ best = sec; mainLevel = l; } });
+  if(cruiseSec < 600) mainLevel = null;
+  const span = Math.max(1, W.t[n-1] - W.t[0]);
+  const cov = Math.max(0, 1 - gapSec / span);
+  let maxAlt = 0, maxSpd = 0;
+  for(let k = 0; k < n; k++){ if(W.alt[k] > maxAlt) maxAlt = W.alt[k]; if(W.spd[k] != null && W.spd[k] > maxSpd) maxSpd = W.spd[k]; }
+  const gc = hav(W.lat[0], W.lon[0], W.lat[n-1], W.lon[n-1]);
+  const m = T.meta;
+  return {
+    airSec: T.airSec, distAir: T.distAir, gc, extra: gc > 1 ? T.distAir / gc - 1 : null,
+    avgGS: T.distAir / (T.airSec / 3600),
+    cruiseGS: spdDt > 0 ? spdW / spdDt : null, mainLevel, maxAlt, maxSpd,
+    gapCount, gapSec, maxGap, gaps, cov, q: cov >= 0.8 ? 'high' : cov >= 0.5 ? 'mid' : 'low',
+    depDelay: (m.atd != null && m.std != null) ? (m.atd - m.std) / 60 : null,
+    etaDelta: (m.eta != null && m.sta != null) ? (m.eta - m.sta) / 60 : null
+  };
+}
+
+/* ---------- position lookup (cursor, deltas) ---------- */
+function locate(arr, x){
+  let lo = 0, hi = arr.length - 1;
+  while(hi - lo > 1){ const mid = (lo + hi) >> 1; if(arr[mid] <= x) lo = mid; else hi = mid; }
+  return lo;
+}
+function stateAt(T, mode, x){
+  const W = T.W, arr = W.X[mode];
+  if(!(x >= arr[0] - 1e-6 && x <= arr[W.n-1] + 1e-6)) return null;
+  let i = locate(arr, x); if(i >= W.n - 1) i = W.n - 2;
+  const span = arr[i+1] - arr[i];
+  const f = span > 0 ? Math.min(1, Math.max(0, (x - arr[i]) / span)) : 0;
+  const L = (a, b) => a + (b - a) * f;
+  const s0 = W.spd[i], s1 = W.spd[i+1];
+  let sp = null;
+  if(s0 != null && s1 != null) sp = L(s0, s1); else sp = (f < 0.5 ? (s0 != null ? s0 : s1) : (s1 != null ? s1 : s0));
+  return {
+    tm: L(W.X.time[i], W.X.time[i+1]), d: L(W.X.dist[i], W.X.dist[i+1]), pr: L(W.X.prog[i], W.X.prog[i+1]),
+    alt: L(W.alt[i], W.alt[i+1]), spd: sp,
+    lat: invMercY(L(mercY(W.lat[i]), mercY(W.lat[i+1]))), lon: L(W.lon[i], W.lon[i+1]),
+    gap: W.dt[i] > UI.thr
+  };
+}
+// ahead(+)/behind(−) of the baseline at the same x. dist/prog: minutes; time: nm
+function deltaSeries(F, B, mode){
+  const aF = F.W.X[mode], aB = B.W.X[mode];
+  const x0 = Math.max(aF[0], aB[0]), x1 = Math.min(aF[F.W.n-1], aB[B.W.n-1]);
+  if(!(x1 > x0)) return null;
+  const step = mode === 'dist' ? Math.max(1, (x1 - x0) / 400) : mode === 'prog' ? 0.25 : 1;
+  const out = [];
+  for(let x = x0; x <= x1 + 1e-9; x += step){
+    const sF = stateAt(F, mode, x), sB = stateAt(B, mode, x);
+    if(!sF || !sB) continue;
+    out.push({x, y: mode === 'time' ? (sF.d - sB.d) : (sB.tm - sF.tm), gap: sF.gap || sB.gap});
+  }
+  return out;
+}
+
+/* ---------- groups ---------- */
+function getGroups(){
+  const m = new Map();
+  LIB.forEach(T => {
+    if(!m.has(T.gkey)) m.set(T.gkey, {key:T.gkey, code:T.meta.code, origin:T.meta.origin ? T.meta.origin.code : '', dest:T.meta.dest ? T.meta.dest.code : '', tracks:[]});
+    m.get(T.gkey).tracks.push(T);
+  });
+  m.forEach(g => g.tracks.sort((a, b) => a.tTO - b.tTO));
+  return m;
+}
+function curGroup(){
+  const gs = getGroups();
+  if(!gs.has(UI.group)) UI.group = gs.size ? [...gs.keys()][0] : null;
+  return UI.group ? gs.get(UI.group) : null;
+}
+function baselineTrack(){
+  const g = curGroup(); if(!g) return null;
+  let B = g.tracks.find(t => t.id === UI.baseline[g.key]);
+  if(!B){ B = g.tracks[0]; UI.baseline[g.key] = B.id; }
+  return B;
+}
+function visibleTracks(){
+  const g = curGroup(); if(!g) return [];
+  const B = baselineTrack();
+  return g.tracks.filter(T => T.vis !== false || T.id === B.id);
+}
+const colorOf = T => PALETTE[T.ci % PALETTE.length];
+function nextColorIndex(gkey){
+  const used = new Set(); LIB.forEach(T => { if(T.gkey === gkey) used.add(T.ci % PALETTE.length); });
+  for(let i = 0; i < PALETTE.length; i++) if(!used.has(i)) return i;
+  return used.size % PALETTE.length;
+}
+
+/* =========================================================================
+   STORAGE — IndexedDB (falls back to memory if the browser refuses, e.g. private mode)
+   ========================================================================= */
+const DB = (function(){
+  let db = null, ok = false; const mem = new Map(); let memKV = {};
+  const req = rq => new Promise((res, rej) => { rq.onsuccess = () => res(rq.result); rq.onerror = () => rej(rq.error); });
+  const store = (name, mode) => db.transaction(name, mode).objectStore(name);
+  return {
+    get ok(){ return ok; },
+    open(){
+      return new Promise(res => {
+        try{
+          const rq = indexedDB.open('flightCompare', 1);
+          rq.onupgradeneeded = () => { rq.result.createObjectStore('tracks', {keyPath:'id'}); rq.result.createObjectStore('kv'); };
+          rq.onsuccess = () => { db = rq.result; ok = true; res(true); };
+          rq.onerror = () => res(false); rq.onblocked = () => res(false);
+        }catch(e){ res(false); }
+      });
+    },
+    async all(){ try{ return ok ? await req(store('tracks', 'readonly').getAll()) : [...mem.values()]; }catch(e){ return []; } },
+    async put(rec){ try{ if(!ok) mem.set(rec.id, rec); else await req(store('tracks', 'readwrite').put(rec)); }catch(e){} },
+    async del(id){ try{ if(!ok) mem.delete(id); else await req(store('tracks', 'readwrite').delete(id)); }catch(e){} },
+    async kvGet(k){ try{ return ok ? await req(store('kv', 'readonly').get(k)) : memKV[k]; }catch(e){ return undefined; } },
+    async kvSet(k, v){ try{ if(!ok) memKV[k] = v; else await req(store('kv', 'readwrite').put(v, k)); }catch(e){} }
+  };
+})();
+const toRec = T => ({id:T.id, name:T.name, meta:T.meta, pts:T.pts, vis:T.vis !== false, ci:T.ci, added:T.added});
+function persistUI(){
+  DB.kvSet('ui', {units:UI.units, xmode:UI.xmode, thr:UI.thr, showGC:UI.showGC, group:UI.group, baseline:UI.baseline, sortKey:UI.sortKey, sortDir:UI.sortDir});
+}
+
+/* ---------- toasts ---------- */
+function toast(msg, kind){
+  const el = document.createElement('div');
+  el.className = 'toast' + (kind ? ' ' + kind : ''); el.textContent = msg;
+  $('toasts').appendChild(el);
+  setTimeout(() => el.remove(), kind === 'err' ? 8000 : 4500);
+}
+
+
+/* =========================================================================
+   KML PARSER (Flightradar24 per-point Placemarks, Google Earth gx:Track, plain paths)
    ========================================================================= */
 function parseKML(text){
   const xml = new DOMParser().parseFromString(text, 'application/xml');
@@ -435,7 +787,7 @@ function parseKML(text){
   {
     const re = />(STD|ATD|STA|ETA) <\/span>\s*<span title="([^"]+)">(\d\d:\d\d)<\/span>/g;
     let m;
-    while((m = re.exec(docDesc))) times[m[1]] = m[2];
+    while((m = re.exec(docDesc))) times[m[1]] = /^\d{4}-\d\d-\d\d \d\d:\d\d$/.test(m[2]) ? Date.parse(m[2].replace(' ','T') + ':00Z')/1000 : null;
   }
   let aircraft_type=null, aircraft_name=null, registration=null;
   {
@@ -599,865 +951,499 @@ function parseKML(text){
 }
 
 /* =========================================================================
-   FILE HANDLING (dropzone + picker)
+   FLIGHT COMPARE — views
    ========================================================================= */
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
-const dzError = document.getElementById('dzError');
-const dzLoading = document.getElementById('dzLoading');
-const dropzoneWrap = document.getElementById('dropzoneWrap');
-const dashboard = document.getElementById('dashboard');
+let map = null, tileBase = null, trackLayer = null, gcLayer = null, mapLayers = {}, cursorMarkers = {};
+let charts = {};
 
-function showError(msg){
-  dzError.textContent = msg;
-  dzError.classList.remove('hidden');
-  dzLoading.classList.add('hidden');
+/* ---------- strip + toolbar ---------- */
+function renderStrip(){
+  const g = curGroup(), B = baselineTrack();
+  $('hCode').textContent = g.code || '--';
+  $('hIcao').textContent = B.meta.icao || '';
+  $('hAirline').textContent = B.meta.airline || '';
+  $('hOrigin').textContent = g.origin || '---';
+  $('hOriginCity').textContent = B.meta.origin ? B.meta.origin.name : '';
+  $('hDest').textContent = g.dest || '---';
+  $('hDestCity').textContent = B.meta.dest ? B.meta.dest.name : '';
+  $('hCount').textContent = g.tracks.length + ' 趟';
+  $('hBase').textContent = B.label;
+  const a = g.tracks[0].tTO, b = g.tracks[g.tracks.length-1].tTO;
+  $('hRange').textContent = a === b || fmtDate(a) === fmtDate(b) ? fmtDate(a) : fmtMD(a) + ' – ' + fmtMD(b);
 }
-function clearError(){
-  dzError.classList.add('hidden');
+function renderToolbar(){
+  const gs = getGroups();
+  $('selGroup').innerHTML = [...gs.values()].map(g =>
+    `<option value="${esc(g.key)}"${g.key === UI.group ? ' selected' : ''}>${esc(g.code || '未命名')} ${esc(g.origin)}${g.origin || g.dest ? '→' : ''}${esc(g.dest)}　(${g.tracks.length})</option>`).join('');
+  document.querySelectorAll('#unitSeg button').forEach(b => b.classList.toggle('active', b.dataset.v === UI.units));
+  document.querySelectorAll('#xSeg button').forEach(b => b.classList.toggle('active', b.dataset.v === UI.xmode));
+  $('selThr').value = String(UI.thr);
+  $('tglGC').classList.toggle('active', UI.showGC);
+  $('legGC').style.display = UI.showGC ? '' : 'none';
 }
 
-
-function showRenderWarning(msg){
-  let el = document.getElementById('renderWarning');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'renderWarning';
-    el.style.cssText = 'margin-bottom:12px;padding:10px 14px;border-radius:8px;font-size:13px;color:#92400E;background:#FDF1E1;border:1px solid #EBCB9F;';
-    dashboard.insertBefore(el, dashboard.firstChild);
-  }
-  el.textContent = '⚠ ' + msg;
+/* ---------- flight list ---------- */
+function defaultSub(T){
+  const S = T.S, d = U().dist;
+  return `空中 <span class="v">${fmtHM(S.airSec/60)}</span> ・ <span class="v">${nf0.format(S.distAir*d.f)}</span> ${d.u}<br>資料覆蓋 <span class="v">${Math.round(S.cov*100)}%</span><span class="q q-${S.q}">${qLabel(S.q)}</span>`;
 }
-
-function handleFile(file){
-  if(!file) return;
-  clearError();
-  if(!/\.kml$/i.test(file.name)){
-    showError('請上傳副檔名為 .kml 的檔案。');
-    return;
-  }
-  dzLoading.classList.remove('hidden');
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try{
-      const FLIGHT = parseKML(e.target.result);
-      dzLoading.classList.add('hidden');
-      dropzoneWrap.classList.add('hidden');
-      dashboard.classList.remove('hidden');
-      renderFlight(FLIGHT);
-    }catch(err){
-      console.error('[載入失敗]', err);
-      if(!dashboard.classList.contains('hidden')){ showRenderWarning('畫面渲染時發生錯誤：' + (err && err.message ? err.message : err)); }
-      else { showError(err.message || '解析這份 KML 時發生錯誤。'); }
+const qLabel = q => q === 'high' ? '高' : q === 'mid' ? '中' : '低';
+function cursorSub(T, st, B){
+  if(!st) return '<span class="v">—</span> 此航班在這個位置沒有資料';
+  const u = U(), mode = UI.xmode;
+  let s = `<span class="v">+${fmtHM(st.tm)}</span> ・ <span class="v">${nf0.format(st.alt*u.alt.f)}</span> ${u.alt.u} ・ <span class="v">${st.spd != null ? nf0.format(st.spd*u.spd.f) : '—'}</span> ${u.spd.u}`;
+  if(st.gap) s += ' <span class="q q-mid">內插</span>';
+  if(T.id !== B.id){
+    const sb = stateAt(B, mode, CURSOR.x);
+    if(sb){
+      const dv = mode === 'time' ? (st.d - sb.d) * u.dist.f : (sb.tm - st.tm);
+      const unit = mode === 'time' ? u.dist.u : '分';
+      const txt = mode === 'time' ? nf0.format(Math.abs(dv)) : fmtHM(Math.abs(dv));
+      s += `<br>相對基準 <span class="${dv >= 0 ? 'd-pos' : 'd-neg'}">${dv >= 0 ? '領先' : '落後'} ${mode === 'time' ? txt + ' ' + unit : txt}</span>`;
     }
-  };
-  reader.onerror = () => showError('讀取檔案時發生錯誤，請再試一次。');
-  reader.readAsText(file);
-}
-
-dropzone.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-['dragenter','dragover'].forEach(evt => dropzone.addEventListener(evt, (e) => {
-  e.preventDefault(); e.stopPropagation();
-  dropzone.classList.add('dragover');
-}));
-['dragleave','drop'].forEach(evt => dropzone.addEventListener(evt, (e) => {
-  e.preventDefault(); e.stopPropagation();
-  dropzone.classList.remove('dragover');
-}));
-dropzone.addEventListener('drop', (e) => {
-  const file = e.dataTransfer.files[0];
-  handleFile(file);
-});
-
-document.getElementById('btnReset').addEventListener('click', () => {
-  teardownDashboard();
-  dashboard.classList.add('hidden');
-  dropzoneWrap.classList.remove('hidden');
-  fileInput.value = '';
-  clearError();
-});
-
-/* =========================================================================
-   DASHBOARD RENDERING (called fresh each time a KML is loaded)
-   ========================================================================= */
-let currentMap = null, currentAltChart = null, currentSpdChart = null, currentRefresh = null, currentRecolor = null;
-let currentPlaying = false;
-
-/* =========================================================================
-   UNITS - internal data stays in kt / ft / nm; conversion happens only when displaying.
-   ========================================================================= */
-const Q = {
-  spd:  { a:{u:'kt', f:1},      m:{u:'km/h', f:1.852} },
-  alt:  { a:{u:'ft', f:1},      m:{u:'m', f:0.3048} },
-  dist: { a:{u:'nm', f:1},      m:{u:'km', f:1.852} },
-  vs:   { a:{u:'ft/min', f:1},  m:{u:'m/s', f:0.3048/60, dec:1} }
-};
-const MODES = {
-  aviation: { spd:'a', alt:'a', dist:'a', vs:'a' },
-  metric:   { spd:'m', alt:'m', dist:'m', vs:'m' },
-  mixed:    { spd:'m', alt:'a', dist:'m', vs:'a' }
-};
-const FL_MIN_FT = 11000; // below roughly the transition altitude, show plain feet instead of FL
-const UNIT_KEY = 'flightViewer.units';
-let unitMode = 'aviation', optFL = false, optDual = false;
-try{
-  const saved = JSON.parse(localStorage.getItem(UNIT_KEY) || '{}');
-  if(MODES[saved.mode]) unitMode = saved.mode;
-  optFL = !!saved.fl; optDual = !!saved.dual;
-}catch(e){}
-
-function sys(q){ return MODES[unitMode][q]; }
-
-// v is always in internal units (kt / ft / nm / ft per min). Returns {n: number text, u: unit, d: dual text}.
-function fmt(q, v, o){
-  o = o || {};
-  const s = sys(q), os = s === 'a' ? 'm' : 'a';
-  const num = (sy) => {
-    const dec = Q[q][sy].dec || 0, k = Math.pow(10, dec);
-    let r = Math.round(v * Q[q][sy].f * k) / k;
-    if(r === 0) r = 0; // avoid "-0"
-    return (o.sign && r > 0 ? '+' : '') + r.toLocaleString('en-US', { minimumFractionDigits:dec, maximumFractionDigits:dec });
-  };
-  let n, u;
-  if(q === 'alt' && s === 'a' && optFL && v >= FL_MIN_FT){
-    n = 'FL' + String(Math.round(v / 100)).padStart(3, '0'); u = '';
-  } else {
-    n = num(s); u = Q[q][s].u;
   }
-  const d = optDual ? num(os) + ' ' + Q[q][os].u : '';
-  return { n, u, d };
+  return s;
 }
-function fhtml(p){
-  return p.n + (p.u ? '<span class="unit">' + p.u + '</span>' : '') + (p.d ? '<span class="dual">' + p.d + '</span>' : '');
-}
-function ftext(p, withDual){
-  return p.n + (p.u ? ' ' + p.u : '') + (withDual && p.d ? ' (' + p.d + ')' : '');
+function renderList(){
+  const g = curGroup(), B = baselineTrack();
+  $('listCount').textContent = `${g.tracks.length} 趟`;
+  $('flightList').innerHTML = g.tracks.map(T => {
+    const isB = T.id === B.id, col = colorOf(T);
+    return `<div class="frow${UI.hl === T.id ? ' hl' : ''}" data-id="${esc(T.id)}">
+      <label class="swatch" title="${isB ? '基準航班固定顯示' : '顯示 / 隱藏'}" style="--c:${col}"><input type="checkbox" data-act="vis" ${T.vis !== false || isB ? 'checked' : ''} ${isB ? 'disabled' : ''} aria-label="顯示 ${esc(T.label)}"><span></span></label>
+      <div class="finfo">
+        <div class="fl1"><b>${esc(fmtMD(T.tTO))}</b><span class="reg">${esc(T.meta.reg || T.meta.code)}</span>${isB ? '<span class="tag">基準</span>' : '<button class="mini" data-act="base" type="button">設為基準</button>'}</div>
+        <div class="fl2" data-sub="${esc(T.id)}">${defaultSub(T)}</div>
+      </div>
+      <div class="facts"><button class="mini danger" data-act="del" type="button" title="從資料庫移除" aria-label="移除 ${esc(T.label)}">✕</button></div>
+    </div>`;
+  }).join('') || '<div class="list-empty">尚無航班</div>';
 }
 
-function syncToolbar(){
-  const flOk = sys('alt') === 'a';
-  document.querySelectorAll('#unitSeg button').forEach(b => b.classList.toggle('active', b.dataset.mode === unitMode));
-  const fl = document.getElementById('tglFL');
-  fl.classList.toggle('active', optFL && flOk);
-  fl.classList.toggle('disabled', !flOk);
-  document.getElementById('tglDual').classList.toggle('active', optDual);
-  document.getElementById('unitHint').textContent =
-    '地速 ' + Q.spd[sys('spd')].u + ' ・ 高度 ' + Q.alt[sys('alt')].u + ' ・ 距離 ' + Q.dist[sys('dist')].u + ' ・ 爬升率 ' + Q.vs[sys('vs')].u;
-}
-function setUnits(){
-  try{ localStorage.setItem(UNIT_KEY, JSON.stringify({ mode:unitMode, fl:optFL, dual:optDual })); }catch(e){}
-  syncToolbar();
-  if(currentRefresh) currentRefresh();
-}
-document.querySelectorAll('#unitSeg button').forEach(b => b.addEventListener('click', () => { unitMode = b.dataset.mode; setUnits(); }));
-document.getElementById('tglFL').addEventListener('click', () => { if(sys('alt') !== 'a') return; optFL = !optFL; setUnits(); });
-document.getElementById('tglDual').addEventListener('click', () => { optDual = !optDual; setUnits(); });
-syncToolbar();
-
-/* ---------- track colouring: by altitude (default) or by ground speed ---------- */
-// Speed ramp is deliberately different from the altitude ramp so the two modes are not mistaken for each other.
-const SPEED_MAX = 600; // kt, fixed so different flights are comparable
-const SPEED_STOPS = [
-  [0,   [79,70,229]],    // indigo: standing / taxi
-  [100, [124,58,237]],   // violet
-  [250, [192,38,211]],   // magenta
-  [400, [225,29,72]],    // crimson
-  [500, [234,88,12]],    // orange: typical jet cruise
-  [600, [161,98,7]]      // dark amber
+/* ---------- summary table ---------- */
+const COLS = [
+  {k:'tTO',   t:'航班',        s:'離地日期 ・ 機號',      get:T => T.tTO},
+  {k:'to',    t:'離地',        s:'UTC',                  get:T => T.tTO},
+  {k:'ld',    t:'落地',        s:'UTC',                  get:T => T.tLD},
+  {k:'dep',   t:'起飛延誤',    s:'ATD−STD 分',           get:T => T.S.depDelay},
+  {k:'air',   t:'空中時間',    s:'h:mm',                 get:T => T.S.airSec},
+  {k:'dist',  t:'航跡距離',    s:'dist',                 get:T => T.S.distAir},
+  {k:'gc',    t:'大圓距離',    s:'dist',                 get:T => T.S.gc},
+  {k:'extra', t:'多出距離',    s:'相對大圓',             get:T => T.S.extra},
+  {k:'maxAlt',t:'最高高度',    s:'alt',                  get:T => T.S.maxAlt},
+  {k:'lvl',   t:'主要巡航層',  s:'實測',                 get:T => T.S.mainLevel},
+  {k:'avg',   t:'平均地速',    s:'空中全程',             get:T => T.S.avgGS},
+  {k:'cr',    t:'巡航地速',    s:'實測',                 get:T => T.S.cruiseGS},
+  {k:'eta',   t:'ETA−STA',     s:'分',                   get:T => T.S.etaDelta},
+  {k:'cov',   t:'資料覆蓋',    s:'空中時間內',           get:T => T.S.cov},
+  {k:'gaps',  t:'缺口',        s:'次 ・ 最長',           get:T => T.S.gapCount}
 ];
-function rampColor(stops, v){
-  if(v <= stops[0][0]) return `rgb(${stops[0][1].join(',')})`;
-  for(let i=0;i<stops.length-1;i++){
-    if(v <= stops[i+1][0]){
-      const [a0,c0]=stops[i], [a1,c1]=stops[i+1];
-      const f = (v-a0)/(a1-a0 || 1);
-      return `rgb(${c0.map((x,k)=>Math.round(x+(c1[k]-x)*f)).join(',')})`;
-    }
-  }
-  return `rgb(${stops[stops.length-1][1].join(',')})`;
-}
-function speedBarCss(){
-  return 'linear-gradient(90deg,' + SPEED_STOPS.map(([v,c]) => `rgb(${c.join(',')}) ${(v/SPEED_MAX*100).toFixed(1)}%`).join(',') + ')';
-}
-const COLOR_KEY = 'flightViewer.trackColor';
-let colorMode = 'alt';
-try{ if(localStorage.getItem(COLOR_KEY) === 'spd') colorMode = 'spd'; }catch(e){}
-function syncColorSeg(){
-  document.querySelectorAll('#colorSeg button').forEach(b => b.classList.toggle('active', b.dataset.color === colorMode));
-}
-document.querySelectorAll('#colorSeg button').forEach(b => b.addEventListener('click', () => {
-  colorMode = b.dataset.color;
-  try{ localStorage.setItem(COLOR_KEY, colorMode); }catch(e){}
-  syncColorSeg();
-  if(currentRecolor) currentRecolor();
-}));
-syncColorSeg();
-
-function teardownDashboard(){
-  currentRefresh = null; currentRecolor = null;
-  currentPlaying = false;
-  if(currentMap){ currentMap.remove(); currentMap = null; }
-  if(currentAltChart){ currentAltChart.destroy(); currentAltChart = null; }
-  if(currentSpdChart){ currentSpdChart.destroy(); currentSpdChart = null; }
-}
-
-function renderFlight(FLIGHT){
-  teardownDashboard();
-  const oldWarn = document.getElementById('renderWarning'); if(oldWarn) oldWarn.remove();
-
-  const pts = FLIGHT.points; // [epoch, lat, lon, alt_ft, spd_kt, hdg_deg]
-  const N = pts.length;
-  const t0 = pts[0][0], t1 = pts[N-1][0];
-  const totalSeconds = Math.max(1, t1 - t0);
-
-  function haversine(lat1, lon1, lat2, lon2){
-    const R = 3440.065; // nm
-    const toRad = d => d*Math.PI/180;
-    const dLat = toRad(lat2-lat1), dLon = toRad(lon2-lon1);
-    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
-    return 2*R*Math.asin(Math.sqrt(a));
-  }
-
-  const GAP_S = 600;           // no fixes for >10 min = receiver coverage gap
-  const MIN_DT_FOR_GLITCH = 20; // shorter intervals are dominated by 1-second timestamp rounding
-
-  // Some receivers report bad speeds (e.g. 10 kt or 220 kt in the middle of a 500 kt cruise). Where that happens,
-  // use the ground speed derived from neighbouring positions instead. A reading is bad when it is physically
-  // impossible for a jet at that height (< 200 kt above 10,000 ft) or when it sits far away from its neighbours.
-  // Below 10,000 ft real speed changes are large (take-off roll, approach), so only the impossible check applies there.
-  const NB_HALF = 2, NB_MAX_DT = 150, SPIKE_KT = 80;
-  function neighbourMedian(i){
-    const w = [];
-    for(let d=-NB_HALF; d<=NB_HALF; d++){
-      const j = i + d;
-      if(d === 0 || j < 0 || j >= N) continue;
-      if(pts[j][3] > 10000 && pts[j][4] < 200) continue; // an impossible reading must not vote on its neighbour
-      if(Math.abs(pts[j][0] - pts[i][0]) <= NB_MAX_DT) w.push(pts[j][4]); // never reaches across a signal gap
-    }
-    if(w.length < 2) return null;
-    w.sort((a,b)=>a-b);
-    const m = w.length >> 1;
-    return w.length % 2 ? w[m] : (w[m-1] + w[m])/2;
-  }
-  let fixedSpeedCount = 0, excludedSpeedCount = 0;
-  const cleanSpd = new Array(N);
-  for(let i=0;i<N;i++){
-    cleanSpd[i] = pts[i][4];
-    if(pts[i][3] > 10000){
-      const nb = neighbourMedian(i);
-      const bad = pts[i][4] < 200 || (nb != null && Math.abs(pts[i][4] - nb) > SPIKE_KT);
-      if(!bad) continue;
-      cleanSpd[i] = null;
-      let a = i, b = i;
-      while(a > 0 && pts[i][0] - pts[a][0] < 20) a--;
-      while(b < N-1 && pts[b][0] - pts[i][0] < 20) b++;
-      const dtw = pts[b][0] - pts[a][0];
-      if(b > a && dtw > 0 && dtw <= 900){
-        const v = haversine(pts[a][1], pts[a][2], pts[b][1], pts[b][2]) / (dtw/3600);
-        if(v >= 200 && v <= 700 && (nb == null || Math.abs(v - nb) <= SPIKE_KT*1.5)){ cleanSpd[i] = Math.round(v); fixedSpeedCount++; }
-      }
-      // no trustworthy replacement (e.g. frozen/stale position): leave this point out
-      if(cleanSpd[i] == null) excludedSpeedCount++;
-    }
-  }
-
-  // Rolling median over the nearest 5 fixes (itself +/- 2, never reaching more than 2 min away), so a single noisy
-  // reading cannot dominate max/avg/chart. Counting fixes rather than seconds matters: fixes can be 30-55 s apart,
-  // and a "+/-30 s" time window then contains only the point itself, i.e. no smoothing at all.
-  const SMOOTH_HALF = 2, SMOOTH_MAX_DT = 120;
-  const smoothSpd = new Array(N);
-  for(let i=0;i<N;i++){
-    const w = [];
-    for(let j=Math.max(0, i-SMOOTH_HALF); j<=Math.min(N-1, i+SMOOTH_HALF); j++){
-      if(cleanSpd[j] != null && Math.abs(pts[j][0] - pts[i][0]) <= SMOOTH_MAX_DT) w.push(cleanSpd[j]);
-    }
-    if(!w.length){ smoothSpd[i] = null; continue; }
-    w.sort((a,b)=>a-b);
-    const m = w.length >> 1;
-    smoothSpd[i] = w.length % 2 ? w[m] : Math.round((w[m-1]+w[m])/2);
-  }
-
-  let totalDist = 0;
-  let flaggedGlitches = 0, gapCount = 0, gapSeconds = 0;
-  let maxAlt = 0, maxSpd = 0, spdSum = 0, spdCount = 0;
-  for(let i=0;i<N;i++){
-    const p = pts[i];
-    if(p[3] > maxAlt) maxAlt = p[3];
-    if(smoothSpd[i] != null && smoothSpd[i] > maxSpd) maxSpd = smoothSpd[i];
-    if(p[3] > 20000 && smoothSpd[i] != null){ spdSum += smoothSpd[i]; spdCount++; }
-    if(i>0){
-      const dseg = haversine(pts[i-1][1], pts[i-1][2], p[1], p[2]);
-      const dt = p[0] - pts[i-1][0];
-      const impliedKt = dt > 0 ? dseg / (dt/3600) : 0;
-      // standing on the ground (both ends < 100 ft, < 1 nm apart) is parked time, not a signal loss in flight
-      const parked = pts[i-1][3] < 100 && p[3] < 100 && dseg < 1;
-      if(!FLIGHT.noTimeData && dt > GAP_S && !parked){ gapCount++; gapSeconds += dt; }
-      if(impliedKt > 700 && dt >= MIN_DT_FOR_GLITCH && dt < 1800){
-        flaggedGlitches++; // an impossible jump between two sparse fixes: treat as bad data, not distance flown
-      } else {
-        totalDist += dseg;
-      }
-    }
-  }
-  const avgCruiseSpd = spdCount ? Math.round(spdSum/spdCount) : 0;
-  const greatCircleDist = haversine(pts[0][1], pts[0][2], pts[N-1][1], pts[N-1][2]);
-
-  function fmtHMS(sec){
-    sec = Math.max(0, Math.round(sec));
-    const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
-    return [h,m,s].map(v=>String(v).padStart(2,'0')).join(':');
-  }
-  function fmtTimeUTC(epoch){
-    const d = new Date(epoch*1000);
-    return d.toISOString().substr(11,8) + ' UTC';
-  }
-  function fmtDate(epoch){
-    const d = new Date(epoch*1000);
-    return d.toISOString().substr(0,10);
-  }
-
-  /* ---------- header / stats ---------- */
-  document.getElementById('hFlightCode').textContent = FLIGHT.flight_iata || '未知航班';
-  document.getElementById('hFlightIcao').textContent = FLIGHT.flight_icao || '';
-  document.getElementById('hAirline').textContent = FLIGHT.airline || '';
-  document.getElementById('hOrigin').textContent = FLIGHT.origin ? FLIGHT.origin.code : '---';
-  document.getElementById('hOriginCity').textContent = FLIGHT.origin ? FLIGHT.origin.name : '';
-  document.getElementById('hDest').textContent = FLIGHT.dest ? FLIGHT.dest.code : '---';
-  document.getElementById('hDestCity').textContent = FLIGHT.dest ? FLIGHT.dest.name : '';
-  document.getElementById('hOriginTime').textContent = FLIGHT.noTimeData ? '' : ((FLIGHT.atd ? 'ATD '+FLIGHT.atd.split(' ')[1] : (FLIGHT.std? 'STD '+FLIGHT.std.split(' ')[1]:'')) + (FLIGHT.atd||FLIGHT.std ? ' UTC' : ''));
-  document.getElementById('hDestTime').textContent = FLIGHT.noTimeData ? '' : ((FLIGHT.eta ? 'ETA '+FLIGHT.eta.split(' ')[1] : (FLIGHT.sta? 'STA '+FLIGHT.sta.split(' ')[1]:'')) + (FLIGHT.eta||FLIGHT.sta ? ' UTC' : ''));
-  document.getElementById('hAircraft').textContent = (FLIGHT.aircraft_name || '--') + (FLIGHT.aircraft_type ? ' ('+FLIGHT.aircraft_type+')' : '');
-  document.getElementById('hReg').textContent = FLIGHT.registration || '--';
-  document.getElementById('hDate').textContent = FLIGHT.noTimeData ? '--' : fmtDate(t0);
-
-  document.getElementById('sDuration').textContent = FLIGHT.noTimeData ? '無時間資料' : fmtHMS(totalSeconds);
-  function renderStats(){
-    document.getElementById('sDistance').innerHTML = fhtml(fmt('dist', totalDist));
-    const capParts = [`直線距離 ${ftext(fmt('dist', greatCircleDist))}`, `多繞 ${Math.round((totalDist/greatCircleDist-1)*100)}%`];
-    if(flaggedGlitches) capParts.push('已忽略 ' + flaggedGlitches + ' 筆訊號異常點');
-    document.getElementById('sDistanceCaption').innerHTML = capParts.map(t => '<span>' + t + '</span>').join('');
-    document.getElementById('sMaxAlt').innerHTML = fhtml(fmt('alt', maxAlt));
-    document.getElementById('sMaxSpd').innerHTML = fhtml(fmt('spd', maxSpd));
-    document.getElementById('sAvgSpd').innerHTML = fhtml(fmt('spd', avgCruiseSpd));
-    renderLegend();
-  }
-  function renderLegend(){
-    const how = colorMode === 'spd' ? '依地速著色' : '依高度著色';
-    document.getElementById('mapSub').textContent = gapCount ? how + ' ・ 虛線 = 無訊號缺口' : how;
-    const bar = document.getElementById('legendBar');
-    if(colorMode === 'spd'){
-      document.getElementById('legendTitle').textContent = '地速 Ground Speed';
-      bar.style.background = speedBarCss();
-      document.getElementById('legendMin').textContent = ftext(fmt('spd', 0));
-      document.getElementById('legendMax').textContent = ftext(fmt('spd', SPEED_MAX)) + '+';
-      return;
-    }
-    document.getElementById('legendTitle').textContent = '高度 Altitude';
-    bar.style.background = ''; // back to the stylesheet's altitude gradient
-    document.getElementById('legendMin').textContent = ftext(fmt('alt', 0));
-    let top;
-    if(sys('alt') === 'm'){
-      top = (Math.ceil(Math.max(maxAlt*0.3048, 1000)/1000)*1000).toLocaleString('en-US') + ' m';
-    } else {
-      const ft = Math.ceil(Math.max(maxAlt, 1000)/1000)*1000;
-      top = optFL ? 'FL' + String(ft/100).padStart(3, '0') : ft.toLocaleString('en-US') + ' ft';
-    }
-    document.getElementById('legendMax').textContent = top + '+';
-  }
-  renderStats();
-  document.getElementById('sPoints').textContent = N.toLocaleString();
-  document.getElementById('sPointsCaption').textContent = gapCount ? `資料缺口 ${gapCount} 段（共 ${Math.round(gapSeconds/60)} 分鐘無訊號）` : '';
-  document.getElementById('sMaxSpd').title = '以前後各 2 點的中位數平滑後的最高地速（避免單點雜訊）';
-  document.getElementById('sMaxSpdCaption').textContent = (fixedSpeedCount || excludedSpeedCount) ? [fixedSpeedCount ? `已修正 ${fixedSpeedCount} 個` : '', excludedSpeedCount ? `排除 ${excludedSpeedCount} 個` : ''].filter(Boolean).join('、') + '不合理速度讀數' : '';
-  document.getElementById('pbTotal').textContent = FLIGHT.noTimeData ? '--' : fmtHMS(totalSeconds);
-
-  /* ---------- compass ---------- */
-  const compassSvg = document.getElementById('compass');
-  compassSvg.innerHTML = `
-    <circle cx="70" cy="70" r="62" fill="none" stroke="rgba(11,31,58,0.22)" stroke-width="1.5"/>
-    <circle cx="70" cy="70" r="46" fill="none" stroke="rgba(11,31,58,0.12)" stroke-width="1"/>
-    <text x="70" y="16" fill="#475569" font-size="11" text-anchor="middle" font-family="JetBrains Mono">N</text>
-    <text x="70" y="130" fill="#475569" font-size="11" text-anchor="middle" font-family="JetBrains Mono">S</text>
-    <text x="12" y="74" fill="#475569" font-size="11" text-anchor="middle" font-family="JetBrains Mono">W</text>
-    <text x="128" y="74" fill="#475569" font-size="11" text-anchor="middle" font-family="JetBrains Mono">E</text>
-    <g id="needleGroup" transform="rotate(0 70 70)">
-      <polygon points="70,18 64,72 70,64 76,72" fill="#0F766E" />
-      <polygon points="70,122 64,68 70,76 76,68" fill="#94A3B8" />
-    </g>
-    <circle cx="70" cy="70" r="4" fill="#0B1F3A"/>
-  `;
-  const needleGroup = document.getElementById('needleGroup');
-
-  /* ---------- map ---------- */
-  let map = null, planeMarker = null, planeEl = null, altChart = null, spdChart = null, trackRedraw = null;
-  // unwrap longitudes so tracks crossing the antimeridian (±180°) stay continuous on the map
-  const latlngs = [];
-  {
-    let offset = 0;
-    for(let i=0;i<N;i++){
-      if(i>0){
-        const diff = pts[i][2] - pts[i-1][2];
-        if(diff > 180) offset -= 360;
-        else if(diff < -180) offset += 360;
-      }
-      latlngs.push([pts[i][1], pts[i][2] + offset]);
-    }
-  }
-  try {
-  map = L.map('map', { zoomControl:true, attributionControl:true }).setView([pts[Math.floor(N/2)][1], pts[Math.floor(N/2)][2]], 4);
-  currentMap = map;
-  // CARTO basemaps started requiring an API key (Aug 2026), so use keyless tiles instead:
-  // Esri "World Light Gray" as the primary basemap, with plain OpenStreetMap as a fallback.
-  const esriBase = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-    maxNativeZoom: 16, maxZoom: 18
-  }).addTo(map);
-  const esriLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-    maxNativeZoom: 16, maxZoom: 18, pane: 'overlayPane', interactive: false
-  }).addTo(map);
-  let tileErrors = 0, tileLoads = 0, usedFallback = false;
-  esriBase.on('tileload', () => { tileLoads++; });
-  esriBase.on('tileerror', () => {
-    tileErrors++;
-    if(!usedFallback && tileErrors >= 4 && tileLoads === 0){
-      usedFallback = true;
-      map.removeLayer(esriBase); map.removeLayer(esriLabels);
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 19
-      }).addTo(map);
-      showRenderWarning('主要底圖無法載入，已改用 OpenStreetMap 底圖。');
-    }
+function renderTable(){
+  const g = curGroup(), B = baselineTrack(), u = U();
+  const rows = [...g.tracks];
+  const col = COLS.find(c => c.k === UI.sortKey) || COLS[0];
+  rows.sort((a, b) => {
+    const va = col.get(a), vb = col.get(b);
+    if(va == null && vb == null) return 0; if(va == null) return 1; if(vb == null) return -1;
+    return (va - vb) * UI.sortDir;
   });
+  const vis = rows.filter(T => T.vis !== false || T.id === B.id);
+  const minOf = f => { const v = vis.map(f).filter(x => x != null); return v.length > 1 ? Math.min(...v) : null; };
+  const best = { air:minOf(T => T.S.airSec), dist:minOf(T => T.S.distAir), extra:minOf(T => T.S.extra) };
+  const sgn = (v, f) => (v >= 0 ? '+' : '−') + f(Math.abs(v));
+  const dMin = (T, k) => T.id === B.id ? '<small class="dl">基準</small>' : `<small class="dl">${sgn((T.S[k] - B.S[k]) / 60, fmtHM).replace('+−','−')}</small>`;
+  const head = '<thead><tr>' + COLS.map(c => {
+    const sub = c.s === 'dist' ? u.dist.u : c.s === 'alt' ? u.alt.u : c.s;
+    const aria = c.k === UI.sortKey ? (UI.sortDir > 0 ? 'ascending' : 'descending') : 'none';
+    return `<th data-k="${c.k}" aria-sort="${aria}" scope="col">${c.t}<small>${esc(sub)}</small></th>`;
+  }).join('') + '</tr></thead>';
+  const na = '<td class="na">—</td>';
+  const body = rows.map(T => {
+    const S = T.S, isB = T.id === B.id, hid = !(T.vis !== false || isB);
+    const lowWarn = S.q === 'low' ? '<span class="warn" title="資料覆蓋率低：距離為下限估計">⚠</span>' : '';
+    const pctCls = (v, b) => b != null && v === b ? ' class="best"' : '';
+    const ldDay = fmtDate(T.tLD) !== fmtDate(T.tTO) ? ' <small style="color:var(--text-faint)">+1d</small>' : '';
+    return `<tr class="${isB ? 'base' : ''}${hid ? ' hid' : ''}" data-id="${esc(T.id)}">
+      <td><div class="fn"><i style="background:${colorOf(T)}"></i><div><b>${esc(fmtDate(T.tTO))}</b>${isB ? ' <span class="tag">基準</span>' : ''}<small>${esc(T.meta.reg || '—')}${T.meta.type ? ' ・ ' + esc(T.meta.type) : ''}${T.hasTO ? '' : ' ・ 起點非離地'}</small></div></div></td>
+      <td>${fmtClock(T.tTO)}</td>
+      <td>${fmtClock(T.tLD)}${ldDay}</td>
+      ${S.depDelay != null ? `<td>${S.depDelay >= 0 ? '+' : '−'}${nf0.format(Math.abs(S.depDelay))}</td>` : na}
+      <td${pctCls(S.airSec, best.air)}>${fmtHM(S.airSec/60)}${dMin(T, 'airSec')}</td>
+      <td${pctCls(S.distAir, best.dist)}>${nf0.format(S.distAir*u.dist.f)}${lowWarn}<small class="dl">${isB ? '基準' : sgn((S.distAir - B.S.distAir)*u.dist.f, nf0.format)}</small></td>
+      <td>${nf0.format(S.gc*u.dist.f)}</td>
+      ${S.extra != null ? `<td${pctCls(S.extra, best.extra)}>${S.extra >= 0 ? '+' : '−'}${nf1.format(Math.abs(S.extra)*100)}%${lowWarn}</td>` : na}
+      <td>${nf0.format(S.maxAlt*u.alt.f)}</td>
+      ${S.mainLevel != null ? `<td>${u.alt.u === 'ft' ? 'FL' + Math.round(S.mainLevel/100) : nf0.format(S.mainLevel*u.alt.f)}</td>` : na}
+      <td>${nf0.format(S.avgGS*u.spd.f)}${lowWarn}</td>
+      ${S.cruiseGS != null ? `<td>${nf0.format(S.cruiseGS*u.spd.f)}</td>` : na}
+      ${S.etaDelta != null ? `<td>${S.etaDelta >= 0 ? '+' : '−'}${nf0.format(Math.abs(S.etaDelta))}</td>` : na}
+      <td>${Math.round(S.cov*100)}%<span class="q q-${S.q}">${qLabel(S.q)}</span></td>
+      <td>${S.gapCount}${S.gapCount ? ' ・ ' + fmtHM(S.maxGap/60) : ''}</td>
+    </tr>`;
+  }).join('');
+  const stat = (f, fmt) => { const v = vis.map(f).filter(x => x != null); if(v.length < 2) return ['—', '—']; const mean = v.reduce((a, b) => a + b, 0) / v.length; return [fmt(mean), fmt(Math.max(...v) - Math.min(...v))]; };
+  const cells = [
+    ['air',  T => T.S.airSec, v => fmtHM(v/60)],
+    ['dist', T => T.S.distAir, v => nf0.format(v*u.dist.f)],
+    ['extra',T => T.S.extra, v => nf1.format(v*100) + '%'],
+    ['avg',  T => T.S.avgGS, v => nf0.format(v*u.spd.f)],
+    ['cr',   T => T.S.cruiseGS, v => nf0.format(v*u.spd.f)],
+    ['cov',  T => T.S.cov, v => Math.round(v*100) + '%']
+  ];
+  const stats = Object.fromEntries(cells.map(([k, f, fmt]) => [k, stat(f, fmt)]));
+  const foot = (label, idx) => '<tr><td>' + label + '</td>' + COLS.slice(1).map(c => `<td>${stats[c.k] ? stats[c.k][idx] : ''}</td>`).join('') + '</tr>';
+  $('cmpTable').innerHTML = head + '<tbody>' + body + '</tbody>' + (vis.length > 1 ? '<tfoot>' + foot('平均', 0) + foot('範圍（最大−最小）', 1) + '</tfoot>' : '');
+}
 
-  function altToColor(alt){
-    const stops = [
-      [0, [148,163,184]], [3000,[14,116,144]], [10000,[21,128,61]],
-      [20000,[202,138,4]], [30000,[234,88,12]], [40000,[185,28,28]]
-    ];
-    for(let i=0;i<stops.length-1;i++){
-      if(alt <= stops[i+1][0]){
-        const [a0,c0]=stops[i], [a1,c1]=stops[i+1];
-        const f = (alt-a0)/(a1-a0 || 1);
-        const c = c0.map((v,idx)=>Math.round(v + (c1[idx]-v)*f));
-        return `rgb(${c[0]},${c[1]},${c[2]})`;
-      }
+/* ---------- data coverage ---------- */
+function renderCoverage(){
+  const tr = visibleTracks();
+  $('covBody').innerHTML = tr.map((T, idx) => {
+    const W = T.W, S = T.S, span = Math.max(1, W.t[W.n-1] - W.t[0]), col = colorOf(T);
+    let rects = '', k = 0;
+    while(k < W.n - 1){
+      const gap = W.dt[k] > UI.thr; let j = k;
+      while(j < W.n - 1 && (W.dt[j] > UI.thr) === gap) j++;
+      const x0 = (W.t[k] - W.t[0]) / span * 1000, w = Math.max(1, (W.t[j] - W.t[k]) / span * 1000);
+      const title = gap ? `缺口 ${fmtClock(W.t[k])}–${fmtClock(W.t[j])} UTC（${fmtHM((W.t[j]-W.t[k])/60)}）` : `實測 ${fmtClock(W.t[k])}–${fmtClock(W.t[j])} UTC`;
+      rects += `<rect x="${x0.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="16" fill="${gap ? `url(#hp${idx})` : col}"><title>${title}</title></rect>`;
+      k = j;
     }
-    return 'rgb(185,28,28)';
+    return `<div class="cov-row"><div class="cov-l"><i style="background:${col}"></i>${esc(T.label)}</div>
+      <svg class="cov-bar" viewBox="0 0 1000 16" preserveAspectRatio="none" role="img" aria-label="${esc(T.label)} 資料覆蓋 ${Math.round(S.cov*100)}%"><defs><pattern id="hp${idx}" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#EEF2F6"/><rect width="3" height="8" fill="${col}" opacity="0.55"/></pattern></defs>${rects}</svg>
+      <div class="cov-r">${Math.round(S.cov*100)}%<span class="q q-${S.q}">${qLabel(S.q)}</span></div></div>`;
+  }).join('');
+}
+
+/* ---------- charts ---------- */
+const GRID = 'rgba(11,31,58,0.08)';
+function yAtX(data, x){
+  if(!data.length || x < data[0].x || x > data[data.length-1].x) return null;
+  let lo = 0, hi = data.length - 1;
+  while(hi - lo > 1){ const m = (lo + hi) >> 1; if(data[m].x <= x) lo = m; else hi = m; }
+  const a = data[lo], b = data[Math.min(hi, data.length-1)];
+  if(a.y == null || b.y == null) return null;
+  return b.x === a.x ? a.y : a.y + (b.y - a.y) * (x - a.x) / (b.x - a.x);
+}
+const cursorPlugin = {
+  id: 'cursorLine',
+  afterDatasetsDraw(chart){
+    if(!CURSOR) return;
+    const xv = CURSOR.x * xFactor(), {ctx, chartArea:{top, bottom, left, right}, scales:{x, y}} = chart;
+    const px = x.getPixelForValue(xv);
+    if(!(px >= left - 0.5 && px <= right + 0.5)) return;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(180,83,9,0.9)'; ctx.lineWidth = 1.25; ctx.setLineDash(CURSOR.locked ? [] : [4, 3]);
+    ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, bottom); ctx.stroke(); ctx.setLineDash([]);
+    chart.data.datasets.forEach(ds => {
+      const yv = yAtX(ds.data, xv); if(yv == null) return;
+      ctx.fillStyle = ds.borderColor; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(px, y.getPixelForValue(yv), 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    });
+    ctx.restore();
   }
-
-  const segColors = FLIGHT.seg_colors || [];
-  const canvasRenderer = L.canvas({ padding: 0.5 });
-  const segGroup = L.layerGroup().addTo(map);
-
-  // speed of segment i = mean of the (smoothed) speeds at its two ends; null = no trustworthy reading
-  function segSpeed(i){
-    const a = smoothSpd[i], b = smoothSpd[i+1];
-    if(a == null && b == null) return null;
-    return a == null ? b : (b == null ? a : (a + b)/2);
-  }
-  function colorFor(i){
-    if(colorMode === 'spd'){
-      const v = segSpeed(i);
-      // 10 kt buckets keep neighbouring segments in one polyline instead of one per fix
-      return v == null ? '#94A3B8' : rampColor(SPEED_STOPS, Math.round(v/10)*10);
-    }
-    if(segColors[i] && segColors[i] !== '000000') return '#' + segColors[i];
-    return altToColor(pts[i][3]);
-  }
-
-  function drawRun(a, b, color, dashed){
-    if(b <= a) return;
-    const opts = { renderer: canvasRenderer, color, weight:3.5, opacity:0.95, interactive:false };
-    if(dashed){ opts.dashArray = '2 8'; opts.opacity = 0.6; }
-    L.polyline(latlngs.slice(a, b+1), opts).addTo(segGroup);
-  }
-  function drawTrack(){
-    segGroup.clearLayers();
-    let runStart = 0;
-    let runColor = N > 1 ? colorFor(0) : null;
-    for(let i=0;i<N-1;i++){
-      const isGap = !FLIGHT.noTimeData && (pts[i+1][0] - pts[i][0]) > GAP_S;
-      const c = colorFor(i);
-      if(isGap){
-        drawRun(runStart, i, runColor, false);
-        drawRun(i, i+1, c, true);
-        runStart = i+1;
-        runColor = i+1 < N-1 ? colorFor(i+1) : c;
-      } else if(c !== runColor){
-        drawRun(runStart, i, runColor, false);
-        runStart = i;
-        runColor = c;
-      }
-    }
-    drawRun(runStart, N-1, runColor, false);
-  }
-  drawTrack();
-  trackRedraw = drawTrack;
-
-  const originIcon = L.divIcon({ className:'', html:'<div style="width:12px;height:12px;border-radius:50%;background:#0F766E;border:2px solid #fff;box-shadow:0 0 0 1px rgba(11,31,58,0.45);"></div>', iconSize:[12,12] });
-  const destIcon = L.divIcon({ className:'', html:'<div style="width:12px;height:12px;border-radius:50%;background:#0B1F3A;border:2px solid #fff;box-shadow:0 0 0 1px rgba(11,31,58,0.45);"></div>', iconSize:[12,12] });
-  L.marker(latlngs[0], {icon: originIcon}).addTo(map).bindTooltip(FLIGHT.origin ? FLIGHT.origin.code : '起點');
-  L.marker(latlngs[N-1], {icon: destIcon}).addTo(map).bindTooltip(FLIGHT.dest ? FLIGHT.dest.code : '終點');
-
-  {
-    const bounds = L.latLngBounds(latlngs);
-    map.fitBounds(bounds, { padding:[24,24], animate:false });
-    // The legend floats over the bottom-right of the map. If the track runs under it (e.g. a south-east bound
-    // route whose destination lands in that corner), fit again with the space below the legend's top edge reserved.
-    const legendEl = document.querySelector('.legend'), mapEl = document.getElementById('map');
-    if(legendEl && mapEl){
-      const mr = mapEl.getBoundingClientRect(), lr = legendEl.getBoundingClientRect();
-      const box = { l: lr.left - mr.left - 12, r: lr.right - mr.left + 12, t: lr.top - mr.top - 12, b: lr.bottom - mr.top + 12 };
-      const covered = latlngs.some(q => { const c = map.latLngToContainerPoint(q); return c.x >= box.l && c.x <= box.r && c.y >= box.t && c.y <= box.b; });
-      if(covered) map.fitBounds(bounds, { paddingTopLeft:[24,24], paddingBottomRight:[24, Math.ceil(mr.bottom - lr.top) + 16], animate:false });
-    }
-  }
-
-  // SVG airliner silhouette, nose up, drawn around the exact centre of a 26x26 box that is also the marker anchor,
-  // so the centre of the plane sits on the track. Rotating the <svg> by the heading needs no offset correction.
-  const planeIcon = L.divIcon({
-    className:'plane-icon',
-    html:'<svg id="planeMarker" viewBox="0 0 24 24" width="26" height="26" style="display:block;overflow:visible;will-change:transform;">' +
-         '<path d="M12 1.8C12.9 1.8 13.5 3 13.5 4.6V9L22.2 14V16L13.5 13.6V18.4L15.8 20.2V22L12 21L8.2 22V20.2L10.5 18.4V13.6L1.8 16V14L10.5 9V4.6C10.5 3 11.1 1.8 12 1.8Z" fill="#0B1F3A" stroke="#fff" stroke-width="1.1" stroke-linejoin="round"/></svg>',
-    iconSize:[26,26], iconAnchor:[13,13]
-  });
-  planeMarker = L.marker(latlngs[0], {icon: planeIcon, zIndexOffset:1000, interactive:false, keyboard:false}).addTo(map);
-  planeEl = document.getElementById('planeMarker');
-  } catch(err){
-    console.error('[地圖] 建立失敗：', err);
-    showRenderWarning('地圖無法載入（' + (err && err.message ? err.message : err) + '）。請檢查網路是否能連到 cdnjs.cloudflare.com。');
-  }
-
-  /* ---------- charts ---------- */
-  let chartLabels = [], chartApply = null;
-  function seekFromChart(chart, evt){
-    const hits = chart.getElementsAtEventForMode(evt, 'index', {intersect:false}, true);
-    if(hits.length){
-      const idx = hits[0].index;
-      const targetMinutes = chartLabels[idx];
-      seekToEpoch(t0 + targetMinutes*60);
-    }
-  }
-  try {
-  const MAX_CHART_POINTS = 900;
-  const chartStep = Math.max(1, Math.floor(N / MAX_CHART_POINTS));
-  const chartIdx = [];
-  for(let i=0;i<N;i+=chartStep) chartIdx.push(i);
-  if(chartIdx[chartIdx.length-1] !== N-1) chartIdx.push(N-1);
-
-  chartLabels = chartIdx.map(i => (pts[i][0]-t0)/60); // minutes elapsed
-  const spdIdx = chartIdx.filter(i => smoothSpd[i] != null);
-
-  function minutesToLabel(mins){
-    const h = Math.floor(mins/60), m = Math.round(mins%60);
-    return h + 'h' + String(m).padStart(2,'0');
-  }
-
-  const commonScales = {
-    x: {
-      type:'linear', min: 0, max: totalSeconds/60,
-      ticks: { color:'#475569', font:{family:'JetBrains Mono', size:10}, callback:(v)=>minutesToLabel(v) },
-      grid: { color:'rgba(11,31,58,0.08)' }
-    }
-  };
-
-  const cursorPlugin = {
-    id:'cursorLine',
-    afterDraw(chart){
-      const x = chart.$cursorX;
-      if(x == null) return;
-      const {ctx, chartArea:{top,bottom}, scales:{x:xScale, y:yScale}} = chart;
-      const px = xScale.getPixelForValue(x);
-      if(px < xScale.left || px > xScale.right) return;
-      ctx.save();
-      ctx.strokeStyle = 'rgba(180,83,9,0.9)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(px, top);
-      ctx.lineTo(px, bottom);
-      ctx.stroke();
-      // dot on the curve at the current time
-      const data = chart.data.datasets[0].data;
-      let y = null;
-      for(let i=1;i<data.length;i++){
-        if(data[i].x >= x){
-          const a = data[i-1], b = data[i];
-          const f = b.x === a.x ? 0 : (x - a.x)/(b.x - a.x);
-          y = a.y + (b.y - a.y)*f;
-          break;
-        }
-      }
-      if(y == null && data.length) y = data[data.length-1].y;
-      if(y != null){
-        ctx.fillStyle = '#B45309';
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(px, yScale.getPixelForValue(y), 5, 0, Math.PI*2);
-        ctx.fill();
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-  };
-
-  altChart = new Chart(document.getElementById('altChart'), {
-    type:'line',
-    data:{ datasets:[{
-      data: [], borderColor:'#0F766E', backgroundColor:'rgba(15,118,110,0.10)',
-      borderWidth:2, pointRadius:0, fill:true, tension:0.15
-    }]},
-    options:{
-      responsive:true, animation:false, maintainAspectRatio:false,
-      interaction:{ mode:'index', intersect:false },
-      plugins:{ legend:{display:false}, tooltip:{
-        callbacks:{
-          title: (ctx)=> minutesToLabel(ctx[0].parsed.x) + ' 軌跡起算',
-          label: (ctx)=> '高度 ' + ftext(fmt('alt', pts[chartIdx[ctx.dataIndex]][3]), true)
-        }
-      }},
-      scales: Object.assign({}, commonScales, { y: { ticks:{ color:'#475569', font:{family:'JetBrains Mono', size:10}, callback:v=>(v/1000)+'k' }, grid:{ color:'rgba(11,31,58,0.08)'} } }),
-      onClick: (evt, elements, chart) => seekFromChart(chart, evt)
+};
+function makeChart(id){
+  const tick = {color:'#475569', font:{family:MONO, size:10}};
+  const title = {display:true, text:'', color:'#475569', font:{size:11}};
+  const ch = new Chart($(id), {
+    type: 'line', data: {datasets: []},
+    options: {
+      responsive:true, maintainAspectRatio:false, animation:false, events:[], parsing:false, normalized:true,
+      plugins:{legend:{display:false}, tooltip:{enabled:false}},
+      scales:{ x:{type:'linear', ticks:{...tick, maxTicksLimit:10}, grid:{color:GRID}, title:{...title}},
+               y:{ticks:tick, grid:{color:GRID}, title:{...title}, grace:'5%'} }
     },
-    plugins:[cursorPlugin]
+    plugins: [cursorPlugin]
   });
-
-  spdChart = new Chart(document.getElementById('spdChart'), {
-    type:'line',
-    data:{ datasets:[{
-      data: [], borderColor:'#1D4ED8', backgroundColor:'rgba(29,78,216,0.08)',
-      borderWidth:2, pointRadius:0, fill:true, tension:0.15
-    }]},
-    options:{
-      responsive:true, animation:false, maintainAspectRatio:false,
-      interaction:{ mode:'index', intersect:false },
-      plugins:{ legend:{display:false}, tooltip:{
-        callbacks:{
-          title: (ctx)=> minutesToLabel(ctx[0].parsed.x) + ' 軌跡起算',
-          label: (ctx)=> '地速 ' + ftext(fmt('spd', smoothSpd[spdIdx[ctx.dataIndex]]), true)
-        }
-      }},
-      scales: Object.assign({}, commonScales, { y: { ticks:{ color:'#475569', font:{family:'JetBrains Mono', size:10} }, grid:{ color:'rgba(11,31,58,0.08)'} } }),
-      onClick: (evt, elements, chart) => seekFromChart(chart, evt)
-    },
-    plugins:[cursorPlugin]
+  const cv = ch.canvas;
+  cv.addEventListener('pointermove', e => {
+    if(CURSOR && CURSOR.locked) return;
+    const pos = Chart.helpers.getRelativePosition(e, ch), a = ch.chartArea;
+    if(pos.x < a.left || pos.x > a.right) return;
+    setCursor(ch.scales.x.getValueForPixel(pos.x) / xFactor());
   });
-  currentAltChart = altChart;
-  currentSpdChart = spdChart;
-
-  // rebuild chart data and Y axes in the current display units
-  chartApply = function(){
-    const sa = sys('alt'), ss = sys('spd');
-    const fl = sa === 'a' && optFL;
-    altChart.data.datasets[0].data = chartIdx.map(i => ({ x:(pts[i][0]-t0)/60, y: pts[i][3]*Q.alt[sa].f }));
-    spdChart.data.datasets[0].data = spdIdx.map(i => ({ x:(pts[i][0]-t0)/60, y: smoothSpd[i]*Q.spd[ss].f }));
-    const ay = altChart.options.scales.y;
-    ay.ticks.stepSize = sa === 'm' ? 1000 : 5000;
-    ay.ticks.callback = fl ? (v)=>'FL'+String(Math.max(0, Math.round(v/100))).padStart(3,'0') : (v)=>(v/1000)+'k';
-    ay.title.display = true; ay.title.color = '#475569';
-    ay.title.text = fl ? 'Flight Level' : Q.alt[sa].u;
-    const sy = spdChart.options.scales.y;
-    sy.title.display = true; sy.title.color = '#475569';
-    sy.title.text = Q.spd[ss].u;
-    altChart.update('none'); spdChart.update('none');
-  };
-  chartApply();
-  } catch(err){
-    console.error('[圖表] 建立失敗：', err);
-    showRenderWarning('剖面圖無法載入（' + (err && err.message ? err.message : err) + '）。');
-  }
-
-  /* ---------- playback engine ---------- */
-  let curIdx = 0;
-  let playMult = 300;
-  let lastFrameTime = null;
-  let simEpoch = t0;
-
-  const seekEl = document.getElementById('seek');
-  seekEl.max = String(totalSeconds);
-
-  function findIdxForEpoch(epoch){
-    let lo=0, hi=N-1;
-    if(epoch <= pts[0][0]) return 0;
-    if(epoch >= pts[N-1][0]) return N-1;
-    while(lo < hi){
-      const mid = (lo+hi)>>1;
-      if(pts[mid][0] < epoch) lo = mid+1; else hi = mid;
-    }
-    return lo;
-  }
-
-  function phaseFor(idx){
-    const alt = pts[idx][3];
-    if(alt < 50) return ['GROUND','phase-ground'];
-    const lookback = Math.max(0, idx-6);
-    const dtMin = (pts[idx][0] - pts[lookback][0]) / 60;
-    const vs = dtMin > 0 ? (pts[idx][3] - pts[lookback][3]) / dtMin : 0; // ft/min
-    if(vs > 300) return ['CLIMB','phase-climb'];
-    if(vs < -300) return ['DESCENT','phase-descent'];
-    if(alt < 20000) return ['LEVEL','phase-cruise'];
-    return ['CRUISE','phase-cruise'];
-  }
-
-  const DEG = Math.PI/180;
-  const mercY = (lat) => Math.log(Math.tan(Math.PI/4 + lat*DEG/2));
-  const invMercY = (y) => (2*Math.atan(Math.exp(y)) - Math.PI/2)/DEG;
-  const angDiff = (a, b) => ((b - a + 540) % 360) - 180;
-
-  // Position and heading ON the drawn polyline at a given time. Leaflet draws each segment straight in map
-  // (Web Mercator) space, so interpolate in that space. Across a signal gap the dashed segment's own direction is used.
-  function poseAt(epoch, idx){
-    if(idx <= 0) return [latlngs[0][0], latlngs[0][1], pts[0][5]];
-    const a = idx-1, b = idx;
-    const ta = pts[a][0], tb = pts[b][0];
-    const f = tb > ta ? Math.min(1, Math.max(0, (epoch - ta)/(tb - ta))) : 1;
-    const ya = mercY(latlngs[a][0]), yb = mercY(latlngs[b][0]);
-    const dLng = latlngs[b][1] - latlngs[a][1];
-    let hdg;
-    // (parked in a gap: almost no displacement, so the bearing of the segment is noise; use the reported heading)
-    const moved = Math.hypot(dLng*DEG, yb - ya); // radians in map space, 2e-4 is roughly 0.7 nm; a real in-air gap spans tens of nm
-    if(!FLIGHT.noTimeData && tb - ta > GAP_S && moved > 2e-4) hdg = (Math.atan2(dLng*DEG, yb - ya)/DEG + 360) % 360;
-    else hdg = (pts[a][5] + angDiff(pts[a][5], pts[b][5])*f + 360) % 360;
-    return [invMercY(ya + (yb-ya)*f), latlngs[a][1] + dLng*f, hdg];
-  }
-
-  // cached element refs, and "last shown" values so each frame only touches what actually changed
-  const R = {};
-  ['tTime','tAlt','tSpd','tHdg','tCoord','tVs','phaseTag','pbElapsed','routeLine'].forEach(id => { R[id] = document.getElementById(id); });
-  let uiIdx = -1, lastSecShown = -1, lastSeekVal = -1, lastFrac = -1;
-  const lastCursorPx = {};
-  function moveCursor(chart, key, minutes){
-    if(!chart) return;
-    chart.$cursorX = minutes;
-    const xs = chart.scales && chart.scales.x;
-    const px = xs ? Math.round(xs.getPixelForValue(minutes)) : null;
-    if(px !== null && px === lastCursorPx[key]) return; // cursor has not moved a whole pixel: skip the redraw
-    lastCursorPx[key] = px;
-    chart.draw(); // repaint only; the data and scales have not changed
-  }
-
-  function updateUI(epoch){
-    simEpoch = Math.min(Math.max(epoch, t0), t1);
-    curIdx = findIdxForEpoch(simEpoch);
-    const pose = poseAt(simEpoch, curIdx);
-
-    // text readouts only change when the nearest fix changes
-    if(curIdx !== uiIdx){
-      uiIdx = curIdx;
-      const p = pts[curIdx];
-      const prev = pts[Math.max(0,curIdx-6)];
-      const dt = p[0]-prev[0] || 1;
-      const vs = Math.round((p[3]-prev[3]) / (dt/60)); // ft/min
-
-      R.tTime.textContent = FLIGHT.noTimeData ? '--:--:--' : fmtTimeUTC(p[0]);
-      R.tAlt.innerHTML = fhtml(fmt('alt', p[3]));
-      R.tSpd.innerHTML = fhtml(fmt('spd', p[4]));
-      R.tHdg.textContent = p[5] + '°';
-      R.tCoord.textContent = p[1].toFixed(4) + ', ' + p[2].toFixed(4);
-      R.tVs.textContent = ftext(fmt('vs', vs, { sign:true }), true);
-
-      const [label, cls] = phaseFor(curIdx);
-      R.phaseTag.textContent = label;
-      R.phaseTag.className = 'phase-pill ' + cls;
-    }
-
-    // these follow the interpolated pose every frame
-    const hdgTxt = pose[2].toFixed(1);
-    if(needleGroup) needleGroup.setAttribute('transform', `rotate(${hdgTxt} 70 70)`);
-    if(planeMarker){
-      const ll = [pose[0], pose[1]];
-      planeMarker.setLatLng(ll); // keeps Leaflet's own state (zoom/pan) in sync, but it rounds to whole pixels
-      // At slow playback the plane moves less than 1px per frame, so rounding makes it step. Place it at the
-      // exact sub-pixel position instead (skipped during Leaflet's zoom animation, which positions markers itself).
-      const ic = planeMarker._icon;
-      if(ic && map && !map._animatingZoom){
-        const q = map.project(ll).subtract(map.getPixelOrigin());
-        ic.style.transform = `translate3d(${q.x.toFixed(2)}px,${q.y.toFixed(2)}px,0)`;
-      }
-    }
-    if(planeEl) planeEl.style.transform = `rotate(${hdgTxt}deg)`;
-
-    const seekVal = Math.round(simEpoch - t0);
-    if(seekVal !== lastSeekVal){ lastSeekVal = seekVal; seekEl.value = String(seekVal); }
-    const secShown = Math.floor(simEpoch - t0);
-    if(secShown !== lastSecShown){
-      lastSecShown = secShown;
-      R.pbElapsed.textContent = FLIGHT.noTimeData ? '--' : fmtHMS(simEpoch - t0);
-    }
-
-    const minutesElapsed = (simEpoch - t0)/60;
-    moveCursor(altChart, 'alt', minutesElapsed);
-    moveCursor(spdChart, 'spd', minutesElapsed);
-
-    const frac = Math.round((simEpoch - t0) / totalSeconds * 1000) / 10;
-    if(frac !== lastFrac){ lastFrac = frac; R.routeLine.style.setProperty('--plane-pos', frac + '%'); }
-  }
-
-  function seekToEpoch(epoch){ updateUI(epoch); }
-
-  function step(ts){
-    if(!currentPlaying) return;
-    if(lastFrameTime == null) lastFrameTime = ts;
-    const dtReal = Math.min(0.25, (ts - lastFrameTime)/1000); // a hidden tab pauses rAF; do not leap ahead on return
-    lastFrameTime = ts;
-    const newEpoch = simEpoch + dtReal*playMult;
-    if(newEpoch >= t1){
-      updateUI(t1);
-      currentPlaying = false;
-      document.getElementById('btnPlay').textContent = '▶';
-      return;
-    }
-    updateUI(newEpoch);
-    requestAnimationFrame(step);
-  }
-
-  document.getElementById('btnPlay').onclick = () => {
-    currentPlaying = !currentPlaying;
-    document.getElementById('btnPlay').textContent = currentPlaying ? '⏸' : '▶';
-    if(currentPlaying){
-      lastFrameTime = null;
-      requestAnimationFrame(step);
-    }
-  };
-  document.getElementById('btnStepFwd').onclick = () => {
-    curIdx = Math.min(N-1, curIdx+1);
-    updateUI(pts[curIdx][0]);
-  };
-  document.getElementById('btnStepBack').onclick = () => {
-    curIdx = Math.max(0, curIdx-1);
-    updateUI(pts[curIdx][0]);
-  };
-  seekEl.oninput = (e) => {
-    currentPlaying = false;
-    document.getElementById('btnPlay').textContent = '▶';
-    updateUI(t0 + Number(e.target.value));
-  };
-  document.querySelectorAll('.speed-btn').forEach(btn=>{
-    btn.onclick = () => {
-      document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      playMult = Number(btn.dataset.mult);
-      document.getElementById('pbSpeedLabel').textContent = playMult + '×';
-    };
-  });
-  document.getElementById('pbSpeedLabel').textContent = playMult + '×';
-
-  updateUI(t0);
-
-  currentRecolor = function(){
-    if(trackRedraw) trackRedraw();
-    renderLegend();
-  };
-
-  currentRefresh = function(){
-    renderStats();
-    if(chartApply) chartApply();
-    uiIdx = -1; lastCursorPx.alt = lastCursorPx.spd = undefined;
-    updateUI(simEpoch);
+  cv.addEventListener('pointerleave', () => { if(CURSOR && !CURSOR.locked) clearCursor(); });
+  cv.addEventListener('click', () => { if(CURSOR){ CURSOR.locked = !CURSOR.locked; renderCursor(); } });
+  cv.style.cursor = 'crosshair';
+  return ch;
+}
+function mkDataset(T, data, gaps, isBase){
+  const col = colorOf(T);
+  return {
+    label: T.label, data, borderColor: col, backgroundColor: col, borderWidth: isBase ? 3 : 1.8, pointRadius: 0, tension: 0, spanGaps: true,
+    order: isBase ? 2 : 1,
+    segment: { borderDash: c => gaps[c.p0DataIndex] ? [6, 4] : undefined, borderColor: c => gaps[c.p0DataIndex] ? col + '99' : col }
   };
 }
+function xAxisTitle(){ return UI.xmode === 'dist' ? `離地後航跡距離（${U().dist.u}）` : UI.xmode === 'time' ? '離地後時間（h:mm）' : '完成百分比（%）'; }
+function xTickCb(){ return UI.xmode === 'time' ? v => fmtHM(v) : UI.xmode === 'prog' ? v => v + '%' : v => nf0.format(v); }
+function updateCharts(){
+  const tr = visibleTracks(), B = baselineTrack(), u = U(), m = UI.xmode, xf = xFactor();
+  const mk = (valOf, f) => tr.map(T => {
+    const W = T.W, data = new Array(W.n), gaps = new Array(W.n);
+    for(let k = 0; k < W.n; k++){ const v = valOf(W, k); data[k] = {x: (m === 'time' ? W.X.time[k] : m === 'dist' ? W.X.dist[k] : W.X.prog[k]) * xf, y: v == null ? null : v * f}; gaps[k] = W.dt[k] > UI.thr; }
+    return mkDataset(T, data, gaps, T.id === B.id);
+  });
+  const apply = (ch, sets, ytitle, ytick, ymin) => {
+    ch.data.datasets = sets;
+    const o = ch.options.scales;
+    o.x.title.text = xAxisTitle(); o.x.ticks.callback = xTickCb();
+    o.x.min = 0; o.x.max = undefined; o.x.bounds = 'data';
+    o.y.title.text = ytitle; o.y.ticks.callback = ytick; o.y.min = ymin;
+    ch.update('none');
+  };
+  apply(charts.alt, mk((W, k) => W.alt[k], u.alt.f), `高度（${u.alt.u}）`, v => (v/1000) + 'k', 0);
+  apply(charts.spd, mk((W, k) => W.spd[k], u.spd.f), `地速（${u.spd.u}）`, v => nf0.format(v));
+
+  // delta chart: how far ahead(+) / behind(−) the baseline at the same x
+  const others = tr.filter(T => T.id !== B.id);
+  const sets = [];
+  others.forEach(T => {
+    const s = deltaSeries(T, B, m); if(!s || !s.length) return;
+    const f = m === 'time' ? u.dist.f : 1;
+    sets.push(mkDataset(T, s.map(p => ({x: p.x * xf, y: p.y * f})), s.map(p => p.gap), false));
+  });
+  const unit = m === 'time' ? u.dist.u : '分鐘';
+  $('dltTitle').textContent = '相對基準的差距';
+  $('dltSub').textContent = m === 'time' ? '同一時刻領先(+)/落後(−)的距離' : '同一位置領先(+)/落後(−)的時間';
+  $('dltFoot').textContent = (m === 'time' ? '在離地後同一時刻，比基準多飛（領先）或少飛（落後）的距離。' : '在同一位置，比基準早到（領先）或晚到（落後）的時間。') + '虛線 = 其中一方在該處是缺口內插，數值僅供參考。';
+  apply(charts.dlt, sets, `領先 + / 落後 −（${unit}）`, v => nf0.format(v));
+  const dy = charts.dlt.options.scales.y;
+  dy.grid = {color: c => c.tick && c.tick.value === 0 ? 'rgba(11,31,58,0.55)' : GRID, lineWidth: c => c.tick && c.tick.value === 0 ? 1.5 : 1};
+  charts.dlt.update('none');
+  const empty = sets.length === 0;
+  $('dltEmpty').classList.toggle('hidden', !empty);
+  $('dltEmpty').textContent = tr.length < 2 ? '再加入或顯示至少 1 趟同航班，就會顯示相對基準（' + B.label + '）的差距' : '這幾趟在選定的 X 軸上沒有重疊範圍';
+}
+
+/* ---------- map ---------- */
+function initMap(){
+  map = L.map('map', {zoomControl:true, preferCanvas:true, worldCopyJump:false}).setView([20, 0], 2);
+  const attr = '© Esri, HERE, Garmin, © OpenStreetMap contributors';
+  const esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
+  tileBase = L.layerGroup([
+    L.tileLayer(esri + 'World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {maxZoom:12, attribution:attr}),
+    L.tileLayer(esri + 'World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {maxZoom:12})
+  ]).addTo(map);
+  let failed = 0, swapped = false;
+  tileBase.getLayers()[0].on('tileerror', () => {
+    failed++;
+    if(failed > 6 && !swapped){
+      swapped = true; map.removeLayer(tileBase);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap contributors'}).addTo(map);
+      toast('主要底圖無法載入，已改用 OpenStreetMap 底圖', 'warn');
+    }
+  });
+  trackLayer = L.layerGroup().addTo(map); gcLayer = L.layerGroup().addTo(map);
+}
+function drawMap(fit){
+  if(!map) initMap();
+  trackLayer.clearLayers(); gcLayer.clearLayers(); mapLayers = {};
+  const tr = visibleTracks(), B = baselineTrack();
+  const all = [];
+  const order = tr.slice().sort((a, b) => (a.id === B.id ? -1 : 0) - (b.id === B.id ? -1 : 0));
+  order.forEach(T => {
+    const W = T.W, col = colorOf(T), isB = T.id === B.id; mapLayers[T.id] = [];
+    let k = 0;
+    while(k < W.n - 1){
+      const gap = W.dt[k] > UI.thr; let j = k; const ll = [[W.lat[k], W.lon[k]]];
+      while(j < W.n - 1 && (W.dt[j] > UI.thr) === gap){ j++; ll.push([W.lat[j], W.lon[j]]); }
+      const base = {color:col, weight: gap ? 2 : (isB ? 4 : 2.8), opacity: gap ? 0.85 : 0.95, dashArray: gap ? '2 7' : null, lineCap: gap ? 'round' : 'butt', interactive:false};
+      const pl = L.polyline(ll, base).addTo(trackLayer);
+      mapLayers[T.id].push({pl, base}); all.push(...ll);
+      k = j;
+    }
+  });
+  const BW = B.W;
+  if(UI.showGC){
+    L.polyline(greatCircle(BW.lat[0], BW.lon[0], BW.lat[BW.n-1], BW.lon[BW.n-1]), {color:'#94A3B8', weight:1.5, dashArray:'1 6', lineCap:'round', interactive:false}).addTo(gcLayer);
+  }
+  const dot = (ll, txt) => L.circleMarker(ll, {radius:5, color:'#fff', weight:2, fillColor:'#0B1F3A', fillOpacity:1}).bindTooltip(txt, {permanent:true, direction:'top', offset:[0, -6]}).addTo(gcLayer);
+  dot([BW.lat[0], BW.lon[0]], esc(curGroup().origin || '離地'));
+  dot([BW.lat[BW.n-1], BW.lon[BW.n-1]], esc(curGroup().dest || '落地'));
+  if(fit && all.length) map.fitBounds(L.latLngBounds(all), {padding:[30, 30]});
+  setTimeout(() => map.invalidateSize(), 0);
+  applyHighlight();
+}
+function applyHighlight(){
+  Object.keys(mapLayers).forEach(id => mapLayers[id].forEach(({pl, base}) => {
+    if(UI.hl == null) pl.setStyle({weight:base.weight, opacity:base.opacity});
+    else if(UI.hl === id) pl.setStyle({weight:base.weight + 2, opacity:1});
+    else pl.setStyle({weight:base.weight, opacity:0.18});
+  }));
+  document.querySelectorAll('.frow').forEach(r => r.classList.toggle('hl', r.dataset.id === UI.hl));
+}
+
+/* ---------- cursor (shared across charts, map and list) ---------- */
+let curRaf = 0;
+function setCursor(x){
+  CURSOR = {x, locked: CURSOR ? CURSOR.locked : false};
+  if(!curRaf) curRaf = requestAnimationFrame(() => { curRaf = 0; renderCursor(); });
+}
+function clearCursor(){ CURSOR = null; renderCursor(); }
+function renderCursor(){
+  const tr = visibleTracks(), B = baselineTrack();
+  const keep = new Set();
+  tr.forEach(T => {
+    const st = CURSOR ? stateAt(T, UI.xmode, CURSOR.x) : null;
+    const sub = document.querySelector(`[data-sub="${CSS.escape(T.id)}"]`);
+    if(sub) sub.innerHTML = CURSOR ? cursorSub(T, st, B) : defaultSub(T);
+    if(st && map){
+      keep.add(T.id);
+      let mk = cursorMarkers[T.id];
+      if(!mk){ mk = cursorMarkers[T.id] = L.circleMarker([st.lat, st.lon], {radius:7, color:'#fff', weight:2.5, fillColor:colorOf(T), fillOpacity:1, interactive:false}); }
+      mk.setLatLng([st.lat, st.lon]); if(!map.hasLayer(mk)) mk.addTo(map);
+    }
+  });
+  Object.keys(cursorMarkers).forEach(id => { if(!keep.has(id) && map && map.hasLayer(cursorMarkers[id])) map.removeLayer(cursorMarkers[id]); });
+  Object.values(charts).forEach(c => c.draw());
+}
+function resetCursorMarkers(){ Object.values(cursorMarkers).forEach(m => { if(map && map.hasLayer(m)) map.removeLayer(m); }); cursorMarkers = {}; }
+
+/* ---------- master refresh ---------- */
+function refreshAll(opts){
+  opts = opts || {};
+  const has = LIB.size > 0;
+  $('dropzoneWrap').classList.toggle('hidden', has);
+  $('dashboard').classList.toggle('hidden', !has);
+  if(!has) return;
+  const g = curGroup(); baselineTrack();
+  g.tracks.forEach(T => { T.S = computeStats(T, UI.thr); });
+  if(!charts.alt){ charts.alt = makeChart('chAlt'); charts.spd = makeChart('chSpd'); charts.dlt = makeChart('chDlt'); }
+  CURSOR = opts.keepCursor ? CURSOR : null; resetCursorMarkers();
+  renderStrip(); renderToolbar(); renderList(); renderTable(); renderCoverage(); updateCharts(); drawMap(opts.fit);
+  renderCursor();
+  persistUI();
+}
+
+
+/* =========================================================================
+   FLIGHT COMPARE — files + events + boot
+   ========================================================================= */
+function metaFromRaw(raw, fileName){
+  return {
+    code: raw.flight_iata || fileBase(fileName), icao: raw.flight_icao || '', airline: raw.airline || '',
+    origin: raw.origin || null, dest: raw.dest || null,
+    std: raw.std, atd: raw.atd, sta: raw.sta, eta: raw.eta,
+    type: raw.aircraft_type || '', acName: raw.aircraft_name || '', reg: raw.registration || ''
+  };
+}
+async function addKML(file){
+  const raw = parseKML(await file.text());
+  if(raw.noTimeData) throw new Error('這份 KML 沒有時間資訊，無法對齊比較。');
+  const meta = metaFromRaw(raw, file.name);
+  const id = `${meta.code}_${raw.points[0][0]}_${raw.points.length}`;
+  if(LIB.has(id)){ toast(`已存在：${file.name}（略過重複）`, 'warn'); return LIB.get(id); }
+  const rec = {id, name:file.name, meta, pts:raw.points, vis:true, ci:nextColorIndex(groupKeyOf(meta)), added:Date.now()};
+  const T = buildTrack(rec);
+  LIB.set(id, T); await DB.put(toRec(T));
+  toast(`已加入 ${meta.code}　${T.label}　空中 ${fmtHM(T.airSec/60)}${T.hasTO ? '' : '（起點非離地，對齊可能不準）'}`);
+  return T;
+}
+async function importJSON(file){
+  const j = JSON.parse(await file.text());
+  if(!j || j.format !== 'flight-compare-v1' || !Array.isArray(j.tracks)) throw new Error('不是本工具匯出的 JSON 檔');
+  let added = 0, skipped = 0, last = null;
+  for(const r of j.tracks){
+    if(LIB.has(r.id)){ skipped++; continue; }
+    const rec = {id:r.id, name:r.name, meta:r.meta, pts:r.pts, vis:r.vis !== false, ci:nextColorIndex(groupKeyOf(r.meta)), added:r.added || Date.now()};
+    try{ const T = buildTrack(rec); LIB.set(T.id, T); await DB.put(toRec(T)); added++; last = T; }catch(e){ skipped++; }
+  }
+  toast(`匯入完成：新增 ${added} 趟${skipped ? `，略過 ${skipped} 趟（重複或無法解析）` : ''}`);
+  return last;
+}
+async function handleFiles(files){
+  let last = null;
+  for(const f of files){
+    try{
+      const T = /\.json$/i.test(f.name) ? await importJSON(f) : await addKML(f);
+      if(T) last = T;
+    }catch(e){ toast(`${f.name}：${e.message || e}`, 'err'); }
+  }
+  if(last){ UI.group = last.gkey; refreshAll({fit:true}); }
+  else refreshAll({});
+}
+function exportJSON(){
+  const g = curGroup(); if(!g) return;
+  const payload = {format:'flight-compare-v1', exported:new Date().toISOString(), tracks:g.tracks.map(toRec)};
+  const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `flight-compare_${(g.code || 'flights').replace(/[^\w-]/g, '')}_${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toast(`已匯出 ${g.tracks.length} 趟（${g.code}）`);
+}
+
+/* ---------- events ---------- */
+function pickFiles(){ $('fileInput').click(); }
+$('btnPick').addEventListener('click', e => { e.stopPropagation(); pickFiles(); });
+$('dropzone').addEventListener('click', pickFiles);
+$('dropzone').addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pickFiles(); } });
+$('btnAdd').addEventListener('click', pickFiles);
+$('fileInput').addEventListener('change', e => { const fs = [...e.target.files]; e.target.value = ''; if(fs.length) handleFiles(fs); });
+
+let dragDepth = 0;
+const hasFiles = e => e.dataTransfer && [...(e.dataTransfer.types || [])].includes('Files');
+window.addEventListener('dragenter', e => { if(!hasFiles(e)) return; e.preventDefault(); dragDepth++; $('dropOverlay').classList.remove('hidden'); });
+window.addEventListener('dragover', e => { if(hasFiles(e)) e.preventDefault(); });
+window.addEventListener('dragleave', e => { if(!hasFiles(e)) return; dragDepth = Math.max(0, dragDepth - 1); if(!dragDepth) $('dropOverlay').classList.add('hidden'); });
+window.addEventListener('drop', e => { if(!hasFiles(e)) return; e.preventDefault(); dragDepth = 0; $('dropOverlay').classList.add('hidden'); handleFiles([...e.dataTransfer.files]); });
+
+$('selGroup').addEventListener('change', e => { UI.group = e.target.value; refreshAll({fit:true}); });
+document.querySelectorAll('#unitSeg button').forEach(b => b.addEventListener('click', () => { UI.units = b.dataset.v; refreshAll({keepCursor:true}); }));
+document.querySelectorAll('#xSeg button').forEach(b => b.addEventListener('click', () => { UI.xmode = b.dataset.v; refreshAll({}); }));
+$('selThr').addEventListener('change', e => { UI.thr = +e.target.value; refreshAll({keepCursor:true}); });
+$('tglGC').addEventListener('click', () => { UI.showGC = !UI.showGC; refreshAll({keepCursor:true}); });
+$('btnFit').addEventListener('click', () => drawMap(true));
+$('btnExport').addEventListener('click', exportJSON);
+$('btnClearGroup').addEventListener('click', async () => {
+  const g = curGroup(); if(!g) return;
+  if(!confirm(`移除「${g.code} ${g.origin}→${g.dest}」群組內全部 ${g.tracks.length} 趟航班？\n（建議先匯出 JSON 備份）`)) return;
+  for(const T of g.tracks){ LIB.delete(T.id); await DB.del(T.id); }
+  delete UI.baseline[g.key]; UI.group = null; refreshAll({fit:true});
+});
+
+$('flightList').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-act]'); if(!btn) return;
+  const row = btn.closest('.frow'), T = LIB.get(row.dataset.id); if(!T) return;
+  const act = btn.dataset.act;
+  if(act === 'base'){ UI.baseline[T.gkey] = T.id; T.vis = true; await DB.put(toRec(T)); refreshAll({}); }
+  else if(act === 'del'){
+    LIB.delete(T.id); await DB.del(T.id);
+    if(UI.baseline[T.gkey] === T.id) delete UI.baseline[T.gkey];
+    refreshAll({fit:true});
+  }
+});
+$('flightList').addEventListener('change', async e => {
+  if(e.target.dataset.act !== 'vis') return;
+  const T = LIB.get(e.target.closest('.frow').dataset.id); if(!T) return;
+  T.vis = e.target.checked; await DB.put(toRec(T)); refreshAll({fit:true});
+});
+$('flightList').addEventListener('mouseover', e => { const r = e.target.closest('.frow'); const id = r ? r.dataset.id : null; if(id !== UI.hl){ UI.hl = id; applyHighlight(); } });
+$('flightList').addEventListener('mouseleave', () => { UI.hl = null; applyHighlight(); });
+$('cmpTable').addEventListener('click', e => {
+  const th = e.target.closest('th[data-k]'); if(!th) return;
+  const k = th.dataset.k, key = k === 'to' ? 'tTO' : k;
+  if(UI.sortKey === key) UI.sortDir = -UI.sortDir; else { UI.sortKey = key; UI.sortDir = 1; }
+  renderTable(); persistUI();
+});
+$('cmpTable').addEventListener('mouseover', e => { const r = e.target.closest('tbody tr'); const id = r ? r.dataset.id : null; if(id !== UI.hl){ UI.hl = id; applyHighlight(); } });
+$('cmpTable').addEventListener('mouseleave', () => { UI.hl = null; applyHighlight(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && CURSOR){ CURSOR.locked = false; clearCursor(); } });
+window.addEventListener('resize', () => { if(map) map.invalidateSize(); });
+
+/* ---------- boot ---------- */
+(async function boot(){
+  await DB.open();
+  const ui = await DB.kvGet('ui');
+  if(ui) Object.assign(UI, {units:ui.units || 'aviation', xmode:ui.xmode || 'dist', thr:ui.thr || 300, showGC:ui.showGC !== false, group:ui.group || null, baseline:ui.baseline || {}, sortKey:ui.sortKey || 'tTO', sortDir:ui.sortDir || 1});
+  const recs = await DB.all();
+  recs.forEach(r => { try{ const T = buildTrack(r); LIB.set(T.id, T); }catch(e){ console.warn('skip', r && r.id, e); } });
+  refreshAll({fit:true});
+})();
+
 </script>
 </body>
 </html>
