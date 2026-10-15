@@ -207,7 +207,7 @@
   .list-empty{ padding:16px; color:var(--text-faint); font-size:12px; }
 
   .map-panel #map{ flex:1; min-height:0; height:auto; }
-  .legend{ left:12px; right:auto; bottom:28px; display:flex; flex-direction:column; gap:5px; font-size:11px; }
+  .legend{ left:12px; right:auto; bottom:76px; display:flex; flex-direction:column; gap:5px; font-size:11px; }
   .legend .li{ display:flex; align-items:center; gap:8px; }
   .legend svg{ width:34px; height:6px; flex:none; }
 
@@ -287,6 +287,55 @@
   @media (max-width:560px){ .app{ padding:10px 10px 24px; } }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
 
+  /* race playback */
+  .race{ display:flex; align-items:center; gap:10px; padding:9px 12px; border-top:1px solid var(--border); background:#FAFBFC; flex:none; flex-wrap:wrap; }
+  .race.on{ background:#F1F8F7; border-top-color:#A8D9D4; }
+  .pb-btn{ width:34px; height:34px; border-radius:6px; border:1px solid var(--border-strong); background:var(--panel); color:var(--navy); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; flex:none; transition:background .12s, transform .1s; }
+  .pb-btn:hover{ background:#EEF2F6; }
+  .pb-btn:active{ transform:scale(0.95); }
+  .pb-btn.play{ background:var(--teal); border-color:var(--teal); color:#fff; }
+  .pb-btn.play:hover{ background:#0B5F58; }
+  #pbSeek{ flex:1; min-width:120px; -webkit-appearance:none; appearance:none; height:5px; border-radius:3px; background:#D5DCE6; outline:none; cursor:pointer; }
+  #pbSeek::-webkit-slider-thumb{ -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--teal); border:2px solid #fff; box-shadow:0 0 0 1px var(--teal), 0 1px 3px rgba(11,31,58,0.3); cursor:pointer; }
+  #pbSeek::-moz-range-thumb{ width:12px; height:12px; border-radius:50%; background:var(--teal); border:2px solid #fff; box-shadow:0 0 0 1px var(--teal); cursor:pointer; }
+  #pbSeek:focus-visible{ outline:2px solid var(--teal); outline-offset:3px; }
+  .pb-time{ font-family:var(--mono); font-size:12.5px; color:var(--text-dim); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .pb-time b{ color:var(--navy); font-weight:700; }
+  .pb-time small{ font-family:var(--sans); font-size:10.5px; color:var(--text-faint); margin-left:6px; }
+  .pb-speed{ display:inline-flex; border:1px solid var(--border-strong); border-radius:6px; overflow:hidden; background:var(--panel); }
+  .pb-speed button{ font-size:11.5px; font-weight:500; padding:5px 9px; border:none; background:transparent; color:var(--text-dim); cursor:pointer; font-variant-numeric:tabular-nums; }
+  .pb-speed button + button{ border-left:1px solid var(--border); }
+  .pb-speed button:hover{ background:#EEF2F6; color:var(--navy); }
+  .pb-speed button.active{ background:var(--navy); color:#fff; font-weight:600; }
+  .mini:disabled{ opacity:0.45; cursor:not-allowed; }
+  .leaflet-tooltip.rm-tip{ font-family:var(--mono); font-size:11px; font-weight:700; color:var(--navy); padding:1px 6px; border:1px solid var(--border-strong); box-shadow:0 1px 3px rgba(11,31,58,0.18); }
+  .charts-grid > .panel.wide{ grid-column:1 / -1; }
+
+  /* gates + cruise events */
+  .ptools{ display:flex; align-items:center; gap:8px; }
+  table.cmp.gate, table.cmp.evt{ min-width:0; }
+  table.cmp.gate td{ vertical-align:top; }
+  table.cmp.gate td b{ display:block; font-size:13px; }
+  table.cmp.gate td small{ display:block; font-size:10.5px; color:var(--text-faint); font-weight:400; font-family:var(--mono); }
+  table.cmp.gate td small.dl{ color:var(--text-dim); font-family:var(--sans); font-size:11px; }
+  table.cmp.gate td:first-child b{ font-size:13px; }
+  table.cmp.gate td.hot{ background:var(--amber-soft); color:var(--amber); font-weight:700; }
+  table.cmp.gate tr:hover td.hot{ background:var(--amber-soft); }
+  table.cmp.evt th, table.cmp.evt td{ text-align:left; white-space:normal; vertical-align:top; }
+  table.cmp.evt td{ font-family:var(--sans); font-size:12.5px; }
+  table.cmp.evt td.mono{ font-family:var(--mono); font-weight:600; }
+  table.cmp.evt td small.dl{ display:block; color:var(--text-dim); font-size:11px; }
+  .evrow{ display:flex; align-items:center; gap:8px; padding:2px 0; flex-wrap:wrap; }
+  .evrow b{ font-family:var(--mono); font-size:12px; font-weight:600; }
+  .evrow small{ color:var(--text-faint); font-family:var(--mono); font-size:11px; }
+  .evs{ display:inline-flex; width:16px; height:16px; align-items:center; justify-content:center; background:var(--c); color:#fff; border-radius:3px; font-size:9px; flex:none; }
+  .ev{ width:16px; height:16px; display:flex; align-items:center; justify-content:center; font-size:9px; line-height:1; color:#fff; background:var(--c); border:2px solid #fff; border-radius:3px; box-shadow:0 0 0 1px rgba(11,31,58,0.45); }
+  .ev.unc{ background:#fff; color:var(--c); border:2px solid var(--c); box-shadow:none; }
+  .ev.pt{ width:11px; height:11px; border-radius:2px; transform:rotate(45deg); margin:2px 0 0 2px; }
+  .leaflet-tooltip.gate-tip{ background:transparent; border:none; box-shadow:none; color:#475569; font-family:var(--mono); font-size:10.5px; font-weight:600; padding:0 2px; }
+  .leaflet-tooltip.gate-tip::before{ display:none; }
+  @media (max-width:980px){ .ptools{ flex-wrap:wrap; } }
+
 </style>
 </head>
 <body>
@@ -341,6 +390,7 @@
         <select class="sel" id="selThr" aria-label="缺口門檻"><option value="180">3 分鐘</option><option value="300">5 分鐘</option><option value="600">10 分鐘</option></select>
       </div>
       <button class="tgl" id="tglGC" title="以基準航班離地點到落地點畫大圓航線">大圓參考線</button>
+      <button class="tgl" id="tglEv" title="在地圖與高度圖標示階梯爬升、爬升頂（TOC）、下降起點（TOD）">巡航事件</button>
       <button class="tgl push" id="btnFit">適合視野</button>
     </div>
 
@@ -361,6 +411,14 @@
           <div class="li"><svg viewBox="0 0 34 6"><line x1="0" y1="3" x2="34" y2="3" stroke="#475569" stroke-width="2" stroke-dasharray="4 4"/></svg>缺口（直線內插）</div>
           <div class="li" id="legGC"><svg viewBox="0 0 34 6"><line x1="0" y1="3" x2="34" y2="3" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="1 4" stroke-linecap="round"/></svg>大圓航線</div>
         </div>
+        <div class="race" id="raceBar" role="group" aria-label="競速回放">
+          <button class="pb-btn" id="pbReset" type="button" title="回到離地時刻" aria-label="回到離地">⏮</button>
+          <button class="pb-btn play" id="pbPlay" type="button" aria-label="播放">▶</button>
+          <input type="range" id="pbSeek" min="0" max="1000" value="0" aria-label="競速時間">
+          <div class="pb-time"><b id="pbT">+0:00</b><span> / </span><span id="pbMax">--</span><small>離地後</small></div>
+          <div class="pb-speed" id="pbSpeed" aria-label="播放速度"><button data-s="120" type="button">120×</button><button data-s="600" type="button" class="active">600×</button><button data-s="1800" type="button">1800×</button><button data-s="3600" type="button">3600×</button></div>
+          <button class="mini" id="pbExit" type="button" disabled>結束競速</button>
+        </div>
       </section>
     </div>
 
@@ -368,6 +426,24 @@
       <div class="panel-title"><b>航班比較表</b><span class="hint-s">點欄位標題排序 ・ 綠色粗體 = 該欄最小值 ・ 小字 = 與基準航班的差</span></div>
       <div class="table-wrap"><table class="cmp" id="cmpTable"></table></div>
       <div class="tnote">距離與平均地速以實測點的連線計算；缺口以直線連接，資料覆蓋率低的航班，距離偏短（⚠ = 下限估計）。巡航層、巡航地速只用實測區段計算。</div>
+    </section>
+
+    <section class="panel gate-panel">
+      <div class="panel-title"><b>穿越點比較（固定緯度／經度）</b>
+        <div class="ptools">
+          <div class="seg" id="gateSeg"><button data-v="auto" type="button">自動</button><button data-v="lat" type="button">緯度線</button><button data-v="lon" type="button">經度線</button></div>
+          <select class="sel" id="gateStep" aria-label="穿越線間隔"><option value="0">間隔：自動</option><option value="5">每 5°</option><option value="10">每 10°</option><option value="15">每 15°</option><option value="20">每 20°</option></select>
+          <button class="tgl" id="gateMapBtn" type="button">地圖顯示</button>
+        </div>
+      </div>
+      <div class="table-wrap"><table class="cmp gate" id="gateTable"></table></div>
+      <div class="tnote" id="gateNote"></div>
+    </section>
+
+    <section class="panel evt-panel">
+      <div class="panel-title"><b>巡航剖面事件（爬升頂 ・ 階梯爬升 ・ 下降起點）</b><span class="hint-s">▲▼ 實心 = 實測 ・ 空心 = 發生在資料缺口內，只知道區間</span></div>
+      <div class="table-wrap"><table class="cmp evt" id="evtTable"></table></div>
+      <div class="tnote">巡航平台 = 至少 2 個實測點、高度差在 ±250 ft 內、持續 ≥ 8 分鐘；相鄰兩個平台相差 ≥ 800 ft 才算一次高度變更。起飛爬升與最後下降不算在內。</div>
     </section>
 
     <div class="charts-grid">
@@ -387,6 +463,11 @@
         <div class="chart-foot" id="dltFoot"></div>
       </section>
       <section class="panel chart-panel">
+        <div class="panel-title"><b>橫向偏離（相對基準航跡）</b><span class="hint-s">右(+) / 左(−) ・ 零線 = 基準航跡</span></div>
+        <div class="chart-box"><canvas id="chXt"></canvas><div class="chart-empty hidden" id="xtEmpty"></div></div>
+        <div class="chart-foot">每個實測點到基準航跡的垂直距離（球面計算）。基準在缺口處是直線內插，這些位置的偏離僅供參考，以虛線標示。超出基準起訖範圍的位置（例如基準已落地而該航班還在飛）沒有定義，不繪製也不納入統計。</div>
+      </section>
+      <section class="panel chart-panel wide">
         <div class="panel-title"><b>資料覆蓋</b><span class="hint-s">各航班離地→落地，依時間 0–100%</span></div>
         <div class="cov" id="covBody"></div>
         <div class="cov-axis"><span>離地</span><span>落地</span></div>
@@ -464,7 +545,7 @@ const fileBase = n => String(n || '').replace(/\.[^.]+$/, '');
 
 /* ---------- state ---------- */
 const LIB = new Map();            // id -> Track (record + derived arrays)
-const UI = { units:'aviation', xmode:'dist', thr:300, showGC:true, group:null, baseline:{}, sortKey:'tTO', sortDir:1, hl:null };
+const UI = { units:'aviation', xmode:'dist', thr:300, showGC:true, group:null, baseline:{}, sortKey:'tTO', sortDir:1, hl:null, gateMode:'auto', gateStep:0, gateMap:true, events:true };
 let CURSOR = null;                // {x (internal units of UI.xmode), locked}
 const U = () => UNITS[UI.units];
 const xFactor = () => UI.xmode === 'dist' ? U().dist.f : 1;
@@ -724,7 +805,7 @@ const DB = (function(){
 })();
 const toRec = T => ({id:T.id, name:T.name, meta:T.meta, pts:T.pts, vis:T.vis !== false, ci:T.ci, added:T.added});
 function persistUI(){
-  DB.kvSet('ui', {units:UI.units, xmode:UI.xmode, thr:UI.thr, showGC:UI.showGC, group:UI.group, baseline:UI.baseline, sortKey:UI.sortKey, sortDir:UI.sortDir});
+  DB.kvSet('ui', {units:UI.units, xmode:UI.xmode, thr:UI.thr, showGC:UI.showGC, group:UI.group, baseline:UI.baseline, sortKey:UI.sortKey, sortDir:UI.sortDir, gateMode:UI.gateMode, gateStep:UI.gateStep, gateMap:UI.gateMap, events:UI.events});
 }
 
 /* ---------- toasts ---------- */
@@ -1000,6 +1081,8 @@ function cursorSub(T, st, B){
       const unit = mode === 'time' ? u.dist.u : '分';
       const txt = mode === 'time' ? nf0.format(Math.abs(dv)) : fmtHM(Math.abs(dv));
       s += `<br>相對基準 <span class="${dv >= 0 ? 'd-pos' : 'd-neg'}">${dv >= 0 ? '領先' : '落後'} ${mode === 'time' ? txt + ' ' + unit : txt}</span>`;
+      const xk = xtkPoint(B, st.lat, st.lon), refGap = B.W.dt[xk.seg] > UI.thr;
+      s += xk.beyond ? ' ・ <span class="q q-mid">超出基準範圍</span>' : ` ・ 偏${sideTxt(xk.x)} <span class="v">${nf0.format(Math.abs(xk.x)*u.dist.f)}</span> ${u.dist.u}${refGap ? ' <span class="q q-mid">基準內插</span>' : ''}`;
     }
   }
   return s;
@@ -1030,8 +1113,10 @@ const COLS = [
   {k:'dist',  t:'航跡距離',    s:'dist',                 get:T => T.S.distAir},
   {k:'gc',    t:'大圓距離',    s:'dist',                 get:T => T.S.gc},
   {k:'extra', t:'多出距離',    s:'相對大圓',             get:T => T.S.extra},
+  {k:'xt',    t:'最大橫向偏離',s:'相對基準 dist',        get:T => T.S.xt ? Math.abs(T.S.xt.max) : null},
   {k:'maxAlt',t:'最高高度',    s:'alt',                  get:T => T.S.maxAlt},
   {k:'lvl',   t:'主要巡航層',  s:'實測',                 get:T => T.S.mainLevel},
+  {k:'steps', t:'階梯爬升',    s:'巡航中高度變更',      get:T => T.S.ev ? T.S.ev.nUp : null},
   {k:'avg',   t:'平均地速',    s:'空中全程',             get:T => T.S.avgGS},
   {k:'cr',    t:'巡航地速',    s:'實測',                 get:T => T.S.cruiseGS},
   {k:'eta',   t:'ETA−STA',     s:'分',                   get:T => T.S.etaDelta},
@@ -1053,7 +1138,7 @@ function renderTable(){
   const sgn = (v, f) => (v >= 0 ? '+' : '−') + f(Math.abs(v));
   const dMin = (T, k) => T.id === B.id ? '<small class="dl">基準</small>' : `<small class="dl">${sgn((T.S[k] - B.S[k]) / 60, fmtHM).replace('+−','−')}</small>`;
   const head = '<thead><tr>' + COLS.map(c => {
-    const sub = c.s === 'dist' ? u.dist.u : c.s === 'alt' ? u.alt.u : c.s;
+    const sub = c.s === 'dist' ? u.dist.u : c.s === 'alt' ? u.alt.u : c.s.replace('dist', u.dist.u);
     const aria = c.k === UI.sortKey ? (UI.sortDir > 0 ? 'ascending' : 'descending') : 'none';
     return `<th data-k="${c.k}" aria-sort="${aria}" scope="col">${c.t}<small>${esc(sub)}</small></th>`;
   }).join('') + '</tr></thead>';
@@ -1072,8 +1157,10 @@ function renderTable(){
       <td${pctCls(S.distAir, best.dist)}>${nf0.format(S.distAir*u.dist.f)}${lowWarn}<small class="dl">${isB ? '基準' : sgn((S.distAir - B.S.distAir)*u.dist.f, nf0.format)}</small></td>
       <td>${nf0.format(S.gc*u.dist.f)}</td>
       ${S.extra != null ? `<td${pctCls(S.extra, best.extra)}>${S.extra >= 0 ? '+' : '−'}${nf1.format(Math.abs(S.extra)*100)}%${lowWarn}</td>` : na}
+      ${S.xt ? `<td>${sideTxt(S.xt.max)} ${nf0.format(Math.abs(S.xt.max)*u.dist.f)}${S.xt.maxRef ? '<span class="warn" title="這個最大值出現在基準航跡的缺口（內插）附近，僅供參考">⚠</span>' : ''}${S.xt.maxRef && S.xt.rel != null ? `<small class="dl">可靠區間 ${sideTxt(S.xt.rel)} ${nf0.format(Math.abs(S.xt.rel)*u.dist.f)}</small>` : ''}</td>` : (isB ? '<td class="na">基準</td>' : na)}
       <td>${nf0.format(S.maxAlt*u.alt.f)}</td>
       ${S.mainLevel != null ? `<td>${u.alt.u === 'ft' ? 'FL' + Math.round(S.mainLevel/100) : nf0.format(S.mainLevel*u.alt.f)}</td>` : na}
+      ${S.ev && S.ev.toc ? `<td>▲${S.ev.nUp}${S.ev.nDown ? ' ▼' + S.ev.nDown : ''}${S.ev.events.some(e => e.unc) ? '<span class="warn" title="部分發生在資料缺口內，只知道區間">⚠</span>' : ''}</td>` : na}
       <td>${nf0.format(S.avgGS*u.spd.f)}${lowWarn}</td>
       ${S.cruiseGS != null ? `<td>${nf0.format(S.cruiseGS*u.spd.f)}</td>` : na}
       ${S.etaDelta != null ? `<td>${S.etaDelta >= 0 ? '+' : '−'}${nf0.format(Math.abs(S.etaDelta))}</td>` : na}
@@ -1128,6 +1215,7 @@ function yAtX(data, x){
 const cursorPlugin = {
   id: 'cursorLine',
   afterDatasetsDraw(chart){
+    if(PB.on){ drawRaceDots(chart); return; }
     if(!CURSOR) return;
     const xv = CURSOR.x * xFactor(), {ctx, chartArea:{top, bottom, left, right}, scales:{x, y}} = chart;
     const px = x.getPixelForValue(xv);
@@ -1143,7 +1231,24 @@ const cursorPlugin = {
     ctx.restore();
   }
 };
-function makeChart(id){
+function drawRaceDots(chart){
+  const m = UI.xmode, xf = xFactor(), {ctx, chartArea:{top, bottom, left, right}, scales:{x, y}} = chart;
+  ctx.save();
+  if(m === 'time'){
+    const px = x.getPixelForValue(PB.tp);
+    if(px >= left - 0.5 && px <= right + 0.5){ ctx.strokeStyle = 'rgba(180,83,9,0.8)'; ctx.lineWidth = 1.25; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, bottom); ctx.stroke(); ctx.setLineDash([]); }
+  }
+  chart.data.datasets.forEach(ds => {
+    const T = LIB.get(ds.tid); if(!T) return;
+    const r = raceInfo(T, PB.tp), xv = (m === 'time' ? r.st.tm : m === 'dist' ? r.st.d : r.st.pr) * xf;
+    const yv = yAtX(ds.data, xv); if(yv == null) return;
+    const px = x.getPixelForValue(xv); if(px < left - 1 || px > right + 1) return;
+    ctx.fillStyle = ds.borderColor; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(px, y.getPixelForValue(yv), 4.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  });
+  ctx.restore();
+}
+function makeChart(id, extraPlugins){
   const tick = {color:'#475569', font:{family:MONO, size:10}};
   const title = {display:true, text:'', color:'#475569', font:{size:11}};
   const ch = new Chart($(id), {
@@ -1154,35 +1259,48 @@ function makeChart(id){
       scales:{ x:{type:'linear', ticks:{...tick, maxTicksLimit:10}, grid:{color:GRID}, title:{...title}},
                y:{ticks:tick, grid:{color:GRID}, title:{...title}, grace:'5%'} }
     },
-    plugins: [cursorPlugin]
+    plugins: [cursorPlugin].concat(extraPlugins || [])
   });
   const cv = ch.canvas;
   cv.addEventListener('pointermove', e => {
-    if(CURSOR && CURSOR.locked) return;
+    if(PB.on || (CURSOR && CURSOR.locked)) return;
     const pos = Chart.helpers.getRelativePosition(e, ch), a = ch.chartArea;
     if(pos.x < a.left || pos.x > a.right) return;
     setCursor(ch.scales.x.getValueForPixel(pos.x) / xFactor());
   });
-  cv.addEventListener('pointerleave', () => { if(CURSOR && !CURSOR.locked) clearCursor(); });
-  cv.addEventListener('click', () => { if(CURSOR){ CURSOR.locked = !CURSOR.locked; renderCursor(); } });
+  cv.addEventListener('pointerleave', () => { if(!PB.on && CURSOR && !CURSOR.locked) clearCursor(); });
+  cv.addEventListener('click', () => { if(!PB.on && CURSOR){ CURSOR.locked = !CURSOR.locked; renderCursor(); } });
   cv.style.cursor = 'crosshair';
   return ch;
 }
 function mkDataset(T, data, gaps, isBase){
   const col = colorOf(T);
   return {
-    label: T.label, data, borderColor: col, backgroundColor: col, borderWidth: isBase ? 3 : 1.8, pointRadius: 0, tension: 0, spanGaps: true,
+    label: T.label, tid: T.id, data, borderColor: col, backgroundColor: col, borderWidth: isBase ? 3 : 1.8, pointRadius: 0, tension: 0, spanGaps: true,
     order: isBase ? 2 : 1,
     segment: { borderDash: c => gaps[c.p0DataIndex] ? [6, 4] : undefined, borderColor: c => gaps[c.p0DataIndex] ? col + '99' : col }
   };
 }
+// thin very long tracks for drawing only (<= ~700 pts per flight); gap boundaries are always kept so dashed spans stay exact
+function sampleIdx(T){
+  const W = T.W, n = W.n, stride = Math.max(1, Math.ceil(n / 700));
+  if(stride === 1) return null;
+  const idx = [];
+  for(let k = 0; k < n; k++) if(k % stride === 0 || k === n - 1 || W.dt[k] > UI.thr || (k > 0 && W.dt[k-1] > UI.thr)) idx.push(k);
+  return idx;
+}
+function segGap(W, k0, k1){ for(let q = k0; q < k1; q++) if(W.dt[q] > UI.thr) return true; return false; }
 function xAxisTitle(){ return UI.xmode === 'dist' ? `離地後航跡距離（${U().dist.u}）` : UI.xmode === 'time' ? '離地後時間（h:mm）' : '完成百分比（%）'; }
 function xTickCb(){ return UI.xmode === 'time' ? v => fmtHM(v) : UI.xmode === 'prog' ? v => v + '%' : v => nf0.format(v); }
 function updateCharts(){
   const tr = visibleTracks(), B = baselineTrack(), u = U(), m = UI.xmode, xf = xFactor();
   const mk = (valOf, f) => tr.map(T => {
-    const W = T.W, data = new Array(W.n), gaps = new Array(W.n);
-    for(let k = 0; k < W.n; k++){ const v = valOf(W, k); data[k] = {x: (m === 'time' ? W.X.time[k] : m === 'dist' ? W.X.dist[k] : W.X.prog[k]) * xf, y: v == null ? null : v * f}; gaps[k] = W.dt[k] > UI.thr; }
+    const W = T.W, ix = sampleIdx(T), cnt = ix ? ix.length : W.n, data = new Array(cnt), gaps = new Array(cnt);
+    for(let j = 0; j < cnt; j++){
+      const k = ix ? ix[j] : j, v = valOf(W, k);
+      data[j] = {x: (m === 'time' ? W.X.time[k] : m === 'dist' ? W.X.dist[k] : W.X.prog[k]) * xf, y: v == null ? null : v * f};
+      gaps[j] = ix ? (j < cnt - 1 && segGap(W, k, ix[j+1])) : W.dt[k] > UI.thr;
+    }
     return mkDataset(T, data, gaps, T.id === B.id);
   });
   const apply = (ch, sets, ytitle, ytick, ymin) => {
@@ -1208,10 +1326,25 @@ function updateCharts(){
   $('dltTitle').textContent = '相對基準的差距';
   $('dltSub').textContent = m === 'time' ? '同一時刻領先(+)/落後(−)的距離' : '同一位置領先(+)/落後(−)的時間';
   $('dltFoot').textContent = (m === 'time' ? '在離地後同一時刻，比基準多飛（領先）或少飛（落後）的距離。' : '在同一位置，比基準早到（領先）或晚到（落後）的時間。') + '虛線 = 其中一方在該處是缺口內插，數值僅供參考。';
+  const zeroGrid = {color: c => c.tick && c.tick.value === 0 ? 'rgba(11,31,58,0.55)' : GRID, lineWidth: c => c.tick && c.tick.value === 0 ? 1.5 : 1};
+  charts.dlt.options.scales.y.grid = zeroGrid;
   apply(charts.dlt, sets, `領先 + / 落後 −（${unit}）`, v => nf0.format(v));
-  const dy = charts.dlt.options.scales.y;
-  dy.grid = {color: c => c.tick && c.tick.value === 0 ? 'rgba(11,31,58,0.55)' : GRID, lineWidth: c => c.tick && c.tick.value === 0 ? 1.5 : 1};
-  charts.dlt.update('none');
+  // lateral deviation from the baseline route (F's own x, so it lines up with the other charts and the cursor)
+  const xsets = [];
+  others.forEach(T => {
+    const xt = ensureXTK(T, B), W = T.W, ix = sampleIdx(T), cnt = ix ? ix.length : W.n, data = new Array(cnt), gaps = new Array(cnt), f = u.dist.f;
+    const refGap = k => B.W.dt[xt.seg[k]] > UI.thr;
+    for(let j = 0; j < cnt; j++){
+      const k = ix ? ix[j] : j, k2 = ix ? (j < cnt - 1 ? ix[j+1] : k) : Math.min(k + 1, W.n - 1);
+      data[j] = {x: (m === 'time' ? W.X.time[k] : m === 'dist' ? W.X.dist[k] : W.X.prog[k]) * xf, y: Number.isNaN(xt.x[k]) ? null : xt.x[k] * f};
+      gaps[j] = segGap(W, k, k2) || refGap(k) || refGap(k2);
+    }
+    xsets.push(mkDataset(T, data, gaps, false));
+  });
+  charts.xt.options.scales.y.grid = zeroGrid;
+  apply(charts.xt, xsets, `偏離基準航跡：右 + / 左 −（${u.dist.u}）`, v => nf0.format(v));
+  $('xtEmpty').classList.toggle('hidden', xsets.length > 0);
+  $('xtEmpty').textContent = '再加入或顯示至少 1 趟同航班，就會顯示相對基準（' + B.label + '）航跡的橫向偏離';
   const empty = sets.length === 0;
   $('dltEmpty').classList.toggle('hidden', !empty);
   $('dltEmpty').textContent = tr.length < 2 ? '再加入或顯示至少 1 趟同航班，就會顯示相對基準（' + B.label + '）的差距' : '這幾趟在選定的 X 軸上沒有重疊範圍';
@@ -1263,12 +1396,14 @@ function drawMap(fit){
   dot([BW.lat[0], BW.lon[0]], esc(curGroup().origin || '離地'));
   dot([BW.lat[BW.n-1], BW.lon[BW.n-1]], esc(curGroup().dest || '落地'));
   if(fit && all.length) map.fitBounds(L.latLngBounds(all), {padding:[30, 30]});
+  drawGateLayer(); drawEventMarkers();
   setTimeout(() => map.invalidateSize(), 0);
   applyHighlight();
 }
 function applyHighlight(){
   Object.keys(mapLayers).forEach(id => mapLayers[id].forEach(({pl, base}) => {
-    if(UI.hl == null) pl.setStyle({weight:base.weight, opacity:base.opacity});
+    if(PB.on) pl.setStyle({weight:base.weight, opacity:0.22});
+    else if(UI.hl == null) pl.setStyle({weight:base.weight, opacity:base.opacity});
     else if(UI.hl === id) pl.setStyle({weight:base.weight + 2, opacity:1});
     else pl.setStyle({weight:base.weight, opacity:0.18});
   }));
@@ -1283,6 +1418,7 @@ function setCursor(x){
 }
 function clearCursor(){ CURSOR = null; renderCursor(); }
 function renderCursor(){
+  if(PB.on) return;
   const tr = visibleTracks(), B = baselineTrack();
   const keep = new Set();
   tr.forEach(T => {
@@ -1309,13 +1445,434 @@ function refreshAll(opts){
   $('dashboard').classList.toggle('hidden', !has);
   if(!has) return;
   const g = curGroup(); baselineTrack();
-  g.tracks.forEach(T => { T.S = computeStats(T, UI.thr); });
-  if(!charts.alt){ charts.alt = makeChart('chAlt'); charts.spd = makeChart('chSpd'); charts.dlt = makeChart('chDlt'); }
+  const Bt = baselineTrack();
+  g.tracks.forEach(T => { T.S = computeStats(T, UI.thr); T.S.xt = T.id === Bt.id ? null : xtkStats(T, Bt, UI.thr); T.S.ev = computeEvents(T, UI.thr); });
+  if(!charts.alt){ charts.alt = makeChart('chAlt', [eventPlugin]); charts.spd = makeChart('chSpd'); charts.dlt = makeChart('chDlt'); charts.xt = makeChart('chXt'); }
   CURSOR = opts.keepCursor ? CURSOR : null; resetCursorMarkers();
-  renderStrip(); renderToolbar(); renderList(); renderTable(); renderCoverage(); updateCharts(); drawMap(opts.fit);
-  renderCursor();
+  renderStrip(); renderToolbar(); renderList(); renderTable(); renderGates(); renderEvents(); renderCoverage(); updateCharts(); drawMap(opts.fit);
+  if(PB.on){ pbRebuild(); renderRace(); } else renderCursor();
   persistUI();
 }
+
+
+/* =========================================================================
+   CROSS-TRACK DEVIATION  (spherical, signed: right of the baseline's direction of travel = +)
+   ========================================================================= */
+function unitVec(lat, lon){ const p = rad(lat), l = rad(lon), c = Math.cos(p); return [c*Math.cos(l), c*Math.sin(l), Math.sin(p)]; }
+function prepRef(B){
+  if(B._ref && B._ref.n === B.W.n) return B._ref;
+  const W = B.W, n = W.n;
+  const X = new Float64Array(n), Y = new Float64Array(n), Z = new Float64Array(n);
+  for(let i = 0; i < n; i++){ const v = unitVec(W.lat[i], W.lon[i]); X[i] = v[0]; Y[i] = v[1]; Z[i] = v[2]; }
+  const NX = new Float64Array(n), NY = new Float64Array(n), NZ = new Float64Array(n), deg = new Uint8Array(n);
+  for(let s = 0; s < n - 1; s++){
+    // plane normal of the great circle A→B; "left" of travel is the side the normal points to
+    let cx = Y[s]*Z[s+1] - Z[s]*Y[s+1], cy = Z[s]*X[s+1] - X[s]*Z[s+1], cz = X[s]*Y[s+1] - Y[s]*X[s+1];
+    const l = Math.hypot(cx, cy, cz);
+    if(l < 1e-12){ deg[s] = 1; continue; }
+    NX[s] = cx / l; NY[s] = cy / l; NZ[s] = cz / l;
+  }
+  return (B._ref = {n, X, Y, Z, NX, NY, NZ, deg});
+}
+// nearest point on the baseline polyline -> {x: signed nm (right +), seg: index of the baseline segment}
+function xtkPoint(B, lat, lon){
+  const R = prepRef(B), n = R.n, p = unitVec(lat, lon), px = p[0], py = p[1], pz = p[2];
+  let bi = 0, bd = -2;
+  for(let i = 0; i < n; i++){ const d = R.X[i]*px + R.Y[i]*py + R.Z[i]*pz; if(d > bd){ bd = d; bi = i; } }
+  let best = Infinity, bseg = Math.min(bi, n - 2), bside = 0, bbeyond = false;
+  for(let s = Math.max(0, bi - 2); s <= Math.min(n - 2, bi + 1); s++){
+    const ax = R.X[s], ay = R.Y[s], az = R.Z[s], bx = R.X[s+1], by = R.Y[s+1], bz = R.Z[s+1];
+    let dist, side = 0, beyond = false;
+    if(R.deg[s]){ dist = Math.acos(Math.max(-1, Math.min(1, ax*px + ay*py + az*pz))); }
+    else {
+      const nx = R.NX[s], ny = R.NY[s], nz = R.NZ[s];
+      const pn = px*nx + py*ny + pz*nz; side = pn;
+      let qx = px - pn*nx, qy = py - pn*ny, qz = pz - pn*nz; const ql = Math.hypot(qx, qy, qz);
+      let inside = false;
+      if(ql > 1e-12){
+        qx /= ql; qy /= ql; qz /= ql;
+        const c1 = (ay*qz - az*qy)*nx + (az*qx - ax*qz)*ny + (ax*qy - ay*qx)*nz;   // (A×q)·n
+        const c2 = (qy*bz - qz*by)*nx + (qz*bx - qx*bz)*ny + (qx*by - qy*bx)*nz;   // (q×B)·n
+        inside = c1 >= -1e-12 && c2 >= -1e-12;
+      }
+      if(inside) dist = Math.asin(Math.min(1, Math.abs(pn)));
+      else {
+        const dA = Math.acos(Math.max(-1, Math.min(1, ax*px + ay*py + az*pz))), dB = Math.acos(Math.max(-1, Math.min(1, bx*px + by*py + bz*pz)));
+        dist = Math.min(dA, dB);
+        // clamped onto the very first / last vertex of the baseline: the point lies outside the baseline's extent
+        beyond = (s === 0 && dA <= dB) || (s === n - 2 && dB < dA);
+      }
+    }
+    if(dist < best){ best = dist; bseg = s; bside = side; bbeyond = beyond; }
+  }
+  return {x: (bside > 0 ? -1 : 1) * best * R_NM, seg: bseg, beyond: bbeyond};
+}
+function ensureXTK(F, B){
+  if(F._xt && F._xt.bid === B.id && F._xt.bn === B.W.n) return F._xt;
+  const n = F.W.n, x = new Float64Array(n), seg = new Int32Array(n);
+  for(let k = 0; k < n; k++){ const r = xtkPoint(B, F.W.lat[k], F.W.lon[k]); x[k] = r.beyond ? NaN : r.x; seg[k] = r.seg; }
+  return (F._xt = {bid:B.id, bn:B.W.n, x, seg});
+}
+function xtkStats(F, B, thr){
+  const xt = ensureXTK(F, B); let max = 0, maxRef = false, rel = null, relAbs = -1, sumAbs = 0, cnt = 0;
+  for(let k = 0; k < F.W.n; k++){
+    const v = xt.x[k]; if(Number.isNaN(v)) continue;
+    const a = Math.abs(v), refGap = B.W.dt[xt.seg[k]] > thr;
+    if(a > Math.abs(max)){ max = v; maxRef = refGap; }
+    if(!refGap){ if(a > relAbs){ relAbs = a; rel = v; } sumAbs += a; cnt++; }
+  }
+  return {max, maxRef, rel, relMean: cnt ? sumAbs / cnt : null};
+}
+const sideTxt = v => v >= 0 ? '右' : '左';
+
+/* =========================================================================
+   RACE PLAYBACK — every visible flight advances on the same clock (time since lift-off)
+   Rank = remaining great-circle distance to the baseline's touch-down point, so different routes compare fairly
+   ========================================================================= */
+const PB = {on:false, playing:false, tp:0, speed:600, last:0, raf:0};
+let raceMarkers = {}, trailLayer = null, trails = {};
+const pbMax = () => Math.max(1, ...visibleTracks().map(T => T.W.X.time[T.W.n - 1]));
+function raceInfo(T, tp){
+  const W = T.W, arr = W.X.time, last = arr[W.n - 1];
+  const x = Math.min(Math.max(tp, arr[0]), last);
+  const st = stateAt(T, 'time', x);
+  return {T, st, fin: tp >= last - 1e-9};
+}
+function raceBoard(tp){
+  const tr = visibleTracks(), B = baselineTrack(), BW = B.W;
+  const dLat = BW.lat[BW.n - 1], dLon = BW.lon[BW.n - 1];
+  const info = tr.map(T => { const r = raceInfo(T, tp); r.dtg = hav(r.st.lat, r.st.lon, dLat, dLon); return r; });
+  const sorted = info.slice().sort((a, b) => (a.fin !== b.fin) ? (a.fin ? -1 : 1) : a.fin ? (a.T.airSec - b.T.airSec) : (a.dtg - b.dtg));
+  sorted.forEach((r, i) => { r.rank = i + 1; });
+  const bi = info.find(r => r.T.id === B.id);
+  info.forEach(r => { r.lead = bi.dtg - r.dtg; });   // nm closer to the destination than the baseline (+ = ahead)
+  return info;
+}
+function raceSub(r, B, tp){
+  const u = U(), T = r.T;
+  let a = `<span class="v">#${r.rank}</span> ・ <span class="v">+${fmtHM(Math.min(tp, T.W.X.time[T.W.n-1]))}</span>`;
+  if(r.fin) a += ` ・ 已抵達 <span class="v">${fmtHM(T.airSec/60)}</span>`;
+  else a += ` ・ 距目的地 <span class="v">${nf0.format(r.dtg*u.dist.f)}</span> ${u.dist.u}`;
+  let b = '';
+  if(T.id === B.id) b = '基準';
+  else if(r.fin && B.airSec != null){ const dm = (B.airSec - T.airSec) / 60; b = `比基準 <span class="${dm >= 0 ? 'd-pos' : 'd-neg'}">${dm >= 0 ? '早' : '晚'} ${fmtHM(Math.abs(dm))}</span> 抵達`; }
+  else b = `<span class="${r.lead >= 0 ? 'd-pos' : 'd-neg'}">${r.lead >= 0 ? '領先' : '落後'} 基準 ${nf0.format(Math.abs(r.lead)*u.dist.f)} ${u.dist.u}</span>`;
+  return a + '<br>' + b;
+}
+function pbRebuild(){
+  // (re)create trails + markers for the currently visible flights
+  Object.values(raceMarkers).forEach(m => map && map.removeLayer(m)); raceMarkers = {};
+  if(trailLayer) trailLayer.clearLayers(); else trailLayer = L.layerGroup().addTo(map);
+  trails = {};
+  const DIRS = [['right', [10, 0]], ['left', [-10, 0]], ['top', [0, -10]], ['bottom', [0, 10]]];
+  visibleTracks().forEach((T, idx) => {
+    trails[T.id] = L.polyline([], {color:colorOf(T), weight:T.id === baselineTrack().id ? 5 : 4, opacity:1, interactive:false}).addTo(trailLayer);
+    const mk = L.circleMarker([0, 0], {radius:8, color:'#fff', weight:2.5, fillColor:colorOf(T), fillOpacity:1, interactive:false}).addTo(map);
+    const dir = DIRS[idx % DIRS.length];
+    mk.bindTooltip(esc(fmtMD(T.tTO)), {permanent:true, direction:dir[0], offset:dir[1], className:'rm-tip'});
+    raceMarkers[T.id] = mk;
+  });
+  applyHighlight();
+}
+function renderRace(){
+  if(!PB.on) return;
+  const B = baselineTrack(), max = pbMax(); PB.tp = Math.min(Math.max(PB.tp, 0), max);
+  const info = raceBoard(PB.tp);
+  info.forEach(r => {
+    const T = r.T, st = r.st, W = T.W;
+    const mk = raceMarkers[T.id]; if(mk) mk.setLatLng([st.lat, st.lon]);
+    const tr = trails[T.id];
+    if(tr){
+      const arr = W.X.time, i = Math.min(locate(arr, Math.min(PB.tp, arr[W.n-1])), W.n - 1), ll = [];
+      for(let k = 0; k <= i; k++) ll.push([W.lat[k], W.lon[k]]);
+      ll.push([st.lat, st.lon]); tr.setLatLngs(ll);
+    }
+    const sub = document.querySelector(`[data-sub="${CSS.escape(T.id)}"]`);
+    if(sub) sub.innerHTML = raceSub(r, B, PB.tp);
+  });
+  $('pbT').textContent = '+' + fmtHM(PB.tp); $('pbMax').textContent = fmtHM(max);
+  $('pbSeek').value = String(Math.round(PB.tp / max * 1000));
+  Object.values(charts).forEach(c => c.draw());
+}
+function pbSetPlaying(on){
+  PB.playing = on; $('pbPlay').textContent = on ? '⏸' : '▶'; $('pbPlay').setAttribute('aria-label', on ? '暫停' : '播放');
+  if(on){ PB.last = performance.now(); cancelAnimationFrame(PB.raf); PB.raf = requestAnimationFrame(pbFrame); }
+  else cancelAnimationFrame(PB.raf);
+}
+function pbEnter(){
+  if(PB.on) return;
+  CURSOR = null; renderCursor();               // clear the hover cursor first
+  PB.on = true; $('pbExit').disabled = false; $('raceBar').classList.add('on');
+  pbRebuild();
+}
+function pbFrame(ts){
+  if(!PB.playing) return;
+  const dt = Math.min(0.1, (ts - PB.last) / 1000); PB.last = ts;
+  const max = pbMax();
+  PB.tp += dt * PB.speed / 60;
+  if(PB.tp >= max){ PB.tp = max; renderRace(); pbSetPlaying(false); return; }
+  renderRace();
+  PB.raf = requestAnimationFrame(pbFrame);
+}
+function pbToggle(){
+  if(!PB.on){ pbEnter(); if(PB.tp >= pbMax() - 1e-6) PB.tp = 0; }
+  else if(!PB.playing && PB.tp >= pbMax() - 1e-6) PB.tp = 0;
+  pbSetPlaying(!PB.playing); renderRace();
+}
+function pbExit(){
+  pbSetPlaying(false); PB.on = false; PB.tp = 0;
+  Object.values(raceMarkers).forEach(m => map && map.removeLayer(m)); raceMarkers = {};
+  if(trailLayer) trailLayer.clearLayers(); trails = {};
+  $('pbExit').disabled = true; $('raceBar').classList.remove('on');
+  $('pbT').textContent = '+0:00'; $('pbSeek').value = '0';
+  applyHighlight(); renderList(); renderCursor();
+}
+$('pbPlay').addEventListener('click', pbToggle);
+$('pbReset').addEventListener('click', () => { if(!PB.on) pbEnter(); PB.tp = 0; renderRace(); });
+$('pbExit').addEventListener('click', pbExit);
+$('pbSeek').addEventListener('input', e => {
+  if(!PB.on) pbEnter();
+  PB.tp = (+e.target.value / 1000) * pbMax(); renderRace();
+});
+$('pbSpeed').addEventListener('click', e => {
+  const b = e.target.closest('button[data-s]'); if(!b) return;
+  PB.speed = +b.dataset.s;
+  document.querySelectorAll('#pbSpeed button').forEach(x => x.classList.toggle('active', x === b));
+});
+
+
+/* =========================================================================
+   CRUISE EVENTS  — level plateaus -> step climbs / descents, top of climb (TOC), top of descent (TOD)
+   A "plateau" = >= 2 fixes within ±250 ft of its first fix, lasting >= 8 min, above 20,000 ft.
+   A change of >= 800 ft between two consecutive plateaus is an event. If any fix interval inside that
+   transition is a data gap, the exact place is unknown: it is reported as a RANGE and flagged uncertain.
+   ========================================================================= */
+const lvlTxt = alt => U().alt.u === 'ft' ? 'FL' + Math.round(alt / 100) : nf0.format(alt * U().alt.f) + ' m';
+const normDeg = d => ((d + 540) % 360 + 360) % 360 - 180;
+function computeEvents(T, thr){
+  const W = T.W, n = W.n, pl = [];
+  let s = 0;
+  while(s < n){
+    const ref = W.alt[s]; let e = s;
+    while(e + 1 < n && Math.abs(W.alt[e+1] - ref) <= 250) e++;
+    if(e > s && W.t[e] - W.t[s] >= 480 && ref >= 20000){
+      let sum = 0; for(let k = s; k <= e; k++) sum += W.alt[k];
+      pl.push({s, e, alt: sum / (e - s + 1)});
+    }
+    s = e + 1;
+  }
+  const stAt = k => stateAt(T, 'time', Math.min(W.X.time[n-1], Math.max(W.X.time[0], W.X.time[k])));
+  const events = [];
+  for(let i = 0; i + 1 < pl.length; i++){
+    const a = pl[i], b = pl[i+1], d = b.alt - a.alt;
+    if(Math.abs(d) < 800) continue;
+    let maxdt = 0; for(let k = a.e; k < b.s; k++) maxdt = Math.max(maxdt, W.dt[k]);
+    const unc = maxdt > thr;
+    let tRep = null;
+    if(!unc){
+      const mid = (a.alt + b.alt) / 2;
+      for(let k = a.e; k < b.s; k++){
+        const a0 = W.alt[k], a1 = W.alt[k+1];
+        if((a0 - mid) * (a1 - mid) <= 0 && a0 !== a1){ tRep = W.t[k] + (mid - a0) / (a1 - a0) * (W.t[k+1] - W.t[k]); break; }
+      }
+    }
+    if(tRep == null) tRep = (W.t[a.e] + W.t[b.s]) / 2;
+    const st = stateAt(T, 'time', Math.min(W.X.time[n-1], Math.max(W.X.time[0], (tRep - T.tTO) / 60)));
+    events.push({type: d > 0 ? 'up' : 'down', from: a.alt, to: b.alt, d, unc, st, d0: W.X.dist[a.e], d1: W.X.dist[b.s], t0: W.X.time[a.e], t1: W.X.time[b.s]});
+  }
+  let toc = null, tod = null;
+  if(pl.length){
+    const f = pl[0], l = pl[pl.length - 1];
+    let uc = false; for(let k = f.s - 1; k >= 0; k--){ if(W.dt[k] > thr) uc = true; if(W.alt[k] < f.alt - 3000) break; }
+    let ud = false; for(let k = l.e; k < n - 1; k++){ if(W.dt[k] > thr) ud = true; if(W.alt[k+1] < l.alt - 3000) break; }
+    toc = {idx:f.s, tm:W.X.time[f.s], d:W.X.dist[f.s], alt:f.alt, st:stAt(f.s), unc:uc};
+    tod = {idx:l.e, tm:W.X.time[l.e], d:W.X.dist[l.e], alt:l.alt, st:stAt(l.e), unc:ud, dtg:Math.max(0, T.distAir - W.X.dist[l.e])};
+  }
+  return {events, toc, tod, nUp: events.filter(e => e.type === 'up').length, nDown: events.filter(e => e.type === 'down').length, first: pl.length ? pl[0].alt : null, last: pl.length ? pl[pl.length-1].alt : null};
+}
+function evRow(T, e){
+  const d = U().dist, f = d.f;
+  const where = e.unc ? `${nf0.format(e.d0*f)}–${nf0.format(e.d1*f)} ${d.u} 之間 ・ +${fmtHM(e.t0)}–${fmtHM(e.t1)}` : `${nf0.format(e.st.d*f)} ${d.u} ・ +${fmtHM(e.st.tm)}`;
+  return `<div class="evrow"><span class="evs ${e.type}" style="--c:${colorOf(T)}">${e.type === 'up' ? '▲' : '▼'}</span><b>${lvlTxt(e.from)}→${lvlTxt(e.to)}</b><small>${where}</small>${e.unc ? '<span class="q q-mid">內插</span>' : ''}</div>`;
+}
+function renderEvents(){
+  const g = curGroup(), B = baselineTrack(), d = U().dist, f = d.f;
+  const rows = visibleTracks();
+  const head = '<thead><tr><th scope="col">航班</th><th scope="col">爬升頂 TOC<small>離地後 ・ 航跡距離</small></th><th scope="col">初始巡航層</th><th scope="col">巡航中的高度變更<small>▲ 階梯爬升 ・ ▼ 階梯下降</small></th><th scope="col">最終巡航層</th><th scope="col">下降起點 TOD<small>離地後 ・ 距落地</small></th></tr></thead>';
+  const body = rows.map(T => {
+    const E = T.S.ev, isB = T.id === B.id;
+    const first = `<td><div class="fn"><i style="background:${colorOf(T)}"></i><div><b>${esc(fmtDate(T.tTO))}</b>${isB ? ' <span class="tag">基準</span>' : ''}<small>${esc(T.meta.reg || '—')}</small></div></div></td>`;
+    if(!E || !E.toc) return `<tr data-id="${esc(T.id)}">${first}<td colspan="5" class="na">空中沒有足夠長的巡航平台（≥ 8 分鐘），無法判讀</td></tr>`;
+    const toc = E.toc, tod = E.tod;
+    const todDiff = !isB && B.S.ev && B.S.ev.tod ? (tod.dtg - B.S.ev.tod.dtg) : null;
+    return `<tr class="${isB ? 'base' : ''}" data-id="${esc(T.id)}">${first}
+      <td>+${fmtHM(toc.tm)} ・ ${nf0.format(toc.d*f)} ${d.u}${toc.unc ? ' <span class="q q-mid">內插</span>' : ''}</td>
+      <td class="mono">${lvlTxt(E.first)}</td>
+      <td>${E.events.length ? E.events.map(e => evRow(T, e)).join('') : '<span class="na">無（全程維持同一高度）</span>'}</td>
+      <td class="mono">${lvlTxt(E.last)}</td>
+      <td>+${fmtHM(tod.tm)} ・ 距落地 ${nf0.format(tod.dtg*f)} ${d.u}${tod.unc ? ' <span class="q q-mid">內插</span>' : ''}${todDiff != null ? `<small class="dl">比基準 ${todDiff >= 0 ? '早' : '晚'} ${nf0.format(Math.abs(todDiff)*f)} ${d.u}</small>` : ''}</td></tr>`;
+  }).join('');
+  $('evtTable').innerHTML = head + '<tbody>' + body + '</tbody>';
+}
+
+/* ---------- chart markers (altitude chart) ---------- */
+const eventPlugin = {
+  id: 'cruiseEvents',
+  afterDatasetsDraw(chart){
+    if(!UI.events) return;
+    const m = UI.xmode, xf = xFactor(), af = U().alt.f, {ctx, chartArea:{left, right, top, bottom}, scales:{x, y}} = chart;
+    ctx.save();
+    chart.data.datasets.forEach(ds => {
+      const T = LIB.get(ds.tid); if(!T || !T.S || !T.S.ev) return;
+      const E = T.S.ev, col = ds.borderColor;
+      const pos = st => [x.getPixelForValue((m === 'time' ? st.tm : m === 'dist' ? st.d : st.pr) * xf), y.getPixelForValue(st.alt * af)];
+      const inside = (px, py) => px >= left - 1 && px <= right + 1 && py >= top - 1 && py <= bottom + 1;
+      E.events.forEach(e => {
+        const [px, py] = pos(e.st); if(!inside(px, py)) return;
+        const up = e.type === 'up';
+        ctx.beginPath();
+        if(up){ ctx.moveTo(px, py - 8); ctx.lineTo(px - 6, py + 3); ctx.lineTo(px + 6, py + 3); } else { ctx.moveTo(px, py + 8); ctx.lineTo(px - 6, py - 3); ctx.lineTo(px + 6, py - 3); }
+        ctx.closePath();
+        ctx.fillStyle = e.unc ? '#fff' : col; ctx.fill();
+        ctx.lineWidth = e.unc ? 1.8 : 1.5; ctx.strokeStyle = e.unc ? col : '#fff'; ctx.stroke();
+      });
+      [E.toc, E.tod].forEach(p => {
+        if(!p) return; const [px, py] = pos(p.st); if(!inside(px, py)) return;
+        ctx.beginPath(); ctx.moveTo(px, py - 5); ctx.lineTo(px + 5, py); ctx.lineTo(px, py + 5); ctx.lineTo(px - 5, py); ctx.closePath();
+        ctx.fillStyle = p.unc ? '#fff' : col; ctx.fill(); ctx.lineWidth = 1.6; ctx.strokeStyle = p.unc ? col : '#fff'; ctx.stroke();
+      });
+    });
+    ctx.restore();
+  }
+};
+
+/* ---------- map markers ---------- */
+let evLayer = null;
+function drawEventMarkers(){
+  if(!map) return;
+  if(!evLayer) evLayer = L.layerGroup().addTo(map);
+  evLayer.clearLayers();
+  if(!UI.events) return;
+  const d = U().dist, f = d.f;
+  visibleTracks().forEach(T => {
+    const E = T.S.ev; if(!E) return;
+    const col = colorOf(T), lab = esc(fmtMD(T.tTO));
+    const mk = (st, html, cls, tip) => L.marker([st.lat, st.lon], {icon:L.divIcon({className:'', html:`<div class="ev ${cls}" style="--c:${col}">${html}</div>`, iconSize:[16, 16], iconAnchor:[8, 8]}), keyboard:false}).bindTooltip(tip, {direction:'top', offset:[0, -8]}).addTo(evLayer);
+    E.events.forEach(e => mk(e.st, e.type === 'up' ? '▲' : '▼', (e.unc ? 'unc ' : '') + e.type, `${lab}　${lvlTxt(e.from)}→${lvlTxt(e.to)}　${e.unc ? nf0.format(e.d0*f) + '–' + nf0.format(e.d1*f) + ' ' + d.u + ' 之間（內插）' : nf0.format(e.st.d*f) + ' ' + d.u + ' ・ +' + fmtHM(e.st.tm)}`));
+    if(E.toc) mk(E.toc.st, '', 'pt' + (E.toc.unc ? ' unc' : ''), `${lab}　TOC　${lvlTxt(E.toc.alt)}　+${fmtHM(E.toc.tm)}`);
+    if(E.tod) mk(E.tod.st, '', 'pt' + (E.tod.unc ? ' unc' : ''), `${lab}　TOD　距落地 ${nf0.format(E.tod.dtg*f)} ${d.u}　+${fmtHM(E.tod.tm)}`);
+  });
+}
+
+/* =========================================================================
+   GATES — where each flight crosses fixed latitude (reports longitude) or longitude (reports latitude) lines
+   Position between two fixes is interpolated along the straight line drawn on the map; crossings inside a gap are flagged.
+   ========================================================================= */
+function gateAuto(B){
+  const W = B.W, dlat = Math.abs(W.lat[W.n-1] - W.lat[0]);
+  const dlon = Math.abs(W.lon[W.n-1] - W.lon[0]) * Math.cos(rad((W.lat[0] + W.lat[W.n-1]) / 2));
+  // latitude lines unless the route is clearly east-west (longitude span > 2x latitude span)
+  return dlon > 2 * dlat ? 'lon' : 'lat';
+}
+function gateRange(B, type){
+  const W = B.W, arr = type === 'lat' ? W.lat : W.lon;
+  let lo = Infinity, hi = -Infinity; for(let k = 0; k < W.n; k++){ if(arr[k] < lo) lo = arr[k]; if(arr[k] > hi) hi = arr[k]; }
+  return {lo, hi, arr};
+}
+// automatic spacing: the smallest step that keeps the number of lines at about 10 or fewer
+function autoGateStep(B, type){ const r = gateRange(B, type), span = r.hi - r.lo; for(const s of [5, 10, 15, 20, 30, 45, 60]) if(span / s <= 10) return s; return 60; }
+function gateList(B, type, step){
+  const W = B.W, {lo, hi, arr} = gateRange(B, type);
+  const out = [];
+  for(let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) if(v > lo + 1e-6 && v < hi - 1e-6) out.push(Math.round(v * 1e6) / 1e6);
+  const dir = arr[W.n-1] - arr[0];
+  return out.sort((a, b) => dir >= 0 ? a - b : b - a);
+}
+function crossings(T, type, g){
+  const W = T.W, out = [];
+  for(let k = 0; k < W.n - 1; k++){
+    let hit = null;
+    if(type === 'lat'){
+      const a = W.lat[k], b = W.lat[k+1];
+      if(((a < g && b >= g) || (a > g && b <= g))){ const f = (mercY(g) - mercY(a)) / (mercY(b) - mercY(a)); hit = {f, lat:g, lon:W.lon[k] + f * (W.lon[k+1] - W.lon[k])}; }
+    } else {
+      const a = W.lon[k], b = W.lon[k+1], gg = g + 360 * Math.round(((a + b) / 2 - g) / 360);
+      if(((a < gg && b >= gg) || (a > gg && b <= gg))){ const f = (gg - a) / (b - a); hit = {f, lat:invMercY(mercY(W.lat[k]) + f * (mercY(W.lat[k+1]) - mercY(W.lat[k]))), lon:gg}; }
+    }
+    if(hit){ hit.tm = (W.t[k] + hit.f * (W.t[k+1] - W.t[k]) - T.tTO) / 60; hit.alt = W.alt[k] + hit.f * (W.alt[k+1] - W.alt[k]); hit.gap = W.dt[k] > UI.thr; hit.k = k; out.push(hit); }
+  }
+  return out;
+}
+const fmtLon = l => { const v = normDeg(l); return Math.abs(v).toFixed(2) + '°' + (v >= 0 ? 'E' : 'W'); };
+const fmtLat = l => Math.abs(l).toFixed(2) + '°' + (l >= 0 ? 'N' : 'S');
+const gateLabel = (type, g) => type === 'lat' ? (g === 0 ? '赤道 0°' : Math.abs(g) + '°' + (g > 0 ? 'N' : 'S')) : (Math.abs(normDeg(g)) + '°' + (normDeg(g) >= 0 ? 'E' : 'W'));
+let gateLayer = null, gateCache = null;
+function renderGates(){
+  const B = baselineTrack(), tr = visibleTracks(), u = U(), f = u.dist.f;
+  const type = UI.gateMode === 'auto' ? gateAuto(B) : UI.gateMode;
+  const step = UI.gateStep || autoGateStep(B, type);
+  const gates = gateList(B, type, step);
+  document.querySelectorAll('#gateSeg button').forEach(b => b.classList.toggle('active', b.dataset.v === UI.gateMode));
+  $('gateStep').value = String(UI.gateStep);
+  $('gateMapBtn').classList.toggle('active', UI.gateMap);
+  $('tglEv').classList.toggle('active', UI.events);
+  gateCache = {type, gates, rows:[]};
+  const head = '<thead><tr><th scope="col">' + (type === 'lat' ? '緯度線<small>顯示經度</small>' : '經度線<small>顯示緯度</small>') + '</th>' +
+    tr.map(T => `<th scope="col" style="cursor:default"><span class="fn" style="justify-content:flex-end"><i style="background:${colorOf(T)};display:inline-block;width:10px;height:10px;border-radius:2px"></i>${esc(fmtMD(T.tTO))}${T.id === B.id ? ' <span class="tag">基準</span>' : ''}<small style="display:inline;margin-left:4px">${esc(T.meta.reg || '')}</small></span></th>`).join('') +
+    `<th scope="col" style="cursor:default">跨航班離散<small>最大−最小，${type === 'lat' ? '東西' : '南北'}向 ${u.dist.u}</small></th></tr></thead>`;
+  const rowsData = gates.map(g => {
+    const cells = tr.map(T => { const c = crossings(T, type, g); return c.length ? {c:c[0], n:c.length} : null; });
+    const bi = tr.findIndex(T => T.id === B.id), cB = cells[bi] ? cells[bi].c : null;
+    const pos = cells.map(x => {
+      if(!x || !cB) return null;
+      return type === 'lat' ? normDeg(x.c.lon - cB.lon) * Math.cos(rad(g)) * R_NM * Math.PI / 180 : (x.c.lat - cB.lat) * R_NM * Math.PI / 180;
+    });
+    const valid = pos.filter(v => v != null);
+    const spread = valid.length > 1 ? Math.max(...valid) - Math.min(...valid) : null;
+    gateCache.rows.push({g, cells});
+    return {g, cells, pos, spread};
+  });
+  const maxSpread = Math.max(0, ...rowsData.map(r => r.spread || 0));
+  const body = rowsData.map(r => {
+    const tds = r.cells.map((x, i) => {
+      if(!x) return '<td class="na">—</td>';
+      const T = tr[i], c = x.c, isB = T.id === B.id;
+      const val = type === 'lat' ? fmtLon(c.lon) : fmtLat(c.lat);
+      let dl = '';
+      if(isB) dl = '<small class="dl">基準</small>';
+      else if(r.pos[i] != null){ const v = r.pos[i] * f; dl = `<small class="dl">${type === 'lat' ? (v >= 0 ? '東' : '西') : (v >= 0 ? '北' : '南')} ${nf0.format(Math.abs(v))} ${u.dist.u}</small>`; }
+      return `<td><b>${val}</b>${dl}<small>+${fmtHM(c.tm)} ・ ${lvlTxt(c.alt)}${x.n > 1 ? ` ・ ×${x.n}` : ''}</small>${c.gap ? '<span class="q q-mid">內插</span>' : ''}</td>`;
+    }).join('');
+    const hot = r.spread != null && r.spread === maxSpread && maxSpread > 0;
+    return `<tr><td><b>${gateLabel(type, r.g)}</b></td>${tds}<td class="${hot ? 'hot' : ''}">${r.spread != null ? nf0.format(r.spread * f) : '—'}${hot ? '<small class="dl">最大</small>' : ''}</td></tr>`;
+  }).join('');
+  $('gateTable').innerHTML = head + '<tbody>' + (body || `<tr><td colspan="${tr.length + 2}" class="na">基準航跡的範圍內沒有這個間隔的${type === 'lat' ? '緯度' : '經度'}線，請調小間隔</td></tr>`) + '</tbody>';
+  $('gateNote').textContent = `間隔 ${step}°${UI.gateStep ? '' : '（自動）'}。穿越點以相鄰兩個實測點的連線內插，與地圖上畫的直線一致；落在資料缺口內的標「內插」，僅供參考。Δ 以基準航班為 0，${type === 'lat' ? '東（+）／西（−）' : '北（+）／南（−）'}距離。×N = 該線被穿越多次，只列第一次。`;
+}
+function drawGateLayer(){
+  if(!map) return;
+  if(!gateLayer) gateLayer = L.layerGroup().addTo(map);
+  gateLayer.clearLayers();
+  if(!UI.gateMap || !gateCache || !gateCache.gates.length) return;
+  const tr = visibleTracks(), type = gateCache.type;
+  let la0 = Infinity, la1 = -Infinity, lo0 = Infinity, lo1 = -Infinity;
+  tr.forEach(T => { for(let k = 0; k < T.W.n; k++){ la0 = Math.min(la0, T.W.lat[k]); la1 = Math.max(la1, T.W.lat[k]); lo0 = Math.min(lo0, T.W.lon[k]); lo1 = Math.max(lo1, T.W.lon[k]); } });
+  const pad = 3;
+  gateCache.gates.forEach(g => {
+    const ll = type === 'lat' ? [[g, lo0 - pad], [g, lo1 + pad]] : [[la0 - pad, g], [la1 + pad, g]];
+    L.polyline(ll, {color:'#64748B', weight:1, opacity:0.55, dashArray:'3 5', interactive:false}).bindTooltip(gateLabel(type, g), {permanent:true, direction:type === 'lat' ? 'left' : 'top', className:'gate-tip', offset:type === 'lat' ? [-2, 0] : [0, -2]}).addTo(gateLayer);
+  });
+  gateCache.rows.forEach(r => r.cells.forEach((x, i) => {
+    if(!x) return; const T = tr[i];
+    L.circleMarker([x.c.lat, x.c.lon], {radius:4, color:colorOf(T), weight:2, fillColor:x.c.gap ? '#fff' : colorOf(T), fillOpacity:1, interactive:false}).addTo(gateLayer);
+  }));
+}
+
+/* ---------- controls ---------- */
+document.querySelectorAll('#gateSeg button').forEach(b => b.addEventListener('click', () => { UI.gateMode = b.dataset.v; refreshAll({keepCursor:true}); }));
+$('gateStep').addEventListener('change', e => { UI.gateStep = +e.target.value; refreshAll({keepCursor:true}); });
+$('gateMapBtn').addEventListener('click', () => { UI.gateMap = !UI.gateMap; refreshAll({keepCursor:true}); });
+$('tglEv').addEventListener('click', () => { UI.events = !UI.events; refreshAll({keepCursor:true}); });
 
 
 /* =========================================================================
@@ -1391,7 +1948,7 @@ window.addEventListener('dragover', e => { if(hasFiles(e)) e.preventDefault(); }
 window.addEventListener('dragleave', e => { if(!hasFiles(e)) return; dragDepth = Math.max(0, dragDepth - 1); if(!dragDepth) $('dropOverlay').classList.add('hidden'); });
 window.addEventListener('drop', e => { if(!hasFiles(e)) return; e.preventDefault(); dragDepth = 0; $('dropOverlay').classList.add('hidden'); handleFiles([...e.dataTransfer.files]); });
 
-$('selGroup').addEventListener('change', e => { UI.group = e.target.value; refreshAll({fit:true}); });
+$('selGroup').addEventListener('change', e => { if(PB.on) pbExit(); UI.group = e.target.value; refreshAll({fit:true}); });
 document.querySelectorAll('#unitSeg button').forEach(b => b.addEventListener('click', () => { UI.units = b.dataset.v; refreshAll({keepCursor:true}); }));
 document.querySelectorAll('#xSeg button').forEach(b => b.addEventListener('click', () => { UI.xmode = b.dataset.v; refreshAll({}); }));
 $('selThr').addEventListener('change', e => { UI.thr = +e.target.value; refreshAll({keepCursor:true}); });
@@ -1402,6 +1959,7 @@ $('btnClearGroup').addEventListener('click', async () => {
   const g = curGroup(); if(!g) return;
   if(!confirm(`移除「${g.code} ${g.origin}→${g.dest}」群組內全部 ${g.tracks.length} 趟航班？\n（建議先匯出 JSON 備份）`)) return;
   for(const T of g.tracks){ LIB.delete(T.id); await DB.del(T.id); }
+  if(PB.on) pbExit();
   delete UI.baseline[g.key]; UI.group = null; refreshAll({fit:true});
 });
 
@@ -1438,7 +1996,7 @@ window.addEventListener('resize', () => { if(map) map.invalidateSize(); });
 (async function boot(){
   await DB.open();
   const ui = await DB.kvGet('ui');
-  if(ui) Object.assign(UI, {units:ui.units || 'aviation', xmode:ui.xmode || 'dist', thr:ui.thr || 300, showGC:ui.showGC !== false, group:ui.group || null, baseline:ui.baseline || {}, sortKey:ui.sortKey || 'tTO', sortDir:ui.sortDir || 1});
+  if(ui) Object.assign(UI, {units:ui.units || 'aviation', xmode:ui.xmode || 'dist', thr:ui.thr || 300, showGC:ui.showGC !== false, group:ui.group || null, baseline:ui.baseline || {}, sortKey:ui.sortKey || 'tTO', sortDir:ui.sortDir || 1, gateMode:ui.gateMode || 'auto', gateStep:ui.gateStep != null ? ui.gateStep : 0, gateMap:ui.gateMap !== false, events:ui.events !== false});
   const recs = await DB.all();
   recs.forEach(r => { try{ const T = buildTrack(r); LIB.set(T.id, T); }catch(e){ console.warn('skip', r && r.id, e); } });
   refreshAll({fit:true});
