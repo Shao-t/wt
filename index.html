@@ -336,6 +336,78 @@
   .leaflet-tooltip.gate-tip::before{ display:none; }
   @media (max-width:980px){ .ptools{ flex-wrap:wrap; } }
 
+  /* ===== help ===== */
+  .pt{ display:inline-flex; align-items:center; min-width:0; }
+  .help-q{ width:18px; height:18px; border-radius:50%; border:1px solid var(--border-strong); background:var(--panel); color:var(--text-dim); font-size:11px; font-weight:700; line-height:1; cursor:pointer; padding:0; display:inline-flex; align-items:center; justify-content:center; margin-left:8px; flex:none; font-family:var(--sans); transition:background .12s, color .12s, border-color .12s; }
+  .help-q:hover{ background:var(--teal); border-color:var(--teal); color:#fff; }
+  .help-q:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
+  .toolbar > .help-q{ margin:0 2px 0 0; }
+  .race > .help-q{ margin:0; }
+  .help-link{ margin-top:10px; background:none; border:none; color:var(--teal); font-size:12.5px; font-weight:600; text-decoration:underline; cursor:pointer; padding:4px 6px; font-family:var(--sans); }
+  .help-link:hover{ color:#0B5F58; }
+  .help-q-demo{ display:inline-flex; width:16px; height:16px; border-radius:50%; border:1px solid var(--border-strong); align-items:center; justify-content:center; font-size:10px; font-weight:700; color:var(--text-dim); vertical-align:1px; }
+  kbd{ font-family:var(--mono); font-size:11px; padding:1px 6px; border:1px solid var(--border-strong); border-bottom-width:2px; border-radius:4px; background:#fff; color:var(--navy); }
+
+  .help-root{ position:fixed; inset:0; z-index:9000; }
+  .help-backdrop{ position:absolute; inset:0; background:rgba(11,31,58,0.5); }
+  .help-panel{ position:absolute; top:0; right:0; bottom:0; width:min(1000px,100vw); background:var(--panel); display:flex; flex-direction:column; box-shadow:-10px 0 34px rgba(11,31,58,0.28); outline:none; }
+  .help-head{ display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--navy); color:#fff; flex:none; }
+  .help-head h2{ font-size:16px; font-weight:700; white-space:nowrap; }
+  #helpSearch{ flex:1; min-width:0; max-width:340px; margin-left:auto; padding:7px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.35); background:rgba(255,255,255,0.1); color:#fff; font:inherit; font-size:13px; }
+  #helpSearch::placeholder{ color:rgba(255,255,255,0.7); }
+  #helpSearch:focus-visible{ outline:2px solid #FBBF24; outline-offset:1px; }
+  .help-x{ width:32px; height:32px; border-radius:6px; border:1px solid rgba(255,255,255,0.35); background:transparent; color:#fff; font-size:15px; cursor:pointer; flex:none; }
+  .help-x:hover{ background:rgba(255,255,255,0.14); }
+  .help-x:focus-visible{ outline:2px solid #FBBF24; outline-offset:2px; }
+  .help-body{ flex:1; min-height:0; display:grid; grid-template-columns:200px minmax(0,1fr); }
+  .help-toc{ overflow:auto; border-right:1px solid var(--border); background:#F7F9FB; padding:10px 8px; display:flex; flex-direction:column; gap:1px; }
+  .help-toc a{ display:block; padding:6px 10px; border-radius:6px; font-size:12.5px; color:var(--text-dim); text-decoration:none; line-height:1.4; }
+  .help-toc a:hover{ background:#EAEFF4; color:var(--navy); }
+  .help-toc a.active{ background:var(--navy); color:#fff; font-weight:600; }
+  .help-toc a:focus-visible{ outline:2px solid var(--teal); outline-offset:-2px; }
+  .help-content{ position:relative; overflow:auto; padding:6px 28px 70px; scroll-behavior:auto; }
+  .help-content .hs{ padding:18px 0 8px; border-bottom:1px solid var(--border); }
+  .help-content h3{ font-size:19px; font-weight:700; color:var(--navy); margin:0 0 10px; padding-top:4px; }
+  .help-content h4{ font-size:14px; font-weight:700; color:var(--navy); margin:0 0 4px; }
+  .help-content p{ font-size:13.5px; line-height:1.8; color:#1E293B; margin:0 0 8px; }
+  .help-content ul, .help-content ol{ margin:4px 0 8px 22px; font-size:13.5px; line-height:1.8; color:#1E293B; }
+  .help-content li{ margin:2px 0; }
+  .help-content a.jump{ color:var(--teal); font-weight:600; }
+  .help-content .it{ margin:12px 0; padding:2px 0 2px 14px; border-left:3px solid var(--border); }
+  .help-content .read{ margin:8px 0 10px; padding:9px 12px; background:var(--teal-soft); border-radius:6px; font-size:13px; line-height:1.75; color:#134E4A; }
+  .help-content .cal{ margin:8px 0 10px; padding:9px 12px; background:var(--amber-soft); border-radius:6px; font-size:13px; line-height:1.75; color:#78350F; }
+  .help-content .fig{ margin:10px 0 12px; border:1px solid var(--border); border-radius:8px; overflow:hidden; background:#F7F9FB; }
+  .help-content .fig svg{ display:block; width:100%; height:auto; font-family:var(--sans); }
+  .help-content .cap{ padding:7px 12px 9px; font-size:12px; line-height:1.6; color:var(--text-dim); border-top:1px solid var(--border); background:#fff; }
+  .help-content ol.steps{ list-style:none; margin-left:0; counter-reset:st; }
+  .help-content ol.steps > li{ counter-increment:st; position:relative; padding-left:34px; margin:8px 0; }
+  .help-content ol.steps > li::before{ content:counter(st); position:absolute; left:0; top:1px; width:22px; height:22px; border-radius:50%; background:var(--navy); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .help-content dl.gl{ margin:6px 0; }
+  .help-content dl.gl dt{ font-size:13.5px; font-weight:700; color:var(--navy); margin-top:12px; }
+  .help-content dl.gl dd{ margin:2px 0 0 0; font-size:13.5px; line-height:1.8; color:#1E293B; }
+  .help-content table.symt{ width:100%; border-collapse:collapse; font-size:13px; margin:6px 0; }
+  .help-content table.symt th, .help-content table.symt td{ text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .help-content table.symt th{ background:#F7F9FB; color:var(--text-dim); font-size:12px; }
+  .help-content table.symt td:first-child{ white-space:nowrap; width:150px; }
+  .help-content ul.meth li{ margin:6px 0; }
+  .help-content .sw{ display:inline-block; width:14px; height:14px; border-radius:3px; vertical-align:middle; }
+  .help-content .dia{ display:inline-block; width:10px; height:10px; background:#1D4ED8; transform:rotate(45deg); border:1.5px solid #fff; box-shadow:0 0 0 1px rgba(11,31,58,0.4); margin:0 4px; }
+  .help-content .tag{ vertical-align:middle; }
+  .help-none{ padding:40px 10px; text-align:center; color:var(--text-faint); font-size:13.5px; }
+  @media (max-width:820px){
+    .help-body{ grid-template-columns:1fr; grid-template-rows:auto minmax(0,1fr); }
+    .help-toc{ flex-direction:row; overflow-x:auto; overflow-y:hidden; border-right:none; border-bottom:1px solid var(--border); padding:8px; gap:6px; }
+    .help-toc a{ white-space:nowrap; border:1px solid var(--border); background:#fff; }
+    .help-content{ padding:4px 16px 70px; }
+    .help-head h2{ font-size:14px; }
+    #helpSearch{ max-width:none; }
+    .help-content table.symt td:first-child{ white-space:normal; width:auto; }
+  }
+
+  @keyframes helpflash{ 0%{ background:#FEF3C7; } 100%{ background:transparent; } }
+  .help-content .hs.flash{ animation:helpflash 1.2s ease-out; }
+  @media (prefers-reduced-motion:reduce){ .help-content .hs.flash{ animation:none; } }
+
 </style>
 </head>
 <body>
@@ -350,6 +422,7 @@
       <div class="formats">.kml　.json（匯入先前匯出的資料庫）</div>
       <button class="btn" id="btnPick" type="button">選擇檔案</button>
       <div class="hint-s" style="margin-top:14px;">資料只存在你的瀏覽器裡（IndexedDB），不會上傳到任何伺服器</div>
+      <button class="help-link" data-help="sec-start" type="button">第一次使用？看「使用說明」（給航空新手）</button>
     </div>
   </div>
 
@@ -373,11 +446,13 @@
         <div class="meta-item"><div class="label">日期範圍（UTC）</div><div class="value" id="hRange">--</div></div>
       </div>
       <div class="hud-actions">
+        <button class="btn-light" data-help="sec-start" type="button" id="btnHelp">？ 使用說明</button>
         <button class="btn-light primary" id="btnAdd" type="button">＋ 加入檔案</button>
       </div>
     </header>
 
     <div class="toolbar" role="toolbar" aria-label="分析設定">
+      <button class="help-q" data-help="sec-toolbar" type="button" aria-label="說明：工具列各按鈕" title="說明：工具列各按鈕">?</button>
       <div class="grp"><span class="lbl">航班群組</span><select class="sel" id="selGroup" aria-label="航班群組"></select></div>
       <span class="sep"></span>
       <div class="grp"><span class="lbl">單位</span>
@@ -396,7 +471,7 @@
 
     <div class="main-row">
       <aside class="panel list-panel">
-        <div class="panel-title"><b>航班</b><span id="listCount"></span></div>
+        <div class="panel-title"><span class="pt"><b>航班</b><button class="help-q" data-help="sec-list" type="button" aria-label="說明：航班清單" title="說明：航班清單">?</button></span><span id="listCount"></span></div>
         <div class="flight-list" id="flightList"></div>
         <div class="list-foot">
           <button class="mini" id="btnExport" type="button">匯出 JSON</button>
@@ -404,7 +479,7 @@
         </div>
       </aside>
       <section class="panel map-panel" style="position:relative;">
-        <div class="panel-title"><b>航跡地圖（離地→落地）</b><span id="mapSub">各航班以不同顏色顯示</span></div>
+        <div class="panel-title"><span class="pt"><b>航跡地圖（離地→落地）</b><button class="help-q" data-help="sec-map" type="button" aria-label="說明：航跡地圖" title="說明：航跡地圖">?</button></span><span id="mapSub">各航班以不同顏色顯示</span></div>
         <div id="map"></div>
         <div class="legend">
           <div class="li"><svg viewBox="0 0 34 6"><line x1="0" y1="3" x2="34" y2="3" stroke="#475569" stroke-width="3"/></svg>實測航跡</div>
@@ -412,6 +487,7 @@
           <div class="li" id="legGC"><svg viewBox="0 0 34 6"><line x1="0" y1="3" x2="34" y2="3" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="1 4" stroke-linecap="round"/></svg>大圓航線</div>
         </div>
         <div class="race" id="raceBar" role="group" aria-label="競速回放">
+          <button class="help-q" data-help="sec-race" type="button" aria-label="說明：競速回放" title="說明：競速回放">?</button>
           <button class="pb-btn" id="pbReset" type="button" title="回到離地時刻" aria-label="回到離地">⏮</button>
           <button class="pb-btn play" id="pbPlay" type="button" aria-label="播放">▶</button>
           <input type="range" id="pbSeek" min="0" max="1000" value="0" aria-label="競速時間">
@@ -423,16 +499,16 @@
     </div>
 
     <section class="panel table-panel">
-      <div class="panel-title"><b>航班比較表</b><span class="hint-s">點欄位標題排序 ・ 綠色粗體 = 該欄最小值 ・ 小字 = 與基準航班的差</span></div>
+      <div class="panel-title"><span class="pt"><b>航班比較表</b><button class="help-q" data-help="sec-table" type="button" aria-label="說明：航班比較表" title="說明：航班比較表">?</button></span><span class="hint-s">點欄位標題排序 ・ 綠色粗體 = 該欄最小值 ・ 小字 = 與基準航班的差</span></div>
       <div class="table-wrap"><table class="cmp" id="cmpTable"></table></div>
       <div class="tnote">距離與平均地速以實測點的連線計算；缺口以直線連接，資料覆蓋率低的航班，距離偏短（⚠ = 下限估計）。巡航層、巡航地速只用實測區段計算。</div>
     </section>
 
     <section class="panel gate-panel">
-      <div class="panel-title"><b>穿越點比較（固定緯度／經度）</b>
+      <div class="panel-title"><span class="pt"><b>穿越點比較（固定緯度／經度）</b><button class="help-q" data-help="sec-gates" type="button" aria-label="說明：穿越點比較" title="說明：穿越點比較">?</button></span>
         <div class="ptools">
           <div class="seg" id="gateSeg"><button data-v="auto" type="button">自動</button><button data-v="lat" type="button">緯度線</button><button data-v="lon" type="button">經度線</button></div>
-          <select class="sel" id="gateStep" aria-label="穿越線間隔"><option value="0">間隔：自動</option><option value="5">每 5°</option><option value="10">每 10°</option><option value="15">每 15°</option><option value="20">每 20°</option></select>
+          <select class="sel" id="gateStep" aria-label="穿越線間隔"><option value="0">間隔：自動</option><option value="1">每 1°</option><option value="2">每 2°</option><option value="5">每 5°</option><option value="10">每 10°</option><option value="15">每 15°</option><option value="20">每 20°</option></select>
           <button class="tgl" id="gateMapBtn" type="button">地圖顯示</button>
         </div>
       </div>
@@ -441,34 +517,34 @@
     </section>
 
     <section class="panel evt-panel">
-      <div class="panel-title"><b>巡航剖面事件（爬升頂 ・ 階梯爬升 ・ 下降起點）</b><span class="hint-s">▲▼ 實心 = 實測 ・ 空心 = 發生在資料缺口內，只知道區間</span></div>
+      <div class="panel-title"><span class="pt"><b>巡航剖面事件（爬升頂 ・ 階梯爬升 ・ 下降起點）</b><button class="help-q" data-help="sec-events" type="button" aria-label="說明：巡航剖面事件" title="說明：巡航剖面事件">?</button></span><span class="hint-s">▲▼ 實心 = 實測 ・ 空心 = 發生在資料缺口內，只知道區間</span></div>
       <div class="table-wrap"><table class="cmp evt" id="evtTable"></table></div>
-      <div class="tnote">巡航平台 = 至少 2 個實測點、高度差在 ±250 ft 內、持續 ≥ 8 分鐘；相鄰兩個平台相差 ≥ 800 ft 才算一次高度變更。起飛爬升與最後下降不算在內。</div>
+      <div class="tnote">巡航平台 = 至少 2 個實測點、高度差在 ±250 ft 內、持續 ≥ 8 分鐘；相鄰兩個平台相差 ≥ 800 ft 才算一次高度變更。起飛爬升不算在內。下降起點（TOD）= 最高巡航層平台（容許 1,500 ft 內）的結束處；其後抵達時的分段下降不列為巡航事件。</div>
     </section>
 
     <div class="charts-grid">
       <section class="panel chart-panel">
-        <div class="panel-title"><b>高度剖面</b><span id="altSub" class="hint-s"></span></div>
+        <div class="panel-title"><span class="pt"><b>高度剖面</b><button class="help-q" data-help="sec-alt" type="button" aria-label="說明：高度剖面圖" title="說明：高度剖面圖">?</button></span><span id="altSub" class="hint-s"></span></div>
         <div class="chart-box"><canvas id="chAlt"></canvas></div>
         <div class="chart-foot">移動游標檢視各航班同一位置的數值，點一下可鎖定游標 ・ 虛線 = 缺口內插</div>
       </section>
       <section class="panel chart-panel">
-        <div class="panel-title"><b>地速剖面</b><span class="hint-s">已用前後各 2 點中位數平滑</span></div>
+        <div class="panel-title"><span class="pt"><b>地速剖面</b><button class="help-q" data-help="sec-spd" type="button" aria-label="說明：地速剖面圖" title="說明：地速剖面圖">?</button></span><span class="hint-s">已用前後各 2 點中位數平滑</span></div>
         <div class="chart-box"><canvas id="chSpd"></canvas></div>
         <div class="chart-foot">地速差異可粗略反映各天的風況（沒有風資料，僅供參考）</div>
       </section>
       <section class="panel chart-panel">
-        <div class="panel-title"><b id="dltTitle">相對基準的差距</b><span id="dltSub" class="hint-s"></span></div>
+        <div class="panel-title"><span class="pt"><b id="dltTitle">相對基準的差距</b><button class="help-q" data-help="sec-delta" type="button" aria-label="說明：相對基準的差距圖" title="說明：相對基準的差距圖">?</button></span><span id="dltSub" class="hint-s"></span></div>
         <div class="chart-box"><canvas id="chDlt"></canvas><div class="chart-empty hidden" id="dltEmpty"></div></div>
         <div class="chart-foot" id="dltFoot"></div>
       </section>
       <section class="panel chart-panel">
-        <div class="panel-title"><b>橫向偏離（相對基準航跡）</b><span class="hint-s">右(+) / 左(−) ・ 零線 = 基準航跡</span></div>
+        <div class="panel-title"><span class="pt"><b>橫向偏離（相對基準航跡）</b><button class="help-q" data-help="sec-xt" type="button" aria-label="說明：橫向偏離圖" title="說明：橫向偏離圖">?</button></span><span class="hint-s">右(+) / 左(−) ・ 零線 = 基準航跡</span></div>
         <div class="chart-box"><canvas id="chXt"></canvas><div class="chart-empty hidden" id="xtEmpty"></div></div>
         <div class="chart-foot">每個實測點到基準航跡的垂直距離（球面計算）。基準在缺口處是直線內插，這些位置的偏離僅供參考，以虛線標示。超出基準起訖範圍的位置（例如基準已落地而該航班還在飛）沒有定義，不繪製也不納入統計。</div>
       </section>
       <section class="panel chart-panel wide">
-        <div class="panel-title"><b>資料覆蓋</b><span class="hint-s">各航班離地→落地，依時間 0–100%</span></div>
+        <div class="panel-title"><span class="pt"><b>資料覆蓋</b><button class="help-q" data-help="sec-cov" type="button" aria-label="說明：資料覆蓋圖" title="說明：資料覆蓋圖">?</button></span><span class="hint-s">各航班離地→落地，依時間 0–100%</span></div>
         <div class="cov" id="covBody"></div>
         <div class="cov-axis"><span>離地</span><span>落地</span></div>
         <div class="cov-legend">
@@ -484,6 +560,533 @@
   <div id="dropOverlay" class="drop-overlay hidden">放開以加入 KML 或 JSON 檔案</div>
   <div id="toasts" role="status" aria-live="polite"></div>
   <input type="file" id="fileInput" accept=".kml,.json,application/json,application/vnd.google-earth.kml+xml" multiple class="hidden">
+</div>
+
+<div id="helpRoot" class="help-root hidden" aria-hidden="true">
+  <div class="help-backdrop" data-close></div>
+  <section class="help-panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle" tabindex="-1">
+    <header class="help-head">
+      <h2 id="helpTitle">使用說明（給航空新手）</h2>
+      <input type="search" id="helpSearch" placeholder="搜尋，例如：TOD、缺口、基準" aria-label="搜尋說明">
+      <button type="button" id="helpClose" class="help-x" data-close aria-label="關閉說明">✕</button>
+    </header>
+    <div class="help-body">
+      <nav class="help-toc" id="helpToc" aria-label="說明目錄"></nav>
+      <div class="help-content" id="helpContent">
+
+<!-- ========================= 快速入門 ========================= -->
+<section class="hs" id="sec-start" data-title="快速入門">
+  <h3>快速入門：三分鐘看懂這個工具</h3>
+  <p>這個工具回答一個問題：<b>「同一個航班，每天飛的路線、高度、速度有什麼不同？」</b>你把同一航班不同日期的飛行軌跡檔（KML）丟進來，它會把這些航班疊在同一張地圖與圖表上，幫你找出差異。</p>
+
+  <div class="it"><h4>操作五步驟</h4>
+    <ol class="steps">
+      <li><b>取得檔案。</b>到 Flightradar24 取得某一趟航班的軌跡，匯出成 KML 檔（一趟一個檔案）。想比較幾天，就取得幾天的檔案。</li>
+      <li><b>加入檔案。</b>可以直接把檔案拖進視窗，也可以按右上角黃色的「＋ 加入檔案」。一次可以選很多個檔案。</li>
+      <li><b>自動分組。</b>工具會依「航班號＋起點＋終點」把檔案分成群組（例如 DL210 ATL→CPT）。只有同一群組內的航班才會互相比較，換群組請用工具列最左邊的「航班群組」選單。</li>
+      <li><b>先看資料品質。</b>先看左側清單的「資料覆蓋」與最下方的「資料覆蓋」圖，了解這份資料有多少是真的收到、有多少是推測的（見下方「兩個關鍵觀念」）。</li>
+      <li><b>由上往下閱讀。</b>地圖 → 比較表 → 穿越點 → 巡航事件 → 四張圖。每一區標題旁的 <span class="help-q-demo">?</span> 都能直接跳到那一區的說明。</li>
+    </ol>
+  </div>
+
+  <div class="it"><h4>兩個關鍵觀念</h4>
+    <p><b>觀念一：「基準航班」。</b>任何比較都要有一個參考對象。工具預設把<b>日期最早的那一趟</b>當基準（名字旁會有深色「基準」標籤），其他航班的所有差異（領先或落後多少、偏左或偏右多少）都是「相對基準」來說的。你可以在左側清單按「設為基準」換一趟當基準。基準本身永遠是 0，不會畫在差距圖上。</p>
+    <p><b>觀念二：「實測」與「內插」。</b>飛機位置是靠飛機自己廣播、地面站台接收來的。在大洋、極地上空常常沒有站台，資料會斷很久。斷掉的地方，工具只能用<b>直線</b>把前後兩個收到的點連起來，這段叫「資料缺口」，是<b>推測</b>，不是真的航跡。整個工具都用同一套視覺語言區分：<b>實線＝真的收到；虛線／空心＝推測。</b>看到虛線或「內插」標籤，請把該處的數字當成參考，不要當成事實。</p>
+    <div class="fig">
+      <svg viewBox="0 0 520 120" role="img" aria-label="實測與內插的差別示意圖">
+        <rect width="520" height="120" fill="#F7F9FB"/>
+        <path d="M30 80 C110 70 140 40 200 50" stroke="#1D4ED8" stroke-width="3.5" fill="none"/>
+        <circle cx="30" cy="80" r="4" fill="#1D4ED8"/><circle cx="200" cy="50" r="4" fill="#1D4ED8"/>
+        <path d="M200 50 C250 85 300 20 360 50" stroke="#94A3B8" stroke-width="2" fill="none" stroke-dasharray="2 5" stroke-linecap="round"/>
+        <path d="M200 50 L360 50" stroke="#1D4ED8" stroke-width="2" fill="none" stroke-dasharray="2 7" stroke-linecap="round"/>
+        <circle cx="360" cy="50" r="4" fill="#1D4ED8"/>
+        <path d="M360 50 C420 60 450 85 495 80" stroke="#1D4ED8" stroke-width="3.5" fill="none"/>
+        <text x="110" y="30" font-size="12" fill="#0B1F3A" text-anchor="middle">實測（實線）</text>
+        <text x="280" y="108" font-size="12" fill="#B45309" text-anchor="middle">缺口：只知道前後兩點，中間用直線連起來（虛線）</text>
+        <text x="280" y="22" font-size="11" fill="#64748B" text-anchor="middle">灰色點線 = 飛機實際可能走過的路（工具不知道）</text>
+        <text x="440" y="60" font-size="12" fill="#0B1F3A" text-anchor="middle">實測</text>
+      </svg>
+      <div class="cap">資料缺口示意：藍色實線是真的收到的位置；缺口內的藍色虛線是工具硬連的直線，真實航跡其實可能像灰色點線那樣彎曲。</div>
+    </div>
+  </div>
+
+  <div class="it"><h4>頁面由上到下的導覽</h4>
+    <ul>
+      <li><b>深藍航班條：</b>這個群組是哪個航班、從哪到哪、有幾趟、誰是基準（<a href="#sec-strip" class="jump">說明</a>）。</li>
+      <li><b>工具列：</b>切換單位、X 軸、缺口門檻與顯示選項（<a href="#sec-toolbar" class="jump">說明</a>）。</li>
+      <li><b>左側航班清單：</b>顯示或隱藏航班、換基準、移除、看游標處的即時數值（<a href="#sec-list" class="jump">說明</a>）。</li>
+      <li><b>地圖與競速回放：</b>看路線；按播放讓所有航班同時「起飛競賽」（<a href="#sec-map" class="jump">地圖</a>、<a href="#sec-race" class="jump">競速</a>）。</li>
+      <li><b>航班比較表：</b>17 個數字欄位，一眼比出誰比較快、誰繞路（<a href="#sec-table" class="jump">說明</a>）。</li>
+      <li><b>穿越點比較：</b>各航班飛過某條緯線（或經線）的位置差多少（<a href="#sec-gates" class="jump">說明</a>）。</li>
+      <li><b>巡航剖面事件：</b>爬升頂、階梯爬升、下降起點（<a href="#sec-events" class="jump">說明</a>）。</li>
+      <li><b>四張圖＋覆蓋率：</b>高度、地速、相對基準的差距、橫向偏離、資料覆蓋（<a href="#sec-alt" class="jump">高度</a>、<a href="#sec-spd" class="jump">地速</a>、<a href="#sec-delta" class="jump">差距</a>、<a href="#sec-xt" class="jump">偏離</a>、<a href="#sec-cov" class="jump">覆蓋</a>）。</li>
+    </ul>
+  </div>
+  <p class="hint-s" style="margin:6px 0 0;">小技巧：在頁面上按鍵盤的 <kbd>?</kbd> 可以隨時開啟這份說明，按 <kbd>Esc</kbd> 關閉；說明視窗上方可以搜尋關鍵字（例如「TOD」「缺口」）。</p>
+  <div class="cal"><b>隱私：</b>檔案只在你的瀏覽器內處理，不會上傳到任何伺服器。資料存在瀏覽器的本機資料庫（IndexedDB），關閉頁面後仍在；清除瀏覽器資料會一併清掉，請用「匯出 JSON」備份。</div>
+</section>
+
+<!-- ========================= 名詞解釋 ========================= -->
+<section class="hs" id="sec-glossary" data-title="名詞解釋（新手必讀）">
+  <h3>名詞解釋（新手必讀）</h3>
+  <p>下面是整個工具會出現的航空與資料名詞，用白話解釋。</p>
+  <dl class="gl">
+    <dt>UTC（世界協調時間）</dt><dd>航空界統一使用的時間，不分時區。工具所有時間都是 UTC。<b>台灣時間 ＝ UTC ＋ 8 小時</b>（例如 UTC 01:30 ＝ 台灣 09:30）。</dd>
+    <dt>離地／起飛（Wheels-off）</dt><dd>飛機輪子離開跑道的那一刻。本工具把「高度越過地面高度＋100 呎」的時刻當作離地，並用前後兩點內插出較精確的時間。<b>所有比較都以離地為零點對齊</b>，所以不同航班的「第 0 分鐘」是同一件事。</dd>
+    <dt>落地（Touchdown）</dt><dd>輪子接觸跑道。工具用「高度最後一次高於地面高度＋100 呎」來判斷。</dd>
+    <dt>空中時間（Airborne time）</dt><dd>離地到落地之間的時間，不包含在地面滑行與等待的時間。</dd>
+    <dt>航跡（Track）</dt><dd>飛機實際飛過的路徑，也就是地圖上的那條線。</dd>
+    <dt>地速（Ground speed, GS）</dt><dd>飛機「相對於地面」的速度。它不等於空速：<b>地速 ≈ 空速 ＋ 順風（或 − 逆風）</b>。同一架飛機在同樣的空速下，順風時地速高、逆風時地速低。所以地速圖的差異常常反映的是<b>風</b>。</dd>
+    <dt>節（kt, knot）</dt><dd>航空的速度單位，1 節 ＝ 每小時 1 海浬 ＝ 1.852 公里／小時。</dd>
+    <dt>海浬（nm, nautical mile）</dt><dd>航空與航海的距離單位，1 海浬 ＝ 1.852 公里。它剛好等於地球表面緯度 1 分（1/60 度）的長度，所以緯度差 1° ≈ 60 海浬。</dd>
+    <dt>呎（ft）與高度層（FL, Flight Level）</dt><dd>航空高度單位是呎，1 呎 ＝ 0.3048 公尺。高度層 FL 是「高度除以 100」：<b>FL350 ＝ 35,000 呎 ≈ 10,668 公尺</b>。客機長程巡航通常在 FL300～FL410（約 9～12.5 公里）。</dd>
+    <dt>為什麼會看到 FL291、FL301、FL341 這種尾數是 1 的高度層？</dt><dd>在中國等使用<b>公尺</b>高度層的空域，飛機會在 8,900 公尺（約 29,100 呎）、9,200 公尺（約 30,100 呎）、10,400 公尺（約 34,100 呎）這類高度巡航。換算成呎再除以 100，就會出現 FL291、FL301、FL341 這種尾數是 1 的數字。這不是資料錯誤，而是公尺制高度層換算的結果。</dd>
+    <dt>大圓航線（Great circle）</dt><dd>在地球表面上兩點之間的<b>最短路徑</b>。在平面地圖上它看起來會彎向極區，那是地圖投影造成的錯覺。實際飛行常常不會完全照大圓飛（風、航路、空域限制都會影響），工具用它當「理想最短距離」的參考。</dd>
+    <dt>巡航（Cruise）</dt><dd>爬升結束後、準備下降前，在相對固定高度長時間平飛的階段，是長程航班最主要的階段。</dd>
+    <dt>爬升頂 TOC（Top of Climb）</dt><dd>爬升結束、第一次進入巡航高度的位置。</dd>
+    <dt>下降起點 TOD（Top of Descent）</dt><dd>離開最終巡航高度、開始下降準備進場的位置。TOD 離機場越遠，代表越早開始下降。</dd>
+    <dt>階梯爬升（Step climb）</dt><dd>巡航途中把高度提高一級（例如 FL340 → FL360）。原因：飛機燃油越燒越輕，可以爬到更高、更省油的高度；加上航管要隔開前後飛機，通常在特定位置才獲准爬升。長程航班常有好幾次階梯爬升。</dd>
+    <dt>STD／ATD／STA／ETA</dt><dd><b>STD</b>＝計畫出發時間；<b>ATD</b>＝實際出發時間；<b>STA</b>＝計畫抵達時間；<b>ETA</b>＝預計（或已實現的）抵達時間。這些時間來自 Flightradar24 檔案內的資訊。</dd>
+    <dt>ADS-B 與「資料缺口」</dt><dd>ADS-B 是飛機自己持續廣播位置的技術，地面站台收到後才有軌跡資料。地面站台大約只能收到視距範圍內（兩三百海浬）的飛機；在大洋、極地或偏遠地區常常收不到，或只靠衛星偶爾補一點，於是軌跡中間就斷了一大段，這就是「資料缺口」。</dd>
+    <dt>基準（Baseline）</dt><dd>用來當比較參考的那一趟航班，見「快速入門」。</dd>
+    <dt>領先／落後</dt><dd>相對基準，同一位置（或同一時刻）比基準早到／多飛（領先），或晚到／少飛（落後）。</dd>
+    <dt>橫向偏離（Cross-track deviation）</dt><dd>某一點距離基準航跡「垂直方向」有多遠、在左邊還是右邊。數字越大代表走的路線和基準差得越遠。</dd>
+    <dt>穿越點（Gate crossing）</dt><dd>航跡穿過某條固定緯線（或經線）的那一點。用它可以公平比較「飛到同一條線時，各航班分別偏東還是偏西多少」。</dd>
+    <dt>KML</dt><dd>一種地圖軌跡檔案格式（Google Earth 也使用）。Flightradar24 可匯出此格式。</dd>
+  </dl>
+</section>
+<!-- ========================= 航班條 ========================= -->
+<section class="hs" id="sec-strip" data-title="頁首航班條">
+  <h3>頁首的深藍航班條</h3>
+  <p>顯示你目前選中的「航班群組」的總覽。這是整個頁面唯一的深色區塊，方便你隨時確認自己在看哪一組資料。</p>
+  <div class="it"><h4>航班代號（黃色大字）與副標</h4><p>例如 <b>DL210</b> 是航班號（IATA 代碼），下面灰字 <b>DAL210</b> 是 ICAO 呼號（航管與機組使用的版本），再下面是航空公司名稱。</p></div>
+  <div class="it"><h4>起點 → 終點</h4><p>三個字母是機場代碼（例如 ATL＝亞特蘭大、CPT＝開普敦），下面是城市名。這裡的起訖點來自檔案內的資訊。</p></div>
+  <div class="it"><h4>趟數</h4><p>這個群組內共有幾趟航班（也就是幾個檔案）。至少要有 2 趟才有比較意義。</p></div>
+  <div class="it"><h4>基準航班</h4><p>目前被當成比較參考的那一趟，格式是「月/日 機號」，例如 <b>10/09 B-2486</b>（機號是這架飛機的註冊編號）。</p></div>
+  <div class="it"><h4>日期範圍（UTC）</h4><p>群組內最早與最晚一趟的<b>離地日期</b>（UTC）。</p></div>
+  <div class="it"><h4>「？ 使用說明」與「＋ 加入檔案」</h4><p><b>？ 使用說明</b>就是你現在看的這份文件。<b>＋ 加入檔案</b>可以選取 KML 檔（可多選），也可以選取先前「匯出 JSON」存下的備份檔。你也可以直接把檔案拖進視窗任何位置。已經加入過的相同航班會自動略過；沒有時間資訊的 KML 無法對齊比較，會顯示錯誤訊息。</p></div>
+</section>
+
+<!-- ========================= 工具列 ========================= -->
+<section class="hs" id="sec-toolbar" data-title="工具列（各按鈕）">
+  <h3>工具列：每一個按鈕與選單</h3>
+  <div class="it"><h4>航班群組（下拉選單）</h4>
+    <p>列出所有群組，格式是「航班號 起點→終點　(趟數)」。<b>群組＝航班號＋起點＋終點</b>，所以 DL210 ATL→CPT 與 CA982 JFK→PEK 是兩個群組，不會被混在一起比較。切換群組後，整個頁面都換成該群組的資料。</p>
+    <div class="read"><b>新手提示：</b>如果你只加入了一個航班，群組裡只會有 1 趟，「相對基準的差距」與「橫向偏離」兩張圖會顯示「再加入至少 1 趟同航班」的提示，這是正常的。</div></div>
+
+  <div class="it"><h4>單位：航空／公制</h4>
+    <p><b>航空</b>：速度用節（kt）、高度用呎（ft）、距離用海浬（nm）。<b>公制</b>：公里／小時（km/h）、公尺（m）、公里（km）。切換只改變顯示，不影響計算。換算：1 nm ＝ 1.852 km、1 kt ＝ 1.852 km/h、1 ft ＝ 0.3048 m。</p></div>
+
+  <div class="it"><h4>X 軸：沿航跡距離／起飛後時間／完成百分比</h4>
+    <p>決定四張圖橫軸「用什麼來對齊不同航班」，同時也決定游標、競速圓點與差距圖的意義。<b>它不影響地圖與比較表。</b></p>
+    <ul>
+      <li><b>沿航跡距離（預設）：</b>離地後「沿自己的航跡」已經飛了多遠（海浬或公里）。適合回答<b>「飛到同一段路的位置時，高度／速度／落後多少？」</b>，最適合比較不同路線。</li>
+      <li><b>起飛後時間：</b>離地後經過了多久（小時:分）。適合回答<b>「在同一個時刻，大家分別在做什麼？」</b>競速回放就是用這個時鐘。</li>
+      <li><b>完成百分比：</b>各航班自己的 0～100%。因為每趟總距離不同，用百分比可以把它們「拉成一樣長」再比較；缺點是看不出真實距離。</li>
+    </ul>
+    <div class="read"><b>怎麼選：</b>想知道「哪一天繞路、哪一天風大」用「沿航跡距離」；想知道「同一時刻誰在前面」用「起飛後時間」；總距離差很多時用「完成百分比」。</div></div>
+
+  <div class="it"><h4>缺口門檻：3／5／10 分鐘</h4>
+    <p>兩個相鄰的位置點，時間間隔<b>超過</b>這個值，就把這一段判定為「資料缺口」（只是直線推測）。門檻越小，越嚴格、越多地方被標成缺口；越大越寬鬆。預設 5 分鐘。</p>
+    <p>它會影響：<b>資料覆蓋率與品質標籤</b>、地圖與圖表上的虛線、階梯爬升是「實測」還是「區間內插」、穿越點的「內插」標籤、橫向偏離是否可靠。</p>
+    <div class="read"><b>怎麼選：</b>資料很密（幾秒一點）可以用 3 分鐘；跨洋資料稀疏時，改成 10 分鐘可以少標一些缺口，但請記得被放寬的部分可信度也較低。</div></div>
+
+  <div class="it"><h4>大圓參考線（開關）</h4>
+    <p>在地圖上用淺灰色點線畫出「基準航班離地點到落地點之間的大圓最短路徑」，用來看各航班相對於理想最短路徑繞了多少。開啟時圖例會顯示這條線。注意：地圖上這條線用的是<b>基準</b>航班的離地點與落地點；比較表的「大圓距離」與「多出距離」則是用<b>各航班自己</b>的離地點與落地點算的，所以兩者不一定完全相同。</p></div>
+
+  <div class="it"><h4>巡航事件（開關）</h4>
+    <p>開啟時，在地圖與<b>高度剖面圖</b>上標出階梯爬升（▲）、階梯下降（▼）、爬升頂與下降起點（◆）。關閉可以讓地圖更乾淨。比較表與「巡航剖面事件」表不受影響。詳見「巡航剖面事件」。</p></div>
+
+  <div class="it"><h4>適合視野</h4><p>讓地圖自動縮放到剛好看得到所有顯示中的航班。你拖曳或縮放地圖之後，按這個鈕可以一鍵回到完整視野。</p></div>
+</section>
+
+<!-- ========================= 航班清單 ========================= -->
+<section class="hs" id="sec-list" data-title="左側航班清單">
+  <h3>左側的「航班」清單</h3>
+  <p>群組內每一趟航班一列。這個清單同時是<b>圖例</b>（顏色對照）與<b>即時數值顯示板</b>。</p>
+  <div class="it"><h4>顏色方塊（核取方塊）</h4><p>方塊的顏色就是這趟航班在地圖與所有圖表上的顏色。點一下可以<b>顯示／隱藏</b>該航班（實心＝顯示、空心＝隱藏）。<b>基準航班不能隱藏</b>，因為所有比較都靠它。</p></div>
+  <div class="it"><h4>日期與機號</h4><p>例如 <b>10/09 B-2486</b>：離地日期（UTC 月/日）與機號。同一航班每天可能由不同飛機執飛。</p></div>
+  <div class="it"><h4>「基準」標籤／「設為基準」按鈕</h4><p>深色「基準」標籤表示目前的基準。按其他航班的「設為基準」，所有相對比較（領先落後、橫向偏離、穿越點 Δ、TOD 差距）都會立刻重算。</p></div>
+  <div class="it"><h4>兩行小字</h4>
+    <p>第一行：<b>空中 h:mm</b>（空中時間）、<b>距離</b>（航跡距離）。第二行：<b>資料覆蓋 xx%</b> 與品質標籤。品質標籤：<span class="q q-high">高</span> 覆蓋 ≥ 80%、<span class="q q-mid">中</span> 50%～80%、<span class="q q-low">低</span> &lt; 50%。</p>
+    <div class="read"><b>怎麼看：</b>覆蓋率越低，這趟航班裡「推測」的部分越多，距離與許多比較數字會越不可靠。詳見「資料覆蓋」。</div></div>
+  <div class="it"><h4>游標經過圖表時的即時數值</h4><p>當你在任何一張圖上移動滑鼠，每一列的小字會改成顯示游標位置的數值：<b>＋離地後時間 ・ 高度 ・ 地速</b>；如果該處是缺口會多一個<span class="q q-mid">內插</span>；非基準航班還會多一行：<b>相對基準 領先／落後多少 ・ 偏左／偏右多少</b>。詳見「游標與鎖定」。</p></div>
+  <div class="it"><h4>「資料不完整」標籤</h4><p>琥珀色的「資料不完整：起點非離地／終點非落地」表示這份軌跡<b>在空中就開始或結束</b>（例如檔案被截斷）。它的空中時間與距離只是<b>下限</b>，所以比較表會用「≥」與 ⚠ 標示，並且<b>不參與</b>「最小值標綠」與「平均、範圍」統計；競速回放中，這類航班資料結束時顯示「資料結束（未落地）」，不會被當成已抵達。</p></div>
+  <div class="it"><h4>✕（移除）</h4><p><b>立刻</b>把這趟航班從資料庫刪除，<b>沒有確認視窗、也無法復原</b>。想先備份請用下方「匯出 JSON」。</p></div>
+  <div class="it"><h4>滑鼠停在某一列上</h4><p>地圖上那一趟的軌跡會加粗，其他航班變淡，方便你在重疊的線裡找到它（在比較表的列上移動也有同樣效果）。</p></div>
+  <div class="it"><h4>清單底部：匯出 JSON／移除此群組</h4>
+    <p><b>匯出 JSON：</b>把<b>目前這個群組</b>的所有航班存成一個 .json 備份檔（約為原始 KML 大小的 5%）。要備份全部資料，請對每個群組各匯出一次。之後用「＋ 加入檔案」就能匯入還原，重複的航班會自動略過。</p>
+    <p><b>移除此群組：</b>刪除目前群組內全部航班，會先跳出確認視窗。</p></div>
+</section>
+
+<!-- ========================= 地圖 ========================= -->
+<section class="hs" id="sec-map" data-title="航跡地圖">
+  <h3>航跡地圖（離地→落地）</h3>
+  <p>地圖只畫<b>空中的部分</b>（離地到落地），不包含機場內的滑行。可以用滑鼠拖曳、滾輪縮放；手機用手指。底圖是淺灰色地圖，右下角有地圖來源標示。</p>
+
+  <div class="it"><h4>線條怎麼看</h4>
+    <ul>
+      <li><b>粗實線（有顏色）：</b>實測航跡。基準航班比其他航班更粗。</li>
+      <li><b>細點虛線（同色）：</b>資料缺口，只是前後兩點的直線推測。</li>
+      <li><b>淺灰色細點線：</b>大圓參考線（需開啟「大圓參考線」）。</li>
+      <li><b>深藍圓點加白色方框標籤（如 ATL、CPT）：</b>基準航班的離地點與落地點。</li>
+    </ul>
+    <div class="fig">
+      <svg viewBox="0 0 520 170" role="img" aria-label="大圓航線與實際航跡示意圖">
+        <rect width="520" height="170" fill="#F7F9FB"/>
+        <path d="M60 120 L460 120" stroke="#94A3B8" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/>
+        <path d="M60 120 C130 40 330 25 460 120" stroke="#1D4ED8" stroke-width="3.5" fill="none"/>
+        <circle cx="60" cy="120" r="6" fill="#0B1F3A" stroke="#fff" stroke-width="2"/><circle cx="460" cy="120" r="6" fill="#0B1F3A" stroke="#fff" stroke-width="2"/>
+        <text x="60" y="145" font-size="12" fill="#0B1F3A" text-anchor="middle">離地點</text><text x="460" y="145" font-size="12" fill="#0B1F3A" text-anchor="middle">落地點</text>
+        <text x="260" y="136" font-size="12" fill="#475569" text-anchor="middle">大圓（理想最短）</text>
+        <text x="260" y="50" font-size="12" fill="#1D4ED8" text-anchor="middle">實際航跡（繞了一圈）</text>
+        <path d="M262 60 L262 110" stroke="#B45309" stroke-width="1.2" stroke-dasharray="3 3"/>
+        <text x="272" y="92" font-size="11" fill="#B45309">多出的距離 → 比較表「多出距離」</text>
+      </svg>
+      <div class="cap">大圓與實際航跡：實際航跡通常比大圓長，多出的部分就是比較表的「多出距離」。</div>
+    </div>
+  </div>
+
+  <div class="it"><h4>穿越線與穿越點（需開啟穿越點區的「地圖顯示」）</h4>
+    <p>灰色細虛線橫跨地圖，旁邊的文字（如 30°N、赤道 0°、80°W）是這條線的緯度或經度；線上的小圓點是各航班穿越它的位置：<b>實心＝實測、空心＝缺口內插</b>。</p></div>
+
+  <div class="it"><h4>方塊 ▲▼ 與菱形 ◆（需開啟「巡航事件」）</h4>
+    <p>小方塊是高度變更：▲＝階梯爬升、▼＝階梯下降；小菱形是爬升頂（TOC）或下降起點（TOD）。<b>實心＝實測、空心＝發生在資料缺口內（只知道大約區間，位置是中點）</b>。滑鼠停在上面會顯示詳細文字。</p></div>
+
+  <div class="it"><h4>游標圓點</h4><p>在圖表上移動滑鼠時，地圖上每趟航班會出現一個有白邊的圓點，標示「游標那一刻」該航班所在的位置。</p></div>
+  <div class="it"><h4>競速模式的圓點與尾跡</h4><p>見下一節「競速回放」。</p></div>
+  <div class="it"><h4>底圖載入失敗</h4><p>如果主要底圖連續載入失敗，工具會自動改用 OpenStreetMap 底圖並跳出提示。這不影響航跡與數字。</p></div>
+</section>
+
+<!-- ========================= 競速 ========================= -->
+<section class="hs" id="sec-race" data-title="競速回放">
+  <h3>競速回放（同步比賽）</h3>
+  <p>想像所有航班<b>在同一個起跑線同時起飛</b>，看看誰先到、誰在哪。所有顯示中的航班用同一個時鐘前進，零點是各自的「離地時刻」。</p>
+  <div class="it"><h4>控制列（地圖下方）</h4>
+    <ul>
+      <li><b>⏮ 回到離地：</b>跳回時間 0。</li>
+      <li><b>▶／⏸ 播放／暫停：</b>播放到最後會自動停；再按一次會從頭開始。</li>
+      <li><b>滑桿：</b>拖曳可跳到任何時刻。一拖曳就會進入競速模式。</li>
+      <li><b>「＋h:mm / h:mm 離地後」：</b>目前時刻 / 最長那一趟的空中時間。</li>
+      <li><b>120×／600×／1800×／3600×：</b>播放速度，意思是「現實 1 秒＝飛行 N 秒」。例如 600× 時，一趟 14 小時的航班約 84 秒播完。</li>
+      <li><b>結束競速：</b>離開競速模式，回到一般的游標檢視。</li>
+    </ul></div>
+  <div class="it"><h4>地圖上看到什麼</h4><p>每趟航班一個彩色圓點（旁邊標日期），身後拖著越來越長的粗尾跡（已飛過的路）；完整的航跡變淡作為背景。如果圓點標籤彼此靠太近，工具會讓標籤朝不同方向展開。</p></div>
+  <div class="it"><h4>左側清單的競速資訊</h4>
+    <p>第一行：<b>#名次 ・ ＋時間 ・ 距目的地 xxx nm</b>。第二行：<b>領先／落後 基準 N nm</b>。</p>
+    <ul>
+      <li><b>名次怎麼算：</b>已經落地的航班排最前面（空中時間短的在前）；還在飛的依「距離基準落地點還剩多遠（直線大圓距離）」排，越近名次越前。用「剩餘直線距離」是因為各航班走的路不同，不能用已飛距離比。</li>
+      <li><b>領先／落後 基準 N nm：</b>該航班比基準「更接近目的地」多少海浬（領先），或更遠多少（落後）。</li>
+      <li><b>已抵達：</b>落地後改顯示「已抵達 h:mm」與「比基準 早／晚 h:mm 抵達」（空中時間差）。如果軌跡在空中就結束（資料不完整），則顯示「資料結束（未落地）」，並依剩餘距離排名。</li>
+      <li><b>與基準持平：</b>與基準的距離差小於 0.5 海浬（或 0.5 公里）時，不顯示領先或落後。</li>
+    </ul></div>
+  <div class="it"><h4>圖表的變化</h4><p>競速時，每張圖上每趟航班各有一個圓點，位在「它自己此刻」的位置。在「沿航跡距離」模式下，各圓點的 X 位置不同（飛得快的在右邊）；在「起飛後時間」模式下，它們排成同一條垂直線。競速期間<b>圖表游標暫停</b>，結束後才恢復。</p></div>
+</section>
+
+<!-- ========================= 圖例速查 ========================= -->
+<section class="hs" id="sec-symbols" data-title="圖例速查表">
+  <h3>圖例速查表：所有符號的意思</h3>
+  <table class="symt">
+    <thead><tr><th>符號</th><th>出現位置</th><th>意思</th></tr></thead>
+    <tbody>
+      <tr><td><svg width="46" height="10"><line x1="0" y1="5" x2="46" y2="5" stroke="#1D4ED8" stroke-width="3.5"/></svg></td><td>地圖、各圖表</td><td><b>實線</b>：真的收到資料的航跡。</td></tr>
+      <tr><td><svg width="46" height="10"><line x1="0" y1="5" x2="46" y2="5" stroke="#1D4ED8" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"/></svg></td><td>地圖</td><td><b>點虛線</b>：資料缺口，直線推測。</td></tr>
+      <tr><td><svg width="46" height="10"><line x1="0" y1="5" x2="46" y2="5" stroke="#1D4ED8" stroke-width="2" stroke-dasharray="6 4"/></svg></td><td>各圖表</td><td><b>虛線</b>：該段曲線是缺口內插（差距圖與偏離圖中，也包含「基準那一側是缺口」）。</td></tr>
+      <tr><td><svg width="46" height="10"><line x1="0" y1="5" x2="46" y2="5" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/></svg></td><td>地圖</td><td>大圓參考線。</td></tr>
+      <tr><td><span class="sw" style="background:#1D4ED8"></span></td><td>清單、表格、覆蓋率</td><td>該航班的代表色。</td></tr>
+      <tr><td><span class="tag">基準</span></td><td>清單、表格、穿越點、事件表</td><td>目前的比較基準。</td></tr>
+      <tr><td><span class="q q-high">高</span> <span class="q q-mid">中</span> <span class="q q-low">低</span></td><td>清單、表格、覆蓋率</td><td>資料品質：覆蓋 ≥80%／50–80%／&lt;50%。</td></tr>
+      <tr><td><span class="q q-mid">內插</span></td><td>清單、穿越點、事件表</td><td>此處數值落在資料缺口內，是推測。</td></tr>
+      <tr><td><span class="q q-mid">基準內插</span></td><td>游標說明</td><td>游標處的橫向偏離，是跟基準的「缺口直線」比，僅供參考。</td></tr>
+      <tr><td><span class="q q-mid">超出基準範圍</span></td><td>游標說明</td><td>該位置已超出基準航跡的起點或終點，橫向偏離沒有定義。</td></tr>
+      <tr><td><span class="warn" style="margin:0">⚠</span></td><td>比較表</td><td>資料覆蓋率低，距離偏短（為下限估計）；或最大橫向偏離／階梯爬升受缺口影響。</td></tr>
+      <tr><td><span class="evs up" style="--c:#1D4ED8">▲</span> <span class="evs down" style="--c:#1D4ED8">▼</span></td><td>地圖、高度圖、事件表、比較表</td><td>階梯爬升／階梯下降。實心＝實測；空心＝發生在缺口內。</td></tr>
+      <tr><td><span class="dia"></span></td><td>地圖、高度圖</td><td>爬升頂（TOC）與下降起點（TOD）。</td></tr>
+      <tr><td><b style="color:#0F766E">綠色粗體數字</b></td><td>比較表</td><td>該欄在顯示中的航班裡<b>最小</b>的值（空中時間、航跡距離、多出距離），需至少 2 趟。</td></tr>
+      <tr><td><span style="color:#64748B;font-size:11px">+0:12／−0:05</span></td><td>比較表小字</td><td>與基準的差。</td></tr>
+      <tr><td>×N</td><td>穿越點</td><td>該航班穿越這條線 N 次，表中只列第一次。</td></tr>
+      <tr><td>≥1:11</td><td>比較表</td><td>「≥」表示下限：這趟軌跡不完整（起點非離地或終點非落地），實際值至少這麼大。</td></tr>
+      <tr><td><span class="q q-mid">資料不完整</span></td><td>航班清單</td><td>軌跡在空中就開始或結束。</td></tr>
+      <tr><td>≈ 0／≈ 基準／持平</td><td>比較表、穿越點、游標說明</td><td>與基準的差小於 0.5 海浬（或 0.5 公里／0.5 分鐘），視為與基準相同。</td></tr>
+      <tr><td>—</td><td>各表格</td><td>沒有資料，或不適用（例如沒有穿越過、沒有足夠長的巡航平台）。</td></tr>
+      <tr><td>起點非離地</td><td>比較表航班欄</td><td>這份軌跡一開始就在空中（資料被截斷），無法準確對齊離地時刻。</td></tr>
+    </tbody>
+  </table>
+</section>
+<!-- ========================= 比較表 ========================= -->
+<section class="hs" id="sec-table" data-title="航班比較表（17 欄）">
+  <h3>航班比較表：17 個欄位逐一說明</h3>
+  <p>每趟航班一列，把最重要的數字並排。<b>點欄位標題可以排序</b>（再點一次反向，標題旁的 ▲／▼ 表示方向）；表格太寬時可左右捲動，第一欄（航班）會固定在左邊。滑鼠停在某一列，地圖上那趟的軌跡會加粗。被隱藏的航班整列變淡；基準那列有淡綠色底。</p>
+  <div class="read"><b>三個共通的視覺規則：</b>① 欄位數字下面的<b>灰色小字</b>是「與基準的差」；② <b>綠色粗體</b>是該欄在目前顯示的航班裡最小的值（只有空中時間、航跡距離、多出距離三欄，且需至少 2 趟）。注意「最小」只代表最短／最快／最不繞路，不代表一定「最好」；③ <span class="warn" style="margin:0">⚠</span> 表示這個數字受到資料缺口影響，請謹慎解讀。</div>
+
+  <div class="it"><h4>不完整的軌跡（⚠ 與「≥」）</h4><p>如果某份軌跡<b>一開始就在空中</b>（起點非離地）或<b>在空中就結束</b>（終點非落地），它的空中時間與距離只是「下限」。比較表會在這些數字前加「≥」與 ⚠，「離地」或「落地」欄顯示「—」，「多出距離」與「與基準的差」也顯示「—」，並且<b>不參與</b>「綠色最小值」與底部的「平均、範圍」。這是為了避免拿一段殘缺的資料和完整航班比較，而得出錯誤的結論。</p></div>
+  <div class="it"><h4>1. 航班</h4><p>左邊的色塊是代表色；粗體是<b>離地日期（UTC）</b>；有「基準」標籤的是基準。下面小字是<b>機號 ・ 機型代碼</b>（例如 B-2486 ・ A359）；<b>滑鼠停在這行小字上會顯示完整機型名稱</b>（例如「Airbus A350-941」）。若出現「起點非離地」，代表這份軌跡一開始就在空中，離地時刻是推測的，對齊可能不準。</p></div>
+  <div class="it"><h4>2. 離地（UTC）</h4><p>輪子離開跑道的時刻。台灣時間請加 8 小時。</p></div>
+  <div class="it"><h4>3. 落地（UTC）</h4><p>輪子接觸跑道的時刻。如果跨到隔天，後面會有小字「+1d」。</p></div>
+  <div class="it"><h4>4. 起飛延誤（ATD−STD，分鐘）</h4>
+    <p>實際出發時間（ATD）減計畫出發時間（STD），正數表示比計畫晚。這兩個時間來自檔案內資訊。</p>
+    <div class="cal"><b>新手注意：</b>在我們看過的檔案中，STD 是計畫「離開登機門」的時間，而 ATD 大約等於「離地」時間，所以這個數字<b>包含了在地面滑行的時間</b>，通常本來就有十幾到三十分鐘，不能直接當成誤點。比較不同天的差異才有意義。</div></div>
+  <div class="it"><h4>5. 空中時間（h:mm）</h4><p>離地到落地經過的時間。小字是與基準的差，例如 <b>+0:06</b> 表示比基準多飛 6 分鐘。</p></div>
+  <div class="it"><h4>6. 航跡距離</h4>
+    <p>從離地到落地，沿著實際位置點連線累加的距離（海浬或公里）。小字是與基準的差。</p>
+    <div class="cal"><b>⚠ 為什麼可能偏短：</b>缺口內只知道前後兩點，工具用「兩點間的直線」計算，而真實航跡通常有些彎，所以<b>資料缺口越多，這個距離越偏短</b>。覆蓋率低的航班會顯示 ⚠，請把它視為「至少這麼長」的下限。</div></div>
+  <div class="it"><h4>7. 大圓距離</h4><p>這趟航班「自己的離地點」到「自己的落地點」之間的最短直線距離（大圓）。它是理想值，用來和航跡距離對照。</p></div>
+  <div class="it"><h4>8. 多出距離</h4>
+    <p>＝（航跡距離 ÷ 大圓距離 − 1），以百分比顯示。例如 <b>+3.2%</b> ＝ 比理想最短路徑多飛 3.2%。這是最直接的「繞路程度」。</p>
+    <div class="read"><b>怎麼看：</b>長程航班通常有數個百分點的繞行很正常（風、航路、空域限制）。短程航班因為起降程序（離場、進場的轉彎）占比大，百分比會偏高（例如 20% 以上）。受缺口影響時是下限估計（⚠）。</div></div>
+  <div class="it"><h4>9. 最大橫向偏離（相對基準，單位：海浬或公里）</h4>
+    <p>這趟航班所有實測點裡，<b>離基準航跡垂直距離最遠</b>的那一點，並標示在基準的「左」或「右」側（例如 <b>左 131</b>）。基準自己的那一列顯示「基準」。</p>
+    <ul><li>超出基準起點或終點範圍的位置沒有定義，不計入（例如基準已落地，而這趟還在飛）。</li>
+        <li>顯示「≈ 0」表示最大偏離不到 0.5 海浬（或 0.5 公里），也就是幾乎貼著基準航跡。</li>
+        <li>⚠ 表示這個最大值出現在「基準航跡的缺口附近」，基準在那裡只是直線推測，數字僅供參考；此時下方小字「可靠區間 左／右 N」是只看基準有實測的地方得到的最大值。</li></ul></div>
+  <div class="it"><h4>10. 最高高度</h4><p>空中所有紀錄點中最高的高度。</p></div>
+  <div class="it"><h4>11. 主要巡航層（實測）</h4><p>在 25,000 呎以上、且是<b>實測資料</b>的區段裡，停留時間最久的高度層（以該層的平均高度顯示到 100 呎，所以會與「巡航剖面事件」表一致，例如 FL291；為什麼會有尾數是 1 的高度層，見「名詞解釋」）。航空新手可以記住：FL350＝35,000 呎。若實測的高空時間不足 10 分鐘則顯示「—」。公制模式下顯示公尺。</p></div>
+  <div class="it"><h4>12. 階梯爬升</h4><p>巡航途中往上提高高度的次數，例如 <b>▲4</b>；若也有往下的高度變更會顯示 <b>▲2 ▼1</b>。⚠ 表示其中有幾次發生在資料缺口內（只知道區間）。詳細列表在「巡航剖面事件」。</p></div>
+  <div class="it"><h4>13. 平均地速（空中全程）</h4><p>＝ 航跡距離 ÷ 空中時間，包含爬升與下降。它不依賴檔案裡的速度欄，只由位置與時間算出，所以比較穩定。受缺口影響時可能偏低（⚠）。</p></div>
+  <div class="it"><h4>14. 巡航地速（實測）</h4><p>25,000 呎以上、實測區段內的平均地速（時間加權，已清除不合理的速度數值）。因為排除了爬升、下降與缺口，它比「平均地速」更能反映巡航時的風況。</p></div>
+  <div class="it"><h4>15. ETA−STA（分鐘）</h4><p>預計（或已實現）抵達時間減計畫抵達時間。<b>負數＝比計畫早到</b>，正數＝比計畫晚。在我們看過的檔案中，已完成的航班的 ETA 與實際落地時間很接近。</p></div>
+  <div class="it"><h4>16. 資料覆蓋</h4><p>空中時間裡，「有實測資料」的比例，旁邊是品質標籤（高／中／低）。這是判斷其他數字可不可信的第一個指標。詳見「資料覆蓋」圖。</p></div>
+  <div class="it"><h4>17. 缺口（次 ・ 最長）</h4><p>空中總共有幾段資料缺口，以及最長那一段的長度（h:mm）。例如 <b>30 ・ 0:45</b>＝30 段缺口，最長 45 分鐘。</p></div>
+
+  <div class="it"><h4>表格底部：平均、範圍（最大−最小）</h4><p>當顯示 2 趟以上時，在「空中時間、航跡距離、多出距離、平均地速、巡航地速、資料覆蓋」六欄的下方，列出各航班的平均值與<b>範圍</b>（最大值減最小值）。範圍越大，代表這些天之間的差異越大。</p></div>
+</section>
+
+<!-- ========================= 穿越點 ========================= -->
+<section class="hs" id="sec-gates" data-title="穿越點比較">
+  <h3>穿越點比較（固定緯度／經度）</h3>
+  <p>怎麼公平地比較「兩天走的路差多遠」？答案是在路上畫幾條<b>固定的線</b>（例如 30°N、赤道），看各航班分別在<b>哪裡穿過</b>這條線。穿過的位置不同，就代表路線不同。</p>
+  <div class="fig">
+    <svg viewBox="0 0 520 206" role="img" aria-label="穿越點示意圖">
+      <rect width="520" height="206" fill="#F7F9FB"/>
+      <line x1="30" y1="45" x2="490" y2="45" stroke="#64748B" stroke-dasharray="3 5"/><text x="34" y="39" font-size="11" fill="#475569">20°N</text>
+      <line x1="30" y1="95" x2="490" y2="95" stroke="#64748B" stroke-dasharray="3 5"/><text x="34" y="89" font-size="11" fill="#475569">10°N</text>
+      <line x1="30" y1="145" x2="490" y2="145" stroke="#64748B" stroke-dasharray="3 5"/><text x="34" y="139" font-size="11" fill="#475569">赤道 0°</text>
+      <path d="M180 10 C200 60 250 110 330 180" stroke="#EA580C" stroke-width="3" fill="none"/>
+      <path d="M130 10 C160 70 210 120 270 180" stroke="#1D4ED8" stroke-width="3.5" fill="none"/>
+      <circle cx="219" cy="145" r="5" fill="#1D4ED8" stroke="#fff" stroke-width="2"/><circle cx="283" cy="145" r="5" fill="#EA580C" stroke="#fff" stroke-width="2"/>
+      <path d="M224 160 L278 160" stroke="#B45309" stroke-width="1.5"/><path d="M224 156 L224 164 M278 156 L278 164" stroke="#B45309" stroke-width="1.5"/>
+      <text x="251" y="199" font-size="11" fill="#B45309" text-anchor="middle">差 N 海浬（東／西）</text>
+      <text x="219" y="125" font-size="11" fill="#1D4ED8" text-anchor="middle">基準 27.8°W</text><text x="300" y="125" font-size="11" fill="#EA580C" text-anchor="start">另一趟 26.9°W</text>
+    </svg>
+    <div class="cap">兩趟航班穿越同一條緯線（赤道）的位置，一個在 27.8°W、一個在 26.9°W，差約 50 海浬。</div>
+  </div>
+  <div class="it"><h4>控制項（面板右上）</h4>
+    <ul>
+      <li><b>自動／緯度線／經度線：</b>決定畫的是緯線（橫的，報告「經度」）還是經線（直的，報告「緯度」）。<b>自動</b>的規則：只有當航線明顯偏東西（經度跨度超過緯度跨度的 2 倍，例如橫越太平洋）才用經線，其他情況用緯線（例如南北向的大西洋航線）。</li>
+      <li><b>間隔：自動／每 1°／2°／5°／10°／15°／20°：</b>線與線的距離。<b>自動</b>會選最小的間隔讓總線數不超過約 10 條。</li>
+      <li><b>地圖顯示（開關）：</b>在地圖上畫出這些線與穿越點。</li>
+    </ul></div>
+  <div class="it"><h4>表格怎麼讀</h4>
+    <p>每一列是一條線（左欄標示，例如 <b>30°N</b>、<b>赤道 0°</b>、<b>80°W</b>）。每一欄是一趟航班（有顏色與日期）。每個格子由上而下：</p>
+    <ol>
+      <li><b>粗體：</b>穿越位置。緯線時是經度（例如 <b>27.81°W</b>）；經線時是緯度（例如 <b>46.98°N</b>）。</li>
+      <li><b>Δ 行：</b>基準顯示「基準」；其他航班顯示相對基準偏<b>東／西</b>（緯線）或<b>北／南</b>（經線）多少海浬。</li>
+      <li><b>灰色小字：</b><b>＋離地後時間 ・ 穿越時的高度層</b>，例如 <b>+7:27 ・ FL380</b>。</li>
+      <li><span class="q q-mid">內插</span>：這個穿越點落在資料缺口內，是兩點間直線算出的，僅供參考。</li>
+    </ol>
+    <p>最右欄<b>「跨航班離散」</b>＝這條線上，所有航班之間「最東與最西（或最北與最南）」相差多少；離散最大的那一列整格標成橘色並寫「最大」，也就是各天路線<b>分歧最大的地方</b>。格子是「—」表示該航班沒有穿越這條線。</p></div>
+  <div class="cal"><b>注意：</b>穿越位置是用兩個相鄰實測點的直線內插算的（和地圖上畫的線一致）；落在缺口內的穿越點誤差可能不小。若同一條線被穿越多次，只列第一次，並以「×N」標示次數。</div>
+</section>
+
+<!-- ========================= 巡航事件 ========================= -->
+<section class="hs" id="sec-events" data-title="巡航剖面事件">
+  <h3>巡航剖面事件（爬升頂 ・ 階梯爬升 ・ 下降起點）</h3>
+  <p>一趟長程航班的高度大致像下面這樣：爬升到巡航高度（爬升頂 TOC）、平飛、中途幾次提高高度（階梯爬升）、最後從某個位置開始下降（下降起點 TOD）。這個面板把這些關鍵點抓出來並排比較。</p>
+  <div class="fig">
+    <svg viewBox="0 0 560 210" role="img" aria-label="航班高度剖面示意圖">
+      <rect width="560" height="210" fill="#F7F9FB"/>
+      <line x1="40" y1="180" x2="540" y2="180" stroke="#94A3B8"/><line x1="40" y1="20" x2="40" y2="180" stroke="#94A3B8"/>
+      <text x="14" y="100" font-size="11" fill="#475569" transform="rotate(-90 14 100)" text-anchor="middle">高度</text><text x="290" y="200" font-size="11" fill="#475569" text-anchor="middle">時間 ／ 距離 →</text>
+      <path d="M50 178 C80 120 100 90 135 78 L235 78 L247 62 L345 62 L357 46 L430 46 C470 90 490 150 520 178" stroke="#1D4ED8" stroke-width="3.5" fill="none" stroke-linejoin="round"/>
+      <path d="M135 78 L135 180" stroke="#CBD5E1" stroke-dasharray="3 4"/><path d="M430 46 L430 180" stroke="#CBD5E1" stroke-dasharray="3 4"/>
+      <polygon points="135,70 141,78 135,86 129,78" fill="#1D4ED8" stroke="#fff"/><polygon points="430,38 436,46 430,54 424,46" fill="#1D4ED8" stroke="#fff"/>
+      <polygon points="241,60 235,71 247,71" fill="#1D4ED8" stroke="#fff"/><polygon points="351,44 345,55 357,55" fill="#1D4ED8" stroke="#fff"/>
+      <text x="70" y="150" font-size="11" fill="#0B1F3A">爬升</text><text x="160" y="104" font-size="11" fill="#0B1F3A">初始巡航層</text>
+      <text x="135" y="66" font-size="11" fill="#0B1F3A" text-anchor="middle">TOC 爬升頂</text><text x="241" y="52" font-size="11" fill="#0B1F3A" text-anchor="middle">▲ 階梯爬升</text>
+      <text x="351" y="36" font-size="11" fill="#0B1F3A" text-anchor="middle">▲ 階梯爬升</text><text x="430" y="32" font-size="11" fill="#0B1F3A" text-anchor="middle">TOD 下降起點</text>
+      <text x="498" y="120" font-size="11" fill="#0B1F3A">下降</text><text x="395" y="172" font-size="11" fill="#B45309" text-anchor="middle">TOD 距落地 →</text>
+    </svg>
+    <div class="cap">高度剖面示意：TOC、階梯爬升（▲）、TOD 是這個面板要找的三種關鍵點。</div>
+  </div>
+  <div class="it"><h4>工具怎麼判斷（白話版）</h4>
+    <ol>
+      <li>先找出「高度平台」：連續至少 2 個實測點、高度差在 ±250 呎內、持續至少 8 分鐘、且高於 20,000 呎的一段平飛。</li>
+      <li>相鄰兩個平台高度相差 <b>800 呎以上</b>，就記為一次高度變更：往上是 ▲，往下是 ▼。</li>
+      <li><b>爬升頂 TOC</b>＝第一個平台的起點。<b>初始巡航層</b>＝第一個平台的高度。</li>
+      <li><b>下降起點 TOD</b>＝「最高巡航層平台（容許 1,500 呎內）」中最後一個平台的結束處；<b>最終巡航層</b>＝那個平台的高度。</li>
+      <li>TOD 之後在抵達階段分段下降的平台（例如 FL360 → FL320 → FL300），屬於進場下降，<b>不算巡航事件</b>，也不會移動 TOD。</li>
+    </ol></div>
+  <div class="it"><h4>表格欄位</h4>
+    <ul>
+      <li><b>航班：</b>日期、機號。</li>
+      <li><b>爬升頂 TOC：</b><b>＋離地後時間 ・ 航跡距離</b>。例如「+0:21 ・ 121 nm」＝離地後 21 分鐘、飛了 121 海浬時爬到巡航高度。</li>
+      <li><b>初始巡航層：</b>第一個巡航高度，如 FL300。</li>
+      <li><b>巡航中的高度變更：</b>每一次一行：▲／▼ 圖示、<b>前高度→後高度</b>（如 FL320→FL340）、發生的位置與時間。</li>
+      <li><b>最終巡航層：</b>下降前最後的巡航高度。</li>
+      <li><b>下降起點 TOD：</b><b>＋離地後時間 ・ 距落地 N nm</b>。非基準航班下方小字<b>「比基準 早／晚 N nm」</b>：TOD 離機場更遠＝更早開始下降（早）；更近＝晚。</li>
+    </ul></div>
+  <div class="it"><h4>「內插」與區間表示</h4><p>如果這次高度變更發生在資料缺口內，工具只知道「前一個平台結束、下一個平台開始」之間發生，無法知道確切位置，所以寫成<b>區間</b>（例如「4,527–4,728 nm 之間 ・ +9:58–10:24」）並標<span class="q q-mid">內插</span>。地圖與高度圖上用<b>空心</b>標記，位置畫在區間中點。</p></div>
+  <div class="read"><b>新手提示：</b>同一航班不同天，階梯爬升的高度順序通常一樣（燃油越燒越輕），但發生的位置會因航管、風與重量而不同；TOD 的位置差反映「誰比較早開始下降」。如果表格顯示「空中沒有足夠長的巡航平台」，代表這趟太短（例如短程航班的平飛不足 8 分鐘）或資料太稀疏，無法判讀。</div>
+  <div class="cal"><b>限制：</b>TOD 的定義是慣例。如果某趟在巡航中途為了避開亂流而大幅下降（低於最高層 1,500 呎以上），之後的平台會被當成抵達階段而不計入。這種情況很少見。</div>
+</section>
+<!-- ========================= 游標 ========================= -->
+<section class="hs" id="sec-cursor" data-title="游標與鎖定">
+  <h3>游標與鎖定：讓所有畫面一起跟著動</h3>
+  <p>在<b>任何一張圖</b>（高度、地速、差距、偏離）上移動滑鼠，會同時發生：</p>
+  <ul>
+    <li>四張圖都在同一個 X 位置出現一條<b>琥珀色垂直虛線</b>，每條曲線上有一個圓點；</li>
+    <li>地圖上每趟航班出現一個圓點，位在「游標那個位置」的真實座標（缺口內是推測位置）；</li>
+    <li>左側清單每一列顯示該位置的數值（時間、高度、地速、相對基準領先落後、偏左偏右）。</li>
+  </ul>
+  <div class="it"><h4>怎麼操作</h4>
+    <ul>
+      <li><b>點一下圖表：</b>鎖定游標（垂直線變成實線），這時你可以放心移動滑鼠去看地圖或清單。再點一下解除鎖定。</li>
+      <li><b>按 Esc：</b>解除鎖定並清除游標。</li>
+      <li><b>滑鼠移出圖表：</b>若沒有鎖定，游標會消失。</li>
+      <li><b>競速回放期間：</b>圖表游標停用，改由競速控制列操作；結束競速後恢復。</li>
+    </ul></div>
+  <div class="read"><b>游標的「位置」是什麼意思？</b>取決於「X 軸」的選擇。選「沿航跡距離」時，游標代表「各航班都飛了 N 海浬的那一刻」；選「起飛後時間」時，代表「各航班都離地 h:mm 後的那一刻」；選「完成百分比」時，代表「各航班都完成了 N% 路程的那一刻」。</div>
+</section>
+
+<!-- ========================= 高度圖 ========================= -->
+<section class="hs" id="sec-alt" data-title="圖：高度剖面">
+  <h3>高度剖面圖</h3>
+  <div class="it"><h4>這張圖在畫什麼</h4><p>橫軸是你選的 X（距離、時間或百分比），縱軸是<b>高度</b>（呎，刻度寫成 35k＝35,000 呎；公制模式為公尺）。每趟航班一條曲線，顏色同清單；基準較粗且畫在最底層，其他航班畫在上面，所以兩者重疊時你還看得到基準。</p></div>
+  <div class="it"><h4>怎麼看</h4>
+    <ul>
+      <li><b>左邊陡升：</b>起飛爬升。越陡代表爬得越快。</li>
+      <li><b>長長的水平線：</b>巡航。水平線的高度就是巡航高度（35k＝FL350）。</li>
+      <li><b>水平線中間往上跳的台階：</b>階梯爬升，通常有 ▲ 標記。</li>
+      <li><b>右邊下降：</b>進場下降。下降起點越靠左，表示越早開始下降。</li>
+      <li><b>虛線：</b>這一段是資料缺口，高度是前後兩點之間硬連的直線，實際高度變化（例如什麼時候爬升）不可知。</li>
+      <li><b>▲▼ 與 ◆：</b>階梯爬升／下降與 TOC／TOD（需開啟「巡航事件」）。實心＝實測、空心＝缺口內。</li>
+    </ul></div>
+  <div class="read"><b>常見用法：</b>比較兩天「什麼時候爬到更高的高度」。例如某天較早爬到 FL370，通常代表當時航管給了較好的許可或飛機較輕。</div>
+</section>
+
+<!-- ========================= 地速圖 ========================= -->
+<section class="hs" id="sec-spd" data-title="圖：地速剖面">
+  <h3>地速剖面圖</h3>
+  <div class="it"><h4>這張圖在畫什麼</h4><p>縱軸是<b>地速</b>（相對地面的速度，kt 或 km/h）。為了避免雜訊讓曲線鋸齒，已經用「前後各 2 個點的中位數」平滑。</p></div>
+  <div class="it"><h4>怎麼看</h4>
+    <ul>
+      <li><b>兩端較低、中間較高：</b>起降時速度低，巡航時速度高，這是正常的。</li>
+      <li><b>同一位置某天比較高：</b>最常見的原因是<b>順風較強</b>（或逆風較弱）。因為工具沒有風資料，無法分辨是風還是飛機自己飛得比較快，所以這只能當線索，不是結論。</li>
+      <li><b>曲線被高度影響：</b>爬升與下降段本來就會變速，不要拿它和巡航段比。</li>
+    </ul></div>
+  <div class="cal"><b>資料清理說明：</b>Flightradar24 偶爾會回報不合理的速度（例如在 14,000 呎高度回報 90 節）。工具會把回報的速度和「由前後 15 秒位置推算出的速度」交叉比對，明顯不符時改用位置推算值；兩段位置推算彼此不一致（可能是位置跳點）時則不採信。所以圖上的速度是清理後的結果。</div>
+</section>
+
+<!-- ========================= 差距圖 ========================= -->
+<section class="hs" id="sec-delta" data-title="圖：相對基準的差距">
+  <h3>相對基準的差距圖</h3>
+  <div class="it"><h4>這張圖在回答什麼</h4><p>「<b>跟基準比，我現在是領先還是落後？</b>」零線（深色水平線）就是基準本身，所以基準不會畫在這張圖上。其他航班在零線<b>上方＝領先（+）</b>、<b>下方＝落後（−）</b>。</p></div>
+  <div class="it"><h4>縱軸的單位會隨 X 軸改變</h4>
+    <ul>
+      <li><b>X 軸＝沿航跡距離或完成百分比：</b>縱軸是<b>分鐘</b>。意思是「在同一個位置（或同一個進度），這趟比基準早到幾分鐘（+）或晚到幾分鐘（−）」。</li>
+      <li><b>X 軸＝起飛後時間：</b>縱軸是<b>距離</b>（海浬或公里）。意思是「在離地後的同一個時刻，這趟比基準多飛了幾海浬（+）或少飛（−）」。</li>
+    </ul></div>
+  <div class="it"><h4>怎麼看</h4>
+    <ul>
+      <li><b>曲線往上爬：</b>這趟在這一段正在<b>追上／超越</b>基準（通常是順風或飛得較直）。</li>
+      <li><b>曲線往下掉：</b>正在<b>輸給</b>基準（逆風或繞路）。</li>
+      <li><b>最右端的數字：</b>幾乎就是兩趟空中時間（或距離）的總差。</li>
+      <li><b>虛線：</b>其中一方在那裡是缺口內插，數值僅供參考。</li>
+    </ul></div>
+  <div class="cal"><b>為什麼最右邊有時會突然拉高或下掉？</b>圖只畫到「兩趟都存在」的範圍（取較短的總距離）。在「沿航跡距離」模式下，若兩趟總距離不同，其中一趟已經接近落地、另一趟還沒，最後一小段的比較就沒有意義。想避開這個效應，請把 X 軸改成「完成百分比」。</div>
+</section>
+
+<!-- ========================= 偏離圖 ========================= -->
+<section class="hs" id="sec-xt" data-title="圖：橫向偏離">
+  <h3>橫向偏離圖（相對基準航跡）</h3>
+  <div class="it"><h4>這張圖在回答什麼</h4><p>「<b>這趟航班離基準走的那條路，橫向差多遠？</b>」縱軸是每個實測點到基準航跡的<b>垂直距離</b>（海浬或公里，球面計算），零線就是基準航跡。曲線貼著零線＝路線和基準幾乎一樣；曲線離零線越遠＝繞到旁邊去了。</p></div>
+  <div class="fig">
+    <svg viewBox="0 0 520 170" role="img" aria-label="橫向偏離與左右方向示意圖">
+      <rect width="520" height="170" fill="#F7F9FB"/>
+      <line x1="30" y1="85" x2="470" y2="85" stroke="#0B1F3A" stroke-width="2.5"/><polygon points="490,85 470,78 470,92" fill="#0B1F3A"/>
+      <text x="260" y="104" font-size="12" fill="#0B1F3A" text-anchor="middle">基準航跡（行進方向 →）</text>
+      <path d="M40 85 C110 60 160 30 240 38 C330 46 380 70 460 85" stroke="#EA580C" stroke-width="3" fill="none"/>
+      <path d="M40 85 C120 110 170 138 250 132 C330 126 390 100 460 85" stroke="#1D4ED8" stroke-width="3" fill="none"/>
+      <path d="M240 85 L240 38 M250 85 L250 132" stroke="#B45309" stroke-dasharray="3 3"/>
+      <text x="215" y="30" font-size="12" fill="#EA580C" text-anchor="end">在基準的「左側」（−）</text>
+      <text x="268" y="150" font-size="12" fill="#1D4ED8">在基準的「右側」（+）</text>
+    </svg>
+    <div class="cap">左與右是以<b>基準行進方向</b>來看：面向前進方向時，左手邊是「左」、右手邊是「右」。向南飛的航班，右邊就是西邊。<br><b>注意：</b>這張示意圖是俯視地圖，右側畫在基準的下方；但<b>實際的偏離圖是把「右側」畫在上方（正值）、「左側」畫在下方（負值）</b>，上下剛好相反，請以圖表縱軸的「右 + / 左 −」為準。</div>
+  </div>
+  <div class="it"><h4>怎麼看</h4>
+    <ul>
+      <li><b>縱軸正值（上方）＝在基準右側，負值（下方）＝在左側。</b>（面板標題旁也寫了「右(+) / 左(−)」。）</li>
+      <li><b>圖上有一整段沒有線：</b>該位置超出基準航跡的起點或終點（例如基準已落地、這趟還沒），橫向偏離沒有定義，所以不畫也不統計。</li>
+      <li><b>虛線：</b>該段是缺口，或參考的基準航跡在那裡是缺口內插，僅供參考。</li>
+      <li>比較表「最大橫向偏離」就是這張圖的極值。</li>
+    </ul></div>
+  <div class="read"><b>怎麼應用：</b>如果兩天的曲線都在零線附近（例如 ±20 海浬內），代表走的是幾乎相同的航路；如果某天有一個大鼓包（例如 +250 海浬），代表那天繞到基準旁邊很遠的地方，可以搭配地圖與「穿越點比較」找出它在哪裡分開。</div>
+</section>
+
+<!-- ========================= 覆蓋圖 ========================= -->
+<section class="hs" id="sec-cov" data-title="圖：資料覆蓋">
+  <h3>資料覆蓋圖</h3>
+  <div class="it"><h4>這張圖在畫什麼</h4><p>每趟航班一條水平長條，從左到右代表<b>離地到落地的整段空中時間（各自的 0～100%）</b>。<b>有顏色的實心段＝有收到資料</b>；<b>斜線條紋段＝資料缺口</b>。右邊是覆蓋率百分比與品質標籤。滑鼠停在某一段上會顯示它的 UTC 時間範圍（例如「缺口 02:50–03:14 UTC（0:24）」）。</p></div>
+  <div class="it"><h4>為什麼這是最重要的一張圖</h4><p>它告訴你<b>其他所有圖表與數字可以相信多少</b>。條紋段愈多，表示該航班那一大段只是直線推測，距離、地速、階梯爬升位置、穿越點、橫向偏離在那裡都只是估計。</p></div>
+  <div class="it"><h4>覆蓋率與品質怎麼算</h4>
+    <p><b>覆蓋率 ＝ 1 − 缺口總時間 ÷ 空中時間</b>。其中「缺口」是間隔超過「缺口門檻」的相鄰兩點之間的時間。<span class="q q-high">高</span> ≥ 80%、<span class="q q-mid">中</span> 50%～80%、<span class="q q-low">低</span> &lt; 50%。</p></div>
+  <div class="read"><b>典型模式：</b>跨洋或極地航班的長條通常是「兩端有顏色（起飛與降落附近有地面站台）、中間大片斜線」；短程且全程在陸地上空的航班可以達到 100%。</div>
+</section>
+
+<!-- ========================= 方法 ========================= -->
+<section class="hs" id="sec-method" data-title="計算方法與限制">
+  <h3>計算方法與限制（想知道數字怎麼來的）</h3>
+  <ul class="meth">
+    <li><b>離地／落地：</b>以高度越過「地面高度＋100 呎」判斷（地面高度取第一個／最後一個點），並在前後兩點間線性內插出較精確的時間與位置。</li>
+    <li><b>距離：</b>空中相鄰兩點的大圓距離累加。若兩點間隔 20 秒到 30 分鐘之內，卻隱含超過 700 節的速度，視為位置跳點，該段不計入距離。</li>
+    <li><b>大圓距離：</b>各航班自己的離地點與落地點之間的大圓距離。</li>
+    <li><b>穿越線與缺口內位置：</b>相鄰兩點之間用「地圖上看到的直線」內插（在地圖投影上線性內插），和畫面一致。</li>
+    <li><b>游標位置：</b>在相鄰兩點間線性內插高度與地速，並以地圖投影的方式內插座標。</li>
+    <li><b>橫向偏離：</b>用球面幾何算「點到基準航跡這條折線的最短距離」，並以基準的行進方向決定左右。超出基準起訖範圍的點為「未定義」。</li>
+    <li><b>經度連續化：</b>跨越國際換日線（±180°）時，經度會被「展開」成連續數值（例如 190°），所以航跡不會在地圖上橫跨一整個地球。穿越點與標籤會自動換回一般的東經／西經表示。</li>
+    <li><b>圖表抽樣：</b>為了流暢，每趟航班畫在圖上的點最多約 700 個，但<b>所有缺口邊界都完整保留</b>；所有統計與表格數字都使用完整資料。</li>
+    <li><b>資料儲存：</b>解析後的精簡軌跡存在瀏覽器 IndexedDB（隱私模式或部分瀏覽器可能無法寫入，這時資料只存在記憶體，重新整理就消失，請用匯出 JSON 備份）。</li>
+  </ul>
+  <div class="cal"><b>誠實的限制：</b>① 工具沒有風資料，地速差異只能「推測」是風；② 資料來源是 Flightradar24 的軌跡，本身有誤差與缺口；③ 缺口內的所有位置、高度與事件都是推測；④ 起飛延誤等時間欄位取決於檔案內附的資訊；⑤ 這個工具用來比較與觀察，<b>不能</b>作為正式的飛航安全或營運判斷依據。</div>
+</section>
+
+<!-- ========================= 流程 ========================= -->
+<section class="hs" id="sec-workflow" data-title="分析流程範例">
+  <h3>範例：這週哪一天的航班最快？為什麼？</h3>
+  <ol class="steps">
+    <li><b>加入檔案：</b>把這個航班這週每天的 KML 全部丟進來，確認群組選單是你要的航班、趟數正確。</li>
+    <li><b>看資料品質：</b>左側清單與最下方的「資料覆蓋」圖。若各趟覆蓋率都「低」，結論要保守。</li>
+    <li><b>看比較表：</b>用「空中時間」欄排序，找出最快與最慢；再看「航跡距離」「多出距離」是否因為繞路，以及「巡航地速」是否因為風。</li>
+    <li><b>看地圖與橫向偏離圖：</b>確認有沒有哪一天走了不同的路線；若有，用「穿越點比較」找出在哪條線上分歧最大。</li>
+    <li><b>看高度與階梯爬升：</b>「巡航剖面事件」表與高度圖，看是否某天較晚才爬到高高度，或較早開始下降。</li>
+    <li><b>看地速剖面與差距圖：</b>確認是哪一段時間（哪一段路）開始領先或落後。</li>
+    <li><b>用競速回放驗證：</b>按播放，看各航班在時間軸上的相對位置，確認你的結論。</li>
+    <li><b>備份：</b>按「匯出 JSON」保存這一組資料。</li>
+  </ol>
+</section>
+
+<!-- ========================= FAQ ========================= -->
+<section class="hs" id="sec-faq" data-title="常見問題">
+  <h3>常見問題</h3>
+  <div class="it"><h4>為什麼同一個航班每天走的路線不一樣？</h4><p>常見原因：高空風（飛機會選擇順風較強的航路省時省油）、天氣（避開雷雨或亂流）、航管指派、空域限制或臨時關閉、當天的載重與燃油計畫。這個工具讓你看到「差了多少」，原因要自己再推敲。</p></div>
+  <div class="it"><h4>圖上大部分都是虛線，正常嗎？</h4><p>跨洋、極地航班很正常，因為那裡地面站台收不到訊號。請對照「資料覆蓋」圖，並把虛線區段的數字當作參考。</p></div>
+  <div class="it"><h4>資料覆蓋率很低，我還能信什麼？</h4><p>有實測的部分仍然可信：起飛與降落附近的航跡、離地與落地時間、空中時間（只靠離地與落地時刻）、最高高度。受缺口影響較大的是：航跡距離、平均地速、階梯爬升位置、穿越點、橫向偏離。這些在表格中大多有 ⚠ 或「內插」標示。</p></div>
+  <div class="it"><h4>為什麼空中時間一樣，航跡距離卻不一樣？</h4><p>兩趟可能走了不同長度的路，但風不同造成地速不同，剛好花一樣的時間；或是資料缺口不同，使得距離被低估的程度不同。</p></div>
+  <div class="it"><h4>「起飛延誤」為什麼大家都差不多是 +20 分鐘？</h4><p>因為這個欄位拿「起飛時間」減「計畫離開登機門的時間」，包含滑行時間，見「比較表」第 4 欄說明。</p></div>
+  <div class="it"><h4>為什麼我加入檔案卻被略過？</h4><p>可能是：已經加入過同一趟（起始時間與點數都相同，視為重複）；檔案沒有時間資訊；內容不是可辨識的軌跡；或軌跡沒有離地紀錄。畫面右下角會用提示說明原因。</p></div>
+  <div class="it"><h4>為什麼台北—上海這種短程航班，「多出距離」高達 +28%？</h4><p>這類航班的資料顯示，航跡並不是起點到終點的直線，而是沿著指定的離場路線，繞經幾個航點再進場。兩岸航班通常必須循指定航路與航點飛行，所以相對「直線大圓距離」的多出比例本來就很高（我們看過的 MU5098 約 +28%）。比較時，看「同一航班不同天的差異」（例如某天多飛了 30 海浬）比看絕對百分比更有意義。</p></div>
+  <div class="it"><h4>為什麼有的航班前面有「≥」與 ⚠，離地或落地欄是「—」？</h4><p>那趟軌跡不完整：資料從空中才開始，或在空中就結束（例如檔案被截斷）。它的空中時間與距離只是下限，所以不參與最小值標綠與平均、範圍統計，也不拿來算「與基準的差」。見「比較表」的「不完整的軌跡」。</p></div>
+  <div class="it"><h4>為什麼加入檔案時出現「空中資料太少」？</h4><p>空中的資料少於 8 個點或不到 3 分鐘，無法可靠地算出距離、速度或對齊，所以工具拒絕加入，避免這種殘缺資料混進平均與範圍而誤導判讀。</p></div>
+  <div class="it"><h4>為什麼某趟在穿越點表格是「—」？</h4><p>該趟沒有穿越這條線（例如它比基準短、或走了別的方向），或資料在那裡完全中斷。</p></div>
+  <div class="it"><h4>如何換電腦或備份？</h4><p>對每個群組按左下角「匯出 JSON」，把檔案帶到另一台電腦，再用「＋ 加入檔案」匯入即可。</p></div>
+  <div class="it"><h4>圖表上的曲線點好像比我的資料少？</h4><p>為了流暢度，圖表最多畫約 700 個點，缺口邊界完整保留；表格統計不受影響。</p></div>
+  <div class="it"><h4>我該相信哪個「速度」？</h4><p>「平均地速」是距離除以時間，最穩定；「巡航地速」只看高空實測區段，最能反映巡航風況；地速剖面圖是清理並平滑後的瞬時值。</p></div>
+</section>
+
+        <div class="help-none hidden" id="helpNone">沒有符合的說明，請換個關鍵字（例如：缺口、基準、TOD、橫向偏離）。</div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -608,6 +1211,23 @@ function buildTrack(rec){
       }
     }
   }
+  // ---- pass 2: cross-check every report against the speed implied by the positions ----
+  // Needed for dense data with a long run of bad reports (neighbours are all bad, so the median test above is fooled).
+  // The speed is taken from the 15 s before and the 15 s after the fix; it is only trusted if the two halves agree
+  // (that also rejects position glitches), and it replaces the report when the two differ by more than ~14 %.
+  let fixedPos = 0;
+  for(let i = 0; i < N; i++){
+    let a = i, b = i;
+    while(a > 0 && P[i][0] - P[a][0] < 15) a--;
+    while(b < N - 1 && P[b][0] - P[i][0] < 15) b++;
+    const d1 = P[i][0] - P[a][0], d2 = P[b][0] - P[i][0];
+    if(d1 < 8 || d2 < 8 || d1 + d2 > 240) continue;
+    const v1 = hav(P[a][1], P[a][2], P[i][1], P[i][2]) / (d1 / 3600), v2 = hav(P[i][1], P[i][2], P[b][1], P[b][2]) / (d2 / 3600);
+    const v = (v1 * d1 + v2 * d2) / (d1 + d2);
+    if(v < 100 || v > 700 || Math.abs(v1 - v2) > Math.max(30, 0.1 * v)) continue;
+    const rep = clean[i];
+    if(rep == null || Math.abs(rep - v) > Math.max(40, 0.14 * v)){ clean[i] = Math.round(v); fixedPos++; }
+  }
   const spd = new Array(N);
   for(let i = 0; i < N; i++){
     const w = [];
@@ -649,7 +1269,8 @@ function buildTrack(rec){
       dLD = cum[k] + f * (cum[k+1] - cum[k]);
     }
   }
-  if(iLD - iTO < 2) throw new Error('空中的點數不足，無法分析');
+  const nWin = iLD - iTO + 1;
+  if(nWin < 8 || tLD - tTO < 180) throw new Error(`空中資料太少（${nWin} 個點、${Math.round(tLD - tTO)} 秒），無法分析`);
   const distAir = Math.max(1, dLD - dTO), airSec = Math.max(1, tLD - tTO);
 
   // ---- airborne window arrays (all comparisons run on these) ----
@@ -667,7 +1288,7 @@ function buildTrack(rec){
   const meta = rec.meta;
   return {
     id: rec.id, name: rec.name, meta, pts: P, vis: rec.vis !== false, ci: rec.ci || 0, added: rec.added || 0,
-    gkey: groupKeyOf(meta), W, iTO, iLD, hasTO, hasLD, tTO, tLD, dTO, dLD, distAir, airSec, glitches, fixedSpd,
+    gkey: groupKeyOf(meta), W, iTO, iLD, hasTO, hasLD, complete: hasTO && hasLD, tTO, tLD, dTO, dLD, distAir, airSec, glitches, fixedSpd, fixedSpd2: fixedPos,
     label: fmtMD(tTO) + (meta.reg ? ' ' + meta.reg : ''), S: null
   };
 }
@@ -676,19 +1297,21 @@ function buildTrack(rec){
 function computeStats(T, thr){
   const W = T.W, n = W.n;
   let gapSec = 0, gapCount = 0, maxGap = 0; const gaps = [];
-  const lv = new Map(); let cruiseSec = 0, spdW = 0, spdDt = 0;
+  const lv = new Map(), lvA = new Map(); let cruiseSec = 0, spdW = 0, spdDt = 0;
   for(let k = 0; k < n-1; k++){
     const dt = W.dt[k];
     if(dt > thr){ gapSec += dt; gapCount++; if(dt > maxGap) maxGap = dt; gaps.push({k, t0:W.t[k], t1:W.t[k+1], sec:dt}); continue; }
     if(W.alt[k] >= 25000 && W.alt[k+1] >= 25000){
       const lvl = Math.round((W.alt[k] + W.alt[k+1]) / 2 / 1000) * 1000;
-      lv.set(lvl, (lv.get(lvl) || 0) + dt); cruiseSec += dt;
+      lv.set(lvl, (lv.get(lvl) || 0) + dt); lvA.set(lvl, (lvA.get(lvl) || 0) + dt * (W.alt[k] + W.alt[k+1]) / 2); cruiseSec += dt;
       const s0 = W.spd[k], s1 = W.spd[k+1];
       if(s0 != null && s1 != null){ spdW += dt * (s0 + s1) / 2; spdDt += dt; }
     }
   }
   let mainLevel = null, best = 0;
   lv.forEach((sec, l) => { if(sec > best){ best = sec; mainLevel = l; } });
+  // report the level at 100 ft resolution (time-weighted mean altitude of the winning bucket) so it matches the cruise-event table (e.g. FL291, not FL290)
+  if(mainLevel != null) mainLevel = Math.round(lvA.get(mainLevel) / lv.get(mainLevel) / 100) * 100;
   if(cruiseSec < 600) mainLevel = null;
   const span = Math.max(1, W.t[n-1] - W.t[0]);
   const cov = Math.max(0, 1 - gapSec / span);
@@ -697,7 +1320,7 @@ function computeStats(T, thr){
   const gc = hav(W.lat[0], W.lon[0], W.lat[n-1], W.lon[n-1]);
   const m = T.meta;
   return {
-    airSec: T.airSec, distAir: T.distAir, gc, extra: gc > 1 ? T.distAir / gc - 1 : null,
+    airSec: T.airSec, distAir: T.distAir, gc, extra: gc > 1 && T.complete ? T.distAir / gc - 1 : null,
     avgGS: T.distAir / (T.airSec / 3600),
     cruiseGS: spdDt > 0 ? spdW / spdDt : null, mainLevel, maxAlt, maxSpd,
     gapCount, gapSec, maxGap, gaps, cov, q: cov >= 0.8 ? 'high' : cov >= 0.5 ? 'mid' : 'low',
@@ -1066,7 +1689,7 @@ function renderToolbar(){
 /* ---------- flight list ---------- */
 function defaultSub(T){
   const S = T.S, d = U().dist;
-  return `空中 <span class="v">${fmtHM(S.airSec/60)}</span> ・ <span class="v">${nf0.format(S.distAir*d.f)}</span> ${d.u}<br>資料覆蓋 <span class="v">${Math.round(S.cov*100)}%</span><span class="q q-${S.q}">${qLabel(S.q)}</span>`;
+  return `空中 <span class="v">${fmtHM(S.airSec/60)}</span> ・ <span class="v">${nf0.format(S.distAir*d.f)}</span> ${d.u}<br>資料覆蓋 <span class="v">${Math.round(S.cov*100)}%</span><span class="q q-${S.q}">${qLabel(S.q)}</span>${T.complete ? '' : `<br><span class="q q-mid" title="軌跡不完整：空中時間、距離只是下限，不參與最小值與平均統計" style="margin-left:0">資料不完整：${!T.hasTO ? '起點非離地' : ''}${!T.hasTO && !T.hasLD ? '、' : ''}${!T.hasLD ? '終點非落地' : ''}</span>`}`;
 }
 const qLabel = q => q === 'high' ? '高' : q === 'mid' ? '中' : '低';
 function cursorSub(T, st, B){
@@ -1080,9 +1703,10 @@ function cursorSub(T, st, B){
       const dv = mode === 'time' ? (st.d - sb.d) * u.dist.f : (sb.tm - st.tm);
       const unit = mode === 'time' ? u.dist.u : '分';
       const txt = mode === 'time' ? nf0.format(Math.abs(dv)) : fmtHM(Math.abs(dv));
-      s += `<br>相對基準 <span class="${dv >= 0 ? 'd-pos' : 'd-neg'}">${dv >= 0 ? '領先' : '落後'} ${mode === 'time' ? txt + ' ' + unit : txt}</span>`;
+      const flat = mode === 'time' ? Math.abs(dv) < 0.5 : Math.abs(dv) < 0.5;
+      s += flat ? '<br>相對基準 <span class="v">持平</span>' : `<br>相對基準 <span class="${dv >= 0 ? 'd-pos' : 'd-neg'}">${dv >= 0 ? '領先' : '落後'} ${mode === 'time' ? txt + ' ' + unit : txt}</span>`;
       const xk = xtkPoint(B, st.lat, st.lon), refGap = B.W.dt[xk.seg] > UI.thr;
-      s += xk.beyond ? ' ・ <span class="q q-mid">超出基準範圍</span>' : ` ・ 偏${sideTxt(xk.x)} <span class="v">${nf0.format(Math.abs(xk.x)*u.dist.f)}</span> ${u.dist.u}${refGap ? ' <span class="q q-mid">基準內插</span>' : ''}`;
+      s += xk.beyond ? ' ・ <span class="q q-mid">超出基準範圍</span>' : Math.abs(xk.x) * u.dist.f < 0.5 ? ' ・ 貼近基準航跡' : ` ・ 偏${sideTxt(xk.x)} <span class="v">${nf0.format(Math.abs(xk.x)*u.dist.f)}</span> ${u.dist.u}${refGap ? ' <span class="q q-mid">基準內插</span>' : ''}`;
     }
   }
   return s;
@@ -1133,33 +1757,35 @@ function renderTable(){
     return (va - vb) * UI.sortDir;
   });
   const vis = rows.filter(T => T.vis !== false || T.id === B.id);
-  const minOf = f => { const v = vis.map(f).filter(x => x != null); return v.length > 1 ? Math.min(...v) : null; };
+  const visC = vis.filter(T => T.complete);   // truncated tracks only give lower bounds: keep them out of min / mean / range
+  const minOf = f => { const v = visC.map(f).filter(x => x != null); return v.length > 1 ? Math.min(...v) : null; };
   const best = { air:minOf(T => T.S.airSec), dist:minOf(T => T.S.distAir), extra:minOf(T => T.S.extra) };
   const sgn = (v, f) => (v >= 0 ? '+' : '−') + f(Math.abs(v));
-  const dMin = (T, k) => T.id === B.id ? '<small class="dl">基準</small>' : `<small class="dl">${sgn((T.S[k] - B.S[k]) / 60, fmtHM).replace('+−','−')}</small>`;
+  const dMin = (T, k) => T.id === B.id ? '<small class="dl">基準</small>' : (!T.complete || !B.complete) ? '<small class="dl">—</small>' : `<small class="dl">${sgn((T.S[k] - B.S[k]) / 60, fmtHM).replace('+−','−')}</small>`;
   const head = '<thead><tr>' + COLS.map(c => {
     const sub = c.s === 'dist' ? u.dist.u : c.s === 'alt' ? u.alt.u : c.s.replace('dist', u.dist.u);
     const aria = c.k === UI.sortKey ? (UI.sortDir > 0 ? 'ascending' : 'descending') : 'none';
-    return `<th data-k="${c.k}" aria-sort="${aria}" scope="col">${c.t}<small>${esc(sub)}</small></th>`;
+    return `<th data-k="${c.k}" aria-sort="${aria}" scope="col" title="${esc(COL_TIPS[c.k] || '')}">${c.t}<small>${esc(sub)}</small></th>`;
   }).join('') + '</tr></thead>';
   const na = '<td class="na">—</td>';
   const body = rows.map(T => {
     const S = T.S, isB = T.id === B.id, hid = !(T.vis !== false || isB);
     const lowWarn = S.q === 'low' ? '<span class="warn" title="資料覆蓋率低：距離為下限估計">⚠</span>' : '';
-    const pctCls = (v, b) => b != null && v === b ? ' class="best"' : '';
+    const pctCls = (v, b) => T.complete && b != null && v === b ? ' class="best"' : '';
+    const trWarn = T.complete ? '' : `<span class="warn" title="軌跡不完整（${!T.hasTO ? '起點不是離地' : ''}${!T.hasTO && !T.hasLD ? '、' : ''}${!T.hasLD ? '終點不是落地' : ''}）：這個數字只是下限，不參與最小值與平均統計">⚠</span>`;
     const ldDay = fmtDate(T.tLD) !== fmtDate(T.tTO) ? ' <small style="color:var(--text-faint)">+1d</small>' : '';
     return `<tr class="${isB ? 'base' : ''}${hid ? ' hid' : ''}" data-id="${esc(T.id)}">
-      <td><div class="fn"><i style="background:${colorOf(T)}"></i><div><b>${esc(fmtDate(T.tTO))}</b>${isB ? ' <span class="tag">基準</span>' : ''}<small>${esc(T.meta.reg || '—')}${T.meta.type ? ' ・ ' + esc(T.meta.type) : ''}${T.hasTO ? '' : ' ・ 起點非離地'}</small></div></div></td>
-      <td>${fmtClock(T.tTO)}</td>
-      <td>${fmtClock(T.tLD)}${ldDay}</td>
+      <td><div class="fn"><i style="background:${colorOf(T)}"></i><div><b>${esc(fmtDate(T.tTO))}</b>${isB ? ' <span class="tag">基準</span>' : ''}<small title="${esc(T.meta.acName || '')}">${esc(T.meta.reg || '—')}${T.meta.type ? ' ・ ' + esc(T.meta.type) : ''}${T.hasTO ? '' : ' ・ 起點非離地'}</small></div></div></td>
+      ${T.hasTO ? `<td>${fmtClock(T.tTO)}</td>` : '<td class="na" title="起點不是離地：這份軌跡從空中才開始">—</td>'}
+      ${T.hasLD ? `<td>${fmtClock(T.tLD)}${ldDay}</td>` : '<td class="na" title="終點不是落地：這份軌跡在空中就結束了">—</td>'}
       ${S.depDelay != null ? `<td>${S.depDelay >= 0 ? '+' : '−'}${nf0.format(Math.abs(S.depDelay))}</td>` : na}
-      <td${pctCls(S.airSec, best.air)}>${fmtHM(S.airSec/60)}${dMin(T, 'airSec')}</td>
-      <td${pctCls(S.distAir, best.dist)}>${nf0.format(S.distAir*u.dist.f)}${lowWarn}<small class="dl">${isB ? '基準' : sgn((S.distAir - B.S.distAir)*u.dist.f, nf0.format)}</small></td>
+      <td${pctCls(S.airSec, best.air)}>${T.complete ? '' : '≥'}${fmtHM(S.airSec/60)}${trWarn}${dMin(T, 'airSec')}</td>
+      <td${pctCls(S.distAir, best.dist)}>${T.complete ? '' : '≥'}${nf0.format(S.distAir*u.dist.f)}${T.complete ? lowWarn : trWarn}<small class="dl">${isB ? '基準' : (!T.complete || !B.complete) ? '—' : sgn((S.distAir - B.S.distAir)*u.dist.f, nf0.format)}</small></td>
       <td>${nf0.format(S.gc*u.dist.f)}</td>
       ${S.extra != null ? `<td${pctCls(S.extra, best.extra)}>${S.extra >= 0 ? '+' : '−'}${nf1.format(Math.abs(S.extra)*100)}%${lowWarn}</td>` : na}
-      ${S.xt ? `<td>${sideTxt(S.xt.max)} ${nf0.format(Math.abs(S.xt.max)*u.dist.f)}${S.xt.maxRef ? '<span class="warn" title="這個最大值出現在基準航跡的缺口（內插）附近，僅供參考">⚠</span>' : ''}${S.xt.maxRef && S.xt.rel != null ? `<small class="dl">可靠區間 ${sideTxt(S.xt.rel)} ${nf0.format(Math.abs(S.xt.rel)*u.dist.f)}</small>` : ''}</td>` : (isB ? '<td class="na">基準</td>' : na)}
+      ${S.xt ? `<td>${Math.abs(S.xt.max) * u.dist.f < 0.5 ? '≈ 0' : sideTxt(S.xt.max) + ' ' + nf0.format(Math.abs(S.xt.max)*u.dist.f)}${S.xt.maxRef ? '<span class="warn" title="這個最大值出現在基準航跡的缺口（內插）附近，僅供參考">⚠</span>' : ''}${S.xt.maxRef && S.xt.rel != null ? `<small class="dl">可靠區間 ${sideTxt(S.xt.rel)} ${nf0.format(Math.abs(S.xt.rel)*u.dist.f)}</small>` : ''}</td>` : (isB ? '<td class="na">基準</td>' : na)}
       <td>${nf0.format(S.maxAlt*u.alt.f)}</td>
-      ${S.mainLevel != null ? `<td>${u.alt.u === 'ft' ? 'FL' + Math.round(S.mainLevel/100) : nf0.format(S.mainLevel*u.alt.f)}</td>` : na}
+      ${S.mainLevel != null ? `<td>${lvlTxt(S.mainLevel)}</td>` : na}
       ${S.ev && S.ev.toc ? `<td>▲${S.ev.nUp}${S.ev.nDown ? ' ▼' + S.ev.nDown : ''}${S.ev.events.some(e => e.unc) ? '<span class="warn" title="部分發生在資料缺口內，只知道區間">⚠</span>' : ''}</td>` : na}
       <td>${nf0.format(S.avgGS*u.spd.f)}${lowWarn}</td>
       ${S.cruiseGS != null ? `<td>${nf0.format(S.cruiseGS*u.spd.f)}</td>` : na}
@@ -1168,7 +1794,7 @@ function renderTable(){
       <td>${S.gapCount}${S.gapCount ? ' ・ ' + fmtHM(S.maxGap/60) : ''}</td>
     </tr>`;
   }).join('');
-  const stat = (f, fmt) => { const v = vis.map(f).filter(x => x != null); if(v.length < 2) return ['—', '—']; const mean = v.reduce((a, b) => a + b, 0) / v.length; return [fmt(mean), fmt(Math.max(...v) - Math.min(...v))]; };
+  const stat = (f, fmt) => { const v = visC.map(f).filter(x => x != null); if(v.length < 2) return ['—', '—']; const mean = v.reduce((a, b) => a + b, 0) / v.length; return [fmt(mean), fmt(Math.max(...v) - Math.min(...v))]; };
   const cells = [
     ['air',  T => T.S.airSec, v => fmtHM(v/60)],
     ['dist', T => T.S.distAir, v => nf0.format(v*u.dist.f)],
@@ -1328,7 +1954,8 @@ function updateCharts(){
   $('dltFoot').textContent = (m === 'time' ? '在離地後同一時刻，比基準多飛（領先）或少飛（落後）的距離。' : '在同一位置，比基準早到（領先）或晚到（落後）的時間。') + '虛線 = 其中一方在該處是缺口內插，數值僅供參考。';
   const zeroGrid = {color: c => c.tick && c.tick.value === 0 ? 'rgba(11,31,58,0.55)' : GRID, lineWidth: c => c.tick && c.tick.value === 0 ? 1.5 : 1};
   charts.dlt.options.scales.y.grid = zeroGrid;
-  apply(charts.dlt, sets, `領先 + / 落後 −（${unit}）`, v => nf0.format(v));
+  charts.dlt.options.scales.y.suggestedMin = -(m === 'time' ? 5 * u.dist.f : 1.5); charts.dlt.options.scales.y.suggestedMax = m === 'time' ? 5 * u.dist.f : 1.5;
+  apply(charts.dlt, sets, `領先 + / 落後 −（${unit}）`, v => nf0.format(Math.round(v) || 0));
   // lateral deviation from the baseline route (F's own x, so it lines up with the other charts and the cursor)
   const xsets = [];
   others.forEach(T => {
@@ -1336,13 +1963,14 @@ function updateCharts(){
     const refGap = k => B.W.dt[xt.seg[k]] > UI.thr;
     for(let j = 0; j < cnt; j++){
       const k = ix ? ix[j] : j, k2 = ix ? (j < cnt - 1 ? ix[j+1] : k) : Math.min(k + 1, W.n - 1);
-      data[j] = {x: (m === 'time' ? W.X.time[k] : m === 'dist' ? W.X.dist[k] : W.X.prog[k]) * xf, y: Number.isNaN(xt.x[k]) ? null : xt.x[k] * f};
+      data[j] = {x: (m === 'time' ? W.X.time[k] : m === 'dist' ? W.X.dist[k] : W.X.prog[k]) * xf, y: Number.isNaN(xt.x[k]) ? null : ((Math.round(xt.x[k] * 20) / 20) || 0) * f};
       gaps[j] = segGap(W, k, k2) || refGap(k) || refGap(k2);
     }
     xsets.push(mkDataset(T, data, gaps, false));
   });
   charts.xt.options.scales.y.grid = zeroGrid;
-  apply(charts.xt, xsets, `偏離基準航跡：右 + / 左 −（${u.dist.u}）`, v => nf0.format(v));
+  charts.xt.options.scales.y.suggestedMin = -5 * u.dist.f; charts.xt.options.scales.y.suggestedMax = 5 * u.dist.f;
+  apply(charts.xt, xsets, `偏離基準航跡：右 + / 左 −（${u.dist.u}）`, v => nf0.format(Math.round(v) || 0));
   $('xtEmpty').classList.toggle('hidden', xsets.length > 0);
   $('xtEmpty').textContent = '再加入或顯示至少 1 趟同航班，就會顯示相對基準（' + B.label + '）航跡的橫向偏離';
   const empty = sets.length === 0;
@@ -1536,7 +2164,8 @@ function raceInfo(T, tp){
   const W = T.W, arr = W.X.time, last = arr[W.n - 1];
   const x = Math.min(Math.max(tp, arr[0]), last);
   const st = stateAt(T, 'time', x);
-  return {T, st, fin: tp >= last - 1e-9};
+  const atEnd = tp >= last - 1e-9;
+  return {T, st, fin: atEnd && T.hasLD, ended: atEnd && !T.hasLD};   // a track that stops in the air has NOT arrived
 }
 function raceBoard(tp){
   const tr = visibleTracks(), B = baselineTrack(), BW = B.W;
@@ -1552,11 +2181,14 @@ function raceSub(r, B, tp){
   const u = U(), T = r.T;
   let a = `<span class="v">#${r.rank}</span> ・ <span class="v">+${fmtHM(Math.min(tp, T.W.X.time[T.W.n-1]))}</span>`;
   if(r.fin) a += ` ・ 已抵達 <span class="v">${fmtHM(T.airSec/60)}</span>`;
+  else if(r.ended) a += ' ・ 資料結束（未落地）';
   else a += ` ・ 距目的地 <span class="v">${nf0.format(r.dtg*u.dist.f)}</span> ${u.dist.u}`;
   let b = '';
   if(T.id === B.id) b = '基準';
   else if(r.fin && B.airSec != null){ const dm = (B.airSec - T.airSec) / 60; b = `比基準 <span class="${dm >= 0 ? 'd-pos' : 'd-neg'}">${dm >= 0 ? '早' : '晚'} ${fmtHM(Math.abs(dm))}</span> 抵達`; }
+  else if(Math.abs(r.lead) * u.dist.f < 0.5) b = '與基準持平';
   else b = `<span class="${r.lead >= 0 ? 'd-pos' : 'd-neg'}">${r.lead >= 0 ? '領先' : '落後'} 基準 ${nf0.format(Math.abs(r.lead)*u.dist.f)} ${u.dist.u}</span>`;
+  if(!T.hasTO && T.id !== B.id) b += ' <span class="q q-mid">起點非離地</span>';
   return a + '<br>' + b;
 }
 function pbRebuild(){
@@ -1661,6 +2293,12 @@ function computeEvents(T, thr){
     }
     s = e + 1;
   }
+  // cruise = first plateau .. last plateau within 1,500 ft of the highest one. Level-offs after that are the stepped arrival
+  // descent (e.g. FL360 -> FL320 -> FL300 into the destination), not cruise events, and must not move the TOD.
+  let top = -Infinity; pl.forEach(p => { if(p.alt > top) top = p.alt; });
+  let lastTop = -1; pl.forEach((p, i) => { if(p.alt >= top - 1500) lastTop = i; });
+  const arrivalLevels = pl.length - 1 - lastTop;
+  pl.length = lastTop + 1;
   const stAt = k => stateAt(T, 'time', Math.min(W.X.time[n-1], Math.max(W.X.time[0], W.X.time[k])));
   const events = [];
   for(let i = 0; i + 1 < pl.length; i++){
@@ -1688,7 +2326,7 @@ function computeEvents(T, thr){
     toc = {idx:f.s, tm:W.X.time[f.s], d:W.X.dist[f.s], alt:f.alt, st:stAt(f.s), unc:uc};
     tod = {idx:l.e, tm:W.X.time[l.e], d:W.X.dist[l.e], alt:l.alt, st:stAt(l.e), unc:ud, dtg:Math.max(0, T.distAir - W.X.dist[l.e])};
   }
-  return {events, toc, tod, nUp: events.filter(e => e.type === 'up').length, nDown: events.filter(e => e.type === 'down').length, first: pl.length ? pl[0].alt : null, last: pl.length ? pl[pl.length-1].alt : null};
+  return {events, toc, tod, arrivalLevels, nUp: events.filter(e => e.type === 'up').length, nDown: events.filter(e => e.type === 'down').length, first: pl.length ? pl[0].alt : null, last: pl.length ? pl[pl.length-1].alt : null};
 }
 function evRow(T, e){
   const d = U().dist, f = d.f;
@@ -1780,7 +2418,7 @@ function gateRange(B, type){
   return {lo, hi, arr};
 }
 // automatic spacing: the smallest step that keeps the number of lines at about 10 or fewer
-function autoGateStep(B, type){ const r = gateRange(B, type), span = r.hi - r.lo; for(const s of [5, 10, 15, 20, 30, 45, 60]) if(span / s <= 10) return s; return 60; }
+function autoGateStep(B, type){ const r = gateRange(B, type), span = r.hi - r.lo; for(const s of [1, 2, 5, 10, 15, 20, 30, 45, 60]) if(span / s <= 10) return s; return 60; }
 function gateList(B, type, step){
   const W = B.W, {lo, hi, arr} = gateRange(B, type);
   const out = [];
@@ -1840,7 +2478,7 @@ function renderGates(){
       const val = type === 'lat' ? fmtLon(c.lon) : fmtLat(c.lat);
       let dl = '';
       if(isB) dl = '<small class="dl">基準</small>';
-      else if(r.pos[i] != null){ const v = r.pos[i] * f; dl = `<small class="dl">${type === 'lat' ? (v >= 0 ? '東' : '西') : (v >= 0 ? '北' : '南')} ${nf0.format(Math.abs(v))} ${u.dist.u}</small>`; }
+      else if(r.pos[i] != null){ const v = r.pos[i] * f; dl = Math.abs(v) < 0.5 ? '<small class="dl">≈ 基準</small>' : `<small class="dl">${type === 'lat' ? (v >= 0 ? '東' : '西') : (v >= 0 ? '北' : '南')} ${nf0.format(Math.abs(v))} ${u.dist.u}</small>`; }
       return `<td><b>${val}</b>${dl}<small>+${fmtHM(c.tm)} ・ ${lvlTxt(c.alt)}${x.n > 1 ? ` ・ ×${x.n}` : ''}</small>${c.gap ? '<span class="q q-mid">內插</span>' : ''}</td>`;
     }).join('');
     const hot = r.spread != null && r.spread === maxSpread && maxSpread > 0;
@@ -1873,6 +2511,79 @@ document.querySelectorAll('#gateSeg button').forEach(b => b.addEventListener('cl
 $('gateStep').addEventListener('change', e => { UI.gateStep = +e.target.value; refreshAll({keepCursor:true}); });
 $('gateMapBtn').addEventListener('click', () => { UI.gateMap = !UI.gateMap; refreshAll({keepCursor:true}); });
 $('tglEv').addEventListener('click', () => { UI.events = !UI.events; refreshAll({keepCursor:true}); });
+
+
+/* =========================================================================
+   HELP — in-app guide (drawer with table of contents, search, deep links from every "?" button)
+   ========================================================================= */
+const COL_TIPS = {
+  tTO:'航班：離地日期（UTC）、機號、機型。點標題可排序。', to:'離地時刻（UTC）。台灣時間 = UTC + 8 小時。', ld:'落地時刻（UTC）。+1d = 隔天。',
+  dep:'起飛延誤 = 實際出發時間（ATD）− 計畫出發時間（STD），單位分鐘。包含滑行時間，不能直接當成誤點。',
+  air:'空中時間 = 離地到落地，單位 h:mm。小字是與基準的差。', dist:'航跡距離 = 沿實測點連線累加的距離。缺口以直線連接，覆蓋率低時偏短（⚠）。',
+  gc:'大圓距離 = 該航班離地點到落地點的最短直線距離（理想值）。', extra:'多出距離 = 航跡距離 ÷ 大圓距離 − 1，是繞路程度。',
+  xt:'最大橫向偏離 = 離基準航跡垂直距離最遠的實測點，標示在基準的左或右側。', maxAlt:'空中所有紀錄點中的最高高度。',
+  lvl:'主要巡航層 = 25,000 呎以上、實測區段中停留最久的高度層（FL350 = 35,000 呎）。', steps:'階梯爬升 = 巡航中往上提高高度的次數（▲），往下為 ▼。',
+  avg:'平均地速 = 航跡距離 ÷ 空中時間，含爬升與下降。', cr:'巡航地速 = 25,000 呎以上、實測區段的平均地速。', eta:'ETA − STA，分鐘。負數 = 比計畫早到。',
+  cov:'資料覆蓋 = 空中時間中有實測資料的比例。高 ≥80%、中 50–80%、低 <50%。', gaps:'資料缺口的次數與最長一段的長度。'
+};
+(function(){
+  const root = $('helpRoot'), content = $('helpContent'), toc = $('helpToc'), search = $('helpSearch'), none = $('helpNone'), panel = root.querySelector('.help-panel');
+  const secs = [...content.querySelectorAll('section.hs')];
+  toc.innerHTML = secs.map(s => `<a href="#${s.id}" data-t="${s.id}">${esc(s.dataset.title)}</a>`).join('');
+  const links = [...toc.querySelectorAll('a')];
+  let opener = null;
+  const isOpen = () => !root.classList.contains('hidden');
+  function setActive(){
+    let cur = secs.find(s => !s.classList.contains('hidden')); const y = content.scrollTop + 70;
+    secs.forEach(s => { if(!s.classList.contains('hidden') && s.offsetTop <= y) cur = s; });
+    links.forEach(a => a.classList.toggle('active', !!cur && a.dataset.t === cur.id));
+  }
+  function filter(q){
+    q = q.trim().toLowerCase(); let any = false;
+    secs.forEach((s, i) => { const hit = !q || s.textContent.toLowerCase().includes(q) || s.dataset.title.toLowerCase().includes(q); s.classList.toggle('hidden', !hit); links[i].classList.toggle('hidden', !hit); if(hit) any = true; });
+    none.classList.toggle('hidden', any); setActive();
+  }
+  function goto(id){
+    const el = document.getElementById(id); if(!el) return;
+    if(el.classList.contains('hidden')){ search.value = ''; filter(''); }
+    content.scrollTop = Math.max(0, el.offsetTop - 4); setActive();
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  }
+  function open(id){
+    if(!isOpen()) opener = document.activeElement;
+    root.classList.remove('hidden'); root.setAttribute('aria-hidden', 'false'); document.documentElement.style.overflow = 'hidden';
+    search.value = ''; filter('');
+    if(id) goto(id); else content.scrollTop = 0;
+    setActive(); $('helpClose').focus();
+  }
+  function close(){
+    root.classList.add('hidden'); root.setAttribute('aria-hidden', 'true'); document.documentElement.style.overflow = '';
+    if(opener && opener.focus) opener.focus(); opener = null;
+  }
+  window.openHelp = open;
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-help]'); if(t){ e.preventDefault(); e.stopPropagation(); open(t.dataset.help); return; }
+    if(e.target.closest('[data-close]') && isOpen()) close();
+  }, true);
+  toc.addEventListener('click', e => { const a = e.target.closest('a[data-t]'); if(a){ e.preventDefault(); goto(a.dataset.t); } });
+  content.addEventListener('click', e => { const a = e.target.closest('a.jump'); if(a){ e.preventDefault(); goto(a.getAttribute('href').slice(1)); } });
+  content.addEventListener('scroll', setActive);
+  search.addEventListener('input', () => filter(search.value));
+  document.addEventListener('keydown', e => {
+    if(isOpen()){
+      if(e.key === 'Escape'){ e.stopPropagation(); e.preventDefault(); close(); return; }
+      if(e.key === 'Tab'){
+        const f = [...panel.querySelectorAll('a[href],button:not([disabled]),input')].filter(x => x.offsetParent !== null);
+        if(!f.length) return; const first = f[0], last = f[f.length - 1];
+        if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      }
+      return;
+    }
+    if(e.key === '?' && !/^(INPUT|SELECT|TEXTAREA)$/.test((document.activeElement || {}).tagName || '')){ e.preventDefault(); open('sec-start'); }
+  }, true);
+  if(/^#help/.test(location.hash)) setTimeout(() => open('sec-start'), 0);
+})();
 
 
 /* =========================================================================
